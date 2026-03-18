@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>mer de nuage — Design Directions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1E1E1E;
+      font-family: 'Josefin Sans', sans-serif;
+      color: #ccc;
+      padding: 40px 24px 80px;
+    }
+    h1 { font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #555; text-align: center; margin-bottom: 8px; }
+    .subtitle { font-size: 11px; color: #444; text-align: center; letter-spacing: 1px; margin-bottom: 48px; }
+
+    /* ─── TOKENS ─── */
+    :root {
+      --bg:       #EFE8DC;
+      --surface:  #F7F5F1;
+      --border:   #E9E4DA;
+      --acc1:     #B28C6E;
+      --acc2:     #D2BA9C;
+      --txt1:     #1A1A1A;
+      --txt2:     #5E5E5E;
+      --txt3:     #9E9E9E;
+      --dark:     #1A1A1A;
+      --s-high:   #5C9E6E;
+      --s-med:    #D4904A;
+      --s-low:    #C25C4A;
+    }
+
+    /* ─── SECTION ─── */
+    .section { margin-bottom: 64px; }
+    .section-title {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: #555; margin-bottom: 24px; padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+
+    /* ─── PHONE ─── */
+    .wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .tag { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; }
+    .tag strong { color: #888; }
+
+    .phone {
+      width: 375px; height: 812px;
+      border-radius: 44px; border: 8px solid #2a2a2a;
+      overflow: hidden; position: relative;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+      flex-shrink: 0;
+    }
+    .status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px 6px; font-size: 12px; font-weight: 600;
+    }
+    .notch {
+      width: 120px; height: 28px; border-radius: 20px;
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    }
+    /* ══════════════════════════════════════════
+       DIRECTION A — Score Central (validée)
+       Fond beige · score hero pleine hauteur
+    ══════════════════════════════════════════ */
+    .dir-a {
+      background: var(--bg);
+      height: 100%; display: flex; flex-direction: column;
+    }
+    .dir-a .status { color: var(--txt1); }
+    .dir-a .notch  { background: var(--dark); }
+    .dir-a .search {
+      margin: 8px 16px 12px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 11px 14px;
+      display: flex; align-items: center; gap: 8px;
+      color: var(--txt3); font-size: 14px;
+    }
+    .dir-a .favs {
+      display: flex; gap: 8px; overflow: hidden; padding: 0 16px; margin-bottom: 16px;
+    }
+    .dir-a .fchip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px 12px; flex-shrink: 0;
+    }
+    .dir-a .fchip .fn { font-size: 11px; font-weight: 600; color: var(--txt1); }
+    .dir-a .fchip .fs { font-size: 13px; font-weight: 700; }
+    .dir-a .hero {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 0 24px; gap: 4px;
+    }
+    .dir-a .peak { font-size: 18px; font-weight: 600; color: var(--txt1); }
+    .dir-a .alt  { font-size: 12px; color: var(--txt3); margin-bottom: 8px; }
+    .dir-a .snum { font-size: 80px; font-weight: 700; line-height: 1; color: var(--s-high); }
+    .dir-a .spct { font-size: 28px; font-weight: 600; color: var(--s-high); vertical-align: super; }
+    .dir-a .slbl {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 99px;
+      background: rgba(92,158,110,0.1); color: var(--s-high); margin-bottom: 12px;
+    }
+    .dir-a .cviz {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 12px 14px; margin-bottom: 12px;
+    }
+    .dir-a .cviz-t { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .dir-a .cviz-bar {
+      position: relative; height: 56px;
+    }
+    .dir-a .mtn {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 50px solid transparent; border-right: 50px solid transparent;
+      border-bottom: 50px solid var(--acc2);
+    }
+    .dir-a .cloud {
+      position: absolute; left: 0; right: 0; height: 14px;
+      background: var(--s-high); opacity: 0.5; border-radius: 3px; bottom: 32px;
+    }
+    .dir-a .wstrip {
+      display: flex; gap: 5px; overflow: hidden; margin-bottom: 0;
+    }
+    .dir-a .wday {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 7px 0; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .dir-a .wday.on { background: var(--acc1); border-color: var(--acc1); }
+    .dir-a .wday .dl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dir-a .wday .ds { font-size: 11px; font-weight: 700; }
+    .dir-a .wday:not(.on) .dl { color: var(--txt3); }
+    .dir-a .wday:not(.on) .ds { color: var(--txt1); }
+    .dir-a .wday.on .dl, .dir-a .wday.on .ds { color: #fff; }
+    .dir-a .bnav {
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 28px; border-top: 1px solid var(--border); background: var(--bg);
+    }
+    .dir-a .nitem { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .dir-a .nitem svg { width: 20px; height: 20px; }
+    .dir-a .nitem span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dir-a .nitem.on svg, .dir-a .nitem.on span { color: var(--acc1); }
+    .dir-a .nitem:not(.on) svg, .dir-a .nitem:not(.on) span { color: var(--border); }
+
+    /* ══════════════════════════════════════════
+       DIRECTION B — Card Layout
+       Score dans une card flottante, fond beige,
+       plus d'espace pour les infos secondaires
+    ══════════════════════════════════════════ */
+    .dir-b {
+      background: var(--bg);
+      height: 100%; display: flex; flex-direction: column;
+    }
+    .dir-b .status { color: var(--txt1); }
+    .dir-b .notch  { background: var(--dark); }
+    .dir-b .header {
+      padding: 8px 16px 16px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .dir-b .hrow { display: flex; justify-content: space-between; align-items: center; }
+    .dir-b .hpeak { font-size: 20px; font-weight: 700; color: var(--txt1); }
+    .dir-b .halt  { font-size: 12px; color: var(--txt3); }
+    .dir-b .hstar { font-size: 18px; color: var(--acc1); }
+    .dir-b .score-card {
+      background: var(--dark); border-radius: 24px; padding: 24px;
+      display: flex; align-items: center; gap: 20px;
+      margin: 0 16px;
+    }
+    .dir-b .sc-left { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .dir-b .sc-num  { font-size: 64px; font-weight: 700; color: var(--s-high); line-height: 1; }
+    .dir-b .sc-pct  { font-size: 24px; font-weight: 600; color: var(--s-high); vertical-align: super; }
+    .dir-b .sc-lbl  {
+      font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 99px;
+      background: rgba(92,158,110,0.2); color: var(--s-high);
+    }
+    .dir-b .sc-right { flex: 1; }
+    .dir-b .sc-viz { position: relative; height: 64px; }
+    .dir-b .sc-mtn {
+      position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 36px solid transparent; border-right: 36px solid transparent;
+      border-bottom: 58px solid #383838;
+    }
+    .dir-b .sc-cloud {
+      position: absolute; left: 0; right: 0; height: 10px;
+      background: var(--s-high); opacity: 0.4; border-radius: 3px; bottom: 38px;
+    }
+    .dir-b .sc-labels { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+    .dir-b .sc-labels span { font-size: 9px; color: #666; }
+    .dir-b .wstrip {
+      display: flex; gap: 6px; overflow: hidden; padding: 16px; margin: 0;
+    }
+    .dir-b .wday {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 8px 0; border-radius: 12px; border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .dir-b .wday.on { background: var(--acc1); border-color: var(--acc1); }
+    .dir-b .wday .dl { font-size: 9px; font-weight: 600; text-transform: uppercase; color: var(--txt3); }
+    .dir-b .wday .ds { font-size: 11px; font-weight: 700; color: var(--txt1); }
+    .dir-b .wday.on .dl, .dir-b .wday.on .ds { color: #fff; }
+    .dir-b .conds {
+      display: flex; gap: 8px; padding: 0 16px; margin-bottom: 12px;
+    }
+    .dir-b .cbadge {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .dir-b .cb-l { font-size: 9px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; }
+    .dir-b .cb-v { font-size: 15px; font-weight: 700; color: var(--txt1); }
+    .dir-b .favs-sect { padding: 0 16px; }
+    .dir-b .fsect-t { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .dir-b .frow { display: flex; gap: 8px; }
+    .dir-b .fchip {
+      flex: 1; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .dir-b .fn { font-size: 12px; font-weight: 600; color: var(--txt1); }
+    .dir-b .fs { font-size: 13px; font-weight: 700; }
+    .dir-b .bnav {
+      margin-top: auto;
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 28px; border-top: 1px solid var(--border); background: var(--bg);
+    }
+    .dir-b .nitem { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .dir-b .nitem svg { width: 20px; height: 20px; }
+    .dir-b .nitem span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dir-b .nitem.on svg, .dir-b .nitem.on span { color: var(--acc1); }
+    .dir-b .nitem:not(.on) svg, .dir-b .nitem:not(.on) span { color: var(--border); }
+
+    /* ══════════════════════════════════════════
+       DIRECTION C — Full Dark, Score Immersif
+       Dark mode only · score dominant centre écran
+       Bottom sheet pour les détails
+    ══════════════════════════════════════════ */
+    .dir-c {
+      background: var(--dark);
+      height: 100%; display: flex; flex-direction: column;
+    }
+    .dir-c .status { color: #F7F5F1; }
+    .dir-c .notch  { background: #000; }
+    .dir-c .top {
+      padding: 4px 20px 0; display: flex; align-items: center; justify-content: space-between;
+    }
+    .dir-c .top-peak { font-size: 16px; font-weight: 600; color: #F7F5F1; }
+    .dir-c .top-btn {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      padding: 6px 12px; border-radius: 99px;
+      background: #242424; border: 1px solid #383838; color: #A0A0A0;
+    }
+    .dir-c .big-score {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+    }
+    .dir-c .bs-sub { font-size: 11px; color: #555; letter-spacing: 2px; text-transform: uppercase; }
+    .dir-c .bs-num { font-size: 100px; font-weight: 700; color: var(--s-high); line-height: 1; }
+    .dir-c .bs-pct { font-size: 36px; font-weight: 700; color: var(--s-high); vertical-align: super; }
+    .dir-c .bs-lbl {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+      padding: 5px 16px; border-radius: 99px;
+      background: rgba(92,158,110,0.15); color: var(--s-high);
+    }
+    /* week strip dark */
+    .dir-c .wstrip {
+      display: flex; gap: 5px; padding: 0 16px 16px;
+    }
+    .dir-c .wday {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 8px 0; border-radius: 10px; border: 1px solid #2a2a2a; background: #1E1E1E;
+    }
+    .dir-c .wday.on { background: #D2BA9C; border-color: #D2BA9C; }
+    .dir-c .wday .dl { font-size: 9px; font-weight: 600; text-transform: uppercase; color: #555; }
+    .dir-c .wday .ds { font-size: 11px; font-weight: 700; color: #F7F5F1; }
+    .dir-c .wday.on .dl { color: rgba(26,26,26,0.5); }
+    .dir-c .wday.on .ds { color: #1A1A1A; }
+    /* bottom sheet */
+    .dir-c .sheet {
+      background: #242424; border-radius: 24px 24px 0 0;
+      padding: 16px 20px 28px;
+      border-top: 1px solid #333;
+    }
+    .dir-c .sheet-handle {
+      width: 36px; height: 4px; border-radius: 2px; background: #444;
+      margin: 0 auto 16px;
+    }
+    .dir-c .conds { display: flex; gap: 8px; }
+    .dir-c .cbadge {
+      flex: 1; background: #1A1A1A; border: 1px solid #333; border-radius: 12px;
+      padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    }
+    .dir-c .cb-l { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .dir-c .cb-v { font-size: 14px; font-weight: 700; color: #F7F5F1; }
+    .dir-c .alert-btn {
+      margin-top: 12px; width: 100%;
+      background: #D2BA9C; color: #1A1A1A;
+      border: none; border-radius: 14px; padding: 14px;
+      font-family: 'Josefin Sans', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    }
+    /* bottom nav dark */
+    .dir-c .bnav {
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 10px 0 28px;
+      background: rgba(26,26,26,0.9);
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .dir-c .nitem { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .dir-c .nitem svg { width: 20px; height: 20px; }
+    .dir-c .nitem span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .dir-c .nitem.on svg, .dir-c .nitem.on span { color: #D2BA9C; }
+    .dir-c .nitem:not(.on) svg, .dir-c .nitem:not(.on) span { color: #333; }
+
+    /* ─── REUSABLE SVG ICONS ─── */
+    .ico { display: inline-flex; align-items: center; justify-content: center; }
+
+    /* ─── COMPARISON TABLE ─── */
+    .compare {
+      max-width: 900px; margin: 0 auto;
+      border-radius: 16px; overflow: hidden;
+      border: 1px solid #2a2a2a;
+    }
+    .compare table { width: 100%; border-collapse: collapse; }
+    .compare th {
+      background: #252525; padding: 12px 16px; text-align: left;
+      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      color: #666; border-bottom: 1px solid #2a2a2a;
+    }
+    .compare td {
+      padding: 12px 16px; border-bottom: 1px solid #222;
+      font-size: 13px; color: #888; vertical-align: top;
+    }
+    .compare tr:last-child td { border-bottom: none; }
+    .compare td:first-child { color: #555; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .yes { color: #5C9E6E !important; }
+    .no  { color: #C25C4A !important; }
+    .meh { color: #D4904A !important; }
+
+    .picked { background: rgba(178,140,110,0.06) !important; }
+    .picked td:first-child { color: #B28C6E !important; }
+  </style>
+</head>
+<body>
+
+<h1>mer de nuage — Design Directions</h1>
+<p class="subtitle">3 variations de layout · même design system · même palette</p>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- PHONES -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Layout Variations — Écran Principal</div>
+  <div class="row">
+
+    <!-- ─── DIRECTION A ─── -->
+    <div class="wrap">
+      <div class="tag"><strong>Direction A</strong> · Score Central</div>
+      <div class="phone">
+        <div class="dir-a">
+          <div class="status">
+            <span>9:41</span>
+            <div class="notch"></div>
+            <span>●●●</span>
+          </div>
+          <div class="search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Rechercher un sommet…
+          </div>
+          <div class="favs">
+            <div class="fchip"><div class="fn">Moucherotte</div><div class="fs" style="color:#5C9E6E">82%</div></div>
+            <div class="fchip"><div class="fn">Chartreuse</div><div class="fs" style="color:#D4904A">51%</div></div>
+            <div class="fchip"><div class="fn">Taillefer</div><div class="fs" style="color:#C25C4A">14%</div></div>
+          </div>
+          <div class="hero">
+            <div class="peak">Moucherotte</div>
+            <div class="alt">1901m · Vercors</div>
+            <div><span class="snum">82</span><span class="spct">%</span></div>
+            <div class="slbl">Mer de nuage probable</div>
+            <div class="cviz">
+              <div class="cviz-t">Couche nuageuse</div>
+              <div class="cviz-bar">
+                <div class="mtn"></div>
+                <div class="cloud"></div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:0 16px 12px;">
+            <div class="wstrip">
+              <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12</span></div>
+              <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44</span></div>
+              <div class="wday on"><span class="dl">Mer</span><span class="ds">82</span></div>
+              <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71</span></div>
+              <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58</span></div>
+              <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22</span></div>
+              <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9</span></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="nitem on">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              <span>Accueil</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Recherche</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span>Favoris</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>Profil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tag" style="color:#5C9E6E">✓ Validée en étape 8</div>
+    </div>
+
+    <!-- ─── DIRECTION B ─── -->
+    <div class="wrap">
+      <div class="tag"><strong>Direction B</strong> · Score Card</div>
+      <div class="phone">
+        <div class="dir-b">
+          <div class="status">
+            <span>9:41</span>
+            <div class="notch"></div>
+            <span>●●●</span>
+          </div>
+          <div class="header">
+            <div class="hrow">
+              <div>
+                <div class="hpeak">Moucherotte</div>
+                <div class="halt">1901m · Vercors</div>
+              </div>
+              <div class="hstar">★</div>
+            </div>
+          </div>
+          <!-- Score card dark -->
+          <div class="score-card">
+            <div class="sc-left">
+              <div><span class="sc-num">82</span><span class="sc-pct">%</span></div>
+              <div class="sc-lbl">Élevé</div>
+            </div>
+            <div class="sc-right">
+              <div class="sc-viz">
+                <div class="sc-mtn"></div>
+                <div class="sc-cloud"></div>
+              </div>
+              <div class="sc-labels">
+                <span>▲ Sommet 1901m</span>
+                <span style="color:#5C9E6E">☁ Couche 1400m</span>
+              </div>
+            </div>
+          </div>
+          <div class="wstrip">
+            <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12%</span></div>
+            <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44%</span></div>
+            <div class="wday on"><span class="dl">Mer</span><span class="ds">82%</span></div>
+            <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71%</span></div>
+            <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58%</span></div>
+            <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22%</span></div>
+            <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9%</span></div>
+          </div>
+          <div class="conds">
+            <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+            <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12km/h</span></div>
+            <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+          </div>
+          <div class="favs-sect">
+            <div class="fsect-t">Aussi consultés</div>
+            <div class="frow">
+              <div class="fchip"><span class="fn">Chartreuse</span><span class="fs" style="color:#D4904A">51%</span></div>
+              <div class="fchip"><span class="fn">Taillefer</span><span class="fs" style="color:#C25C4A">14%</span></div>
+            </div>
+          </div>
+          <div class="bnav">
+            <div class="nitem on">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              <span>Accueil</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Recherche</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span>Favoris</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>Profil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tag">Card flottante dark sur fond beige</div>
+    </div>
+
+    <!-- ─── DIRECTION C ─── -->
+    <div class="wrap">
+      <div class="tag"><strong>Direction C</strong> · Immersif Dark</div>
+      <div class="phone">
+        <div class="dir-c">
+          <div class="status">
+            <span>9:41</span>
+            <div class="notch"></div>
+            <span style="color:#F7F5F1">●●●</span>
+          </div>
+          <div class="top">
+            <div class="top-peak">Moucherotte · 1901m</div>
+            <div class="top-btn">Mer 17 mars</div>
+          </div>
+          <div class="big-score">
+            <div class="bs-sub">Probabilité mer de nuage</div>
+            <div><span class="bs-num">82</span><span class="bs-pct">%</span></div>
+            <div class="bs-lbl">Mer de nuage probable</div>
+          </div>
+          <div class="wstrip">
+            <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12</span></div>
+            <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44</span></div>
+            <div class="wday on"><span class="dl">Mer</span><span class="ds">82</span></div>
+            <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71</span></div>
+            <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58</span></div>
+            <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22</span></div>
+            <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9</span></div>
+          </div>
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="conds">
+              <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+              <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12km/h</span></div>
+              <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+            </div>
+            <button class="alert-btn">🔔 Activer une alerte</button>
+          </div>
+          <div class="bnav">
+            <div class="nitem on">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+              <span>Accueil</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <span>Recherche</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              <span>Favoris</span>
+            </div>
+            <div class="nitem">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>Profil</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tag">Score 100px · bottom sheet détails</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- COMPARISON TABLE -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-title">Comparaison</div>
+  <div class="compare">
+    <table>
+      <tr>
+        <th>Critère</th>
+        <th>A — Score Central</th>
+        <th>B — Score Card</th>
+        <th>C — Immersif Dark</th>
+      </tr>
+      <tr class="picked">
+        <td>Émotion "privilégié"</td>
+        <td class="yes">✓ Score dominant, clair</td>
+        <td class="meh">~ Card propre mais moins percutant</td>
+        <td class="yes">✓ Score 100px très impactant</td>
+      </tr>
+      <tr>
+        <td>Réponse < 3s</td>
+        <td class="yes">✓ Immédiat</td>
+        <td class="yes">✓ Immédiat</td>
+        <td class="yes">✓ Immédiat</td>
+      </tr>
+      <tr class="picked">
+        <td>DA organique Alex</td>
+        <td class="yes">✓ Beige partout, cohérent DA</td>
+        <td class="meh">~ Beige + dark card, hybride</td>
+        <td class="no">✗ Full dark, perd le beige</td>
+      </tr>
+      <tr>
+        <td>Lisibilité outdoor</td>
+        <td class="yes">✓ Fond clair = soleil OK</td>
+        <td class="yes">✓ Fond clair = soleil OK</td>
+        <td class="meh">~ Dark = parfait nuit, soleil moins</td>
+      </tr>
+      <tr class="picked">
+        <td>Visualisation couche</td>
+        <td class="yes">✓ Intégrée dans hero</td>
+        <td class="yes">✓ Dans la card score</td>
+        <td class="no">✗ Absente (bottom sheet)</td>
+      </tr>
+      <tr>
+        <td>Favoris accessibles</td>
+        <td class="yes">✓ Chips visibles</td>
+        <td class="meh">~ En bas, moins visible</td>
+        <td class="no">✗ Absents</td>
+      </tr>
+      <tr class="picked">
+        <td>Dark mode possible</td>
+        <td class="yes">✓ Via tokens</td>
+        <td class="yes">✓ Via tokens</td>
+        <td class="meh">~ Dark only, pas de light</td>
+      </tr>
+      <tr>
+        <td>Différenciation marché</td>
+        <td class="yes">✓ Unique dans l'outdoor</td>
+        <td class="meh">~ Propre mais plus classique</td>
+        <td class="yes">✓ Très premium</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

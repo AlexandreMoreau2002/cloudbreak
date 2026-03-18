@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>mer de nuage — Direction B (v2)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #EFE8DC;
+      --surf:    #F7F5F1;
+      --bord:    #E9E4DA;
+      --acc1:    #B28C6E;
+      --acc2:    #D2BA9C;
+      --txt1:    #1A1A1A;
+      --txt2:    #5E5E5E;
+      --txt3:    #9E9E9E;
+      --dark:    #1A1A1A;
+      --dark2:   #242424;
+      --dark3:   #2E2E2E;
+      --dbord:   #383838;
+      --sh:      #5C9E6E;
+      --sm:      #D4904A;
+      --sl:      #C25C4A;
+    }
+
+    body {
+      background: #1E1E1E;
+      font-family: 'Josefin Sans', sans-serif;
+      padding: 40px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 56px;
+    }
+
+    .page-title { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #555; }
+    .page-sub   { font-size: 11px; color: #3a3a3a; letter-spacing: 1px; margin-top: 4px; }
+
+    .section-label {
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #444;
+      align-self: flex-start; max-width: 1200px; width: 100%;
+      border-bottom: 1px solid #2a2a2a; padding-bottom: 8px; margin-bottom: 0;
+    }
+
+    .row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+
+    .wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .device-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #555; }
+
+    /* ── PHONE FRAME ── */
+    .phone {
+      width: 375px; height: 812px;
+      border-radius: 44px; border: 8px solid #2C2C2C;
+      overflow: hidden; position: relative; flex-shrink: 0;
+      box-shadow: 0 28px 64px rgba(0,0,0,0.7), inset 0 0 0 1px #333;
+    }
+
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px 0; font-size: 12px; font-weight: 600; position: relative;
+    }
+    .notch {
+      width: 120px; height: 28px; border-radius: 20px;
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    }
+
+    /* ════════════════════════════════════════
+       DIRECTION B AFFINÉE — Light
+       Barre recherche → sommet header → card score dark → week → conds → alerte → favoris → nav
+    ════════════════════════════════════════ */
+    .b { background: var(--bg); height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .b .status-bar { color: var(--txt1); }
+    .b .notch      { background: var(--dark); }
+
+    /* Search */
+    .b .search {
+      margin: 8px 16px 0;
+      background: var(--surf); border: 1px solid var(--bord);
+      border-radius: 14px; padding: 11px 14px;
+      display: flex; align-items: center; gap: 8px;
+      color: var(--txt3); font-size: 14px;
+    }
+    .b .search svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* Peak header */
+    .b .peak-hdr {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 16px 10px;
+    }
+    .b .ph-left {}
+    .b .ph-name { font-size: 22px; font-weight: 700; color: var(--txt1); letter-spacing: -0.3px; }
+    .b .ph-sub  { font-size: 12px; color: var(--txt3); margin-top: 2px; }
+    .b .ph-star {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--surf); border: 1px solid var(--bord);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+
+    /* Score card dark */
+    .b .scard {
+      margin: 0 16px;
+      background: var(--dark); border-radius: 22px; padding: 20px 22px;
+      display: flex; gap: 18px; align-items: stretch;
+    }
+    .b .sc-l { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; min-width: 110px; }
+    .b .sc-num-wrap { display: flex; align-items: baseline; gap: 2px; }
+    .b .sc-num { font-size: 68px; font-weight: 700; color: var(--sh); line-height: 1; }
+    .b .sc-pct { font-size: 26px; font-weight: 600; color: var(--sh); }
+    .b .sc-pill {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 99px; align-self: flex-start;
+      background: rgba(92,158,110,0.18); color: var(--sh);
+    }
+    .b .sc-desc { font-size: 11px; color: #555; line-height: 1.4; }
+
+    /* Viz colonne droite */
+    .b .sc-r { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .b .sc-viz-wrap {
+      flex: 1; position: relative; min-height: 80px;
+      background: var(--dark2); border-radius: 12px; overflow: hidden; padding: 8px;
+    }
+    /* mountain silhouette via clip-path */
+    .b .viz-mountain {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 70px;
+      background: #2a2a2a;
+      clip-path: polygon(0% 100%, 30% 100%, 50% 15%, 70% 100%, 100% 100%);
+    }
+    .b .viz-cloud {
+      position: absolute; left: 0; right: 0; height: 16px;
+      background: var(--sh); opacity: 0.35; border-radius: 4px;
+      bottom: 42px;
+    }
+    .b .viz-line {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: var(--sh); opacity: 0.6; bottom: 42px;
+    }
+    .b .viz-labels {
+      position: absolute; left: 6px; right: 6px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .b .vl-cloud  { font-size: 9px; color: var(--sh); position: absolute; bottom: 50px; left: 6px; }
+    .b .vl-summit { font-size: 9px; color: #555; position: absolute; bottom: 18px; right: 6px; text-align: right; }
+    .b .sc-time {
+      margin-top: 8px;
+      display: flex; gap: 6px;
+    }
+    .b .time-pill {
+      flex: 1; background: var(--dark3); border: 1px solid var(--dbord);
+      border-radius: 8px; padding: 5px 0; text-align: center;
+      font-size: 10px; color: #555; font-weight: 600;
+    }
+    .b .time-pill.on { background: rgba(92,158,110,0.15); border-color: rgba(92,158,110,0.3); color: var(--sh); }
+
+    /* Week strip */
+    .b .wstrip { display: flex; gap: 5px; padding: 12px 16px; }
+    .b .wday {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 8px 0; border-radius: 12px; border: 1px solid var(--bord); background: var(--surf);
+    }
+    .b .wday.on { background: var(--acc1); border-color: var(--acc1); }
+    .b .wday .dl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--txt3); }
+    .b .wday .ds { font-size: 12px; font-weight: 700; color: var(--txt1); }
+    .b .wday .dd { width: 4px; height: 4px; border-radius: 99px; }
+    .b .wday.on .dl, .b .wday.on .ds { color: #fff; }
+    .b .wday.on .dd { background: rgba(255,255,255,0.6); }
+
+    /* Conditions */
+    .b .conds { display: flex; gap: 8px; padding: 0 16px 12px; }
+    .b .cbadge {
+      flex: 1; background: var(--surf); border: 1px solid var(--bord);
+      border-radius: 14px; padding: 11px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .b .cb-l { font-size: 9px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; }
+    .b .cb-v { font-size: 15px; font-weight: 700; color: var(--txt1); }
+
+    /* Alerte CTA */
+    .b .alert-cta {
+      margin: 0 16px 12px;
+      background: var(--surf); border: 1.5px solid var(--bord);
+      border-radius: 14px; padding: 13px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .b .alert-cta-txt { font-size: 13px; font-weight: 600; color: var(--txt1); }
+    .b .alert-cta-sub { font-size: 11px; color: var(--txt3); margin-top: 1px; }
+    .b .alert-cta-btn {
+      background: var(--dark); color: #F7F5F1; border: none; border-radius: 10px;
+      padding: 8px 14px; font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; flex-shrink: 0;
+    }
+
+    /* Favoris */
+    .b .favs-sect { padding: 0 16px; }
+    .b .favs-lbl { font-size: 10px; color: var(--txt3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+    .b .favs-row { display: flex; gap: 8px; }
+    .b .fchip {
+      flex: 1; background: var(--surf); border: 1px solid var(--bord);
+      border-radius: 12px; padding: 10px 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .b .fn { font-size: 12px; font-weight: 600; color: var(--txt1); }
+    .b .fa { font-size: 10px; color: var(--txt3); margin-top: 1px; }
+    .b .fs { font-size: 14px; font-weight: 700; }
+
+    /* Bottom nav */
+    .b .bnav {
+      margin-top: auto;
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 28px; border-top: 1px solid var(--bord); background: var(--bg);
+    }
+    .b .nitem { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .b .nitem svg { width: 22px; height: 22px; }
+    .b .nitem span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .b .nitem.on svg, .b .nitem.on span { color: var(--acc1); }
+    .b .nitem:not(.on) svg, .b .nitem:not(.on) span { color: var(--bord); }
+
+    /* ════════════════════════════════════════
+       DARK version de B
+    ════════════════════════════════════════ */
+    .bd { background: var(--dark); height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .bd .status-bar { color: #F7F5F1; }
+    .bd .notch      { background: #000; }
+
+    .bd .search {
+      margin: 8px 16px 0;
+      background: var(--dark2); border: 1px solid var(--dbord);
+      border-radius: 14px; padding: 11px 14px;
+      display: flex; align-items: center; gap: 8px;
+      color: #555; font-size: 14px;
+    }
+    .bd .search svg { width: 15px; height: 15px; flex-shrink: 0; color: #555; }
+
+    .bd .peak-hdr {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 16px 10px;
+    }
+    .bd .ph-name { font-size: 22px; font-weight: 700; color: #F7F5F1; letter-spacing: -0.3px; }
+    .bd .ph-sub  { font-size: 12px; color: #555; margin-top: 2px; }
+    .bd .ph-star {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--dark2); border: 1px solid var(--dbord);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+
+    .bd .scard {
+      margin: 0 16px; background: var(--dark2); border-radius: 22px; padding: 20px 22px;
+      display: flex; gap: 18px; align-items: stretch; border: 1px solid var(--dbord);
+    }
+    .bd .sc-l { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; min-width: 110px; }
+    .bd .sc-num-wrap { display: flex; align-items: baseline; gap: 2px; }
+    .bd .sc-num { font-size: 68px; font-weight: 700; color: var(--sh); line-height: 1; }
+    .bd .sc-pct { font-size: 26px; font-weight: 600; color: var(--sh); }
+    .bd .sc-pill {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 99px; align-self: flex-start;
+      background: rgba(92,158,110,0.18); color: var(--sh);
+    }
+    .bd .sc-desc { font-size: 11px; color: #555; line-height: 1.4; }
+    .bd .sc-r { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .bd .sc-viz-wrap {
+      flex: 1; position: relative; min-height: 80px;
+      background: #1E1E1E; border-radius: 12px; overflow: hidden; padding: 8px;
+    }
+    .bd .viz-mountain {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 70px;
+      background: #2a2a2a;
+      clip-path: polygon(0% 100%, 30% 100%, 50% 15%, 70% 100%, 100% 100%);
+    }
+    .bd .viz-cloud {
+      position: absolute; left: 0; right: 0; height: 16px;
+      background: var(--sh); opacity: 0.35; border-radius: 4px; bottom: 42px;
+    }
+    .bd .viz-line {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: var(--sh); opacity: 0.6; bottom: 42px;
+    }
+    .bd .vl-cloud  { font-size: 9px; color: var(--sh); position: absolute; bottom: 50px; left: 6px; }
+    .bd .vl-summit { font-size: 9px; color: #555; position: absolute; bottom: 18px; right: 6px; text-align: right; }
+    .bd .sc-time { margin-top: 8px; display: flex; gap: 6px; }
+    .bd .time-pill {
+      flex: 1; background: var(--dark); border: 1px solid var(--dbord);
+      border-radius: 8px; padding: 5px 0; text-align: center;
+      font-size: 10px; color: #444; font-weight: 600;
+    }
+    .bd .time-pill.on { background: rgba(92,158,110,0.15); border-color: rgba(92,158,110,0.3); color: var(--sh); }
+
+    .bd .wstrip { display: flex; gap: 5px; padding: 12px 16px; }
+    .bd .wday {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 8px 0; border-radius: 12px; border: 1px solid var(--dbord); background: var(--dark2);
+    }
+    .bd .wday.on { background: var(--acc2); border-color: var(--acc2); }
+    .bd .wday .dl { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #555; }
+    .bd .wday .ds { font-size: 12px; font-weight: 700; color: #F7F5F1; }
+    .bd .wday.on .dl { color: rgba(26,26,26,0.5); }
+    .bd .wday.on .ds { color: var(--dark); }
+
+    .bd .conds { display: flex; gap: 8px; padding: 0 16px 12px; }
+    .bd .cbadge {
+      flex: 1; background: var(--dark2); border: 1px solid var(--dbord);
+      border-radius: 14px; padding: 11px 8px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .bd .cb-l { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+    .bd .cb-v { font-size: 15px; font-weight: 700; color: #F7F5F1; }
+
+    .bd .alert-cta {
+      margin: 0 16px 12px;
+      background: var(--dark2); border: 1.5px solid var(--dbord);
+      border-radius: 14px; padding: 13px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .bd .alert-cta-txt { font-size: 13px; font-weight: 600; color: #F7F5F1; }
+    .bd .alert-cta-sub { font-size: 11px; color: #555; margin-top: 1px; }
+    .bd .alert-cta-btn {
+      background: var(--acc2); color: var(--dark); border: none; border-radius: 10px;
+      padding: 8px 14px; font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      cursor: pointer; flex-shrink: 0;
+    }
+
+    .bd .favs-sect { padding: 0 16px; }
+    .bd .favs-lbl { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+    .bd .favs-row { display: flex; gap: 8px; }
+    .bd .fchip {
+      flex: 1; background: var(--dark2); border: 1px solid var(--dbord);
+      border-radius: 12px; padding: 10px 12px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .bd .fn { font-size: 12px; font-weight: 600; color: #F7F5F1; }
+    .bd .fa { font-size: 10px; color: #555; margin-top: 1px; }
+    .bd .fs { font-size: 14px; font-weight: 700; }
+
+    .bd .bnav {
+      margin-top: auto;
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 0 28px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(20px);
+    }
+    .bd .nitem { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .bd .nitem svg { width: 22px; height: 22px; }
+    .bd .nitem span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .bd .nitem.on svg, .bd .nitem.on span { color: var(--acc2); }
+    .bd .nitem:not(.on) svg, .bd .nitem:not(.on) span { color: #333; }
+
+    /* ════════════════════════════════════
+       ONBOARDING — inchangé
+    ════════════════════════════════════ */
+    .onb { background: var(--bg); height: 100%; display: flex; flex-direction: column; }
+    .onb-img {
+      height: 310px; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #A8BEC4 0%, #7DA0A8 35%, #C8AD8F 100%);
+    }
+    .onb-img svg { position: absolute; bottom: 0; left: 0; width: 100%; }
+    .onb-sb {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px 0; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8);
+    }
+    .onb-sb .notch { background: rgba(0,0,0,0.4); }
+    .onb-body { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .onb-tag { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--acc1); }
+    .onb-ttl { font-size: 26px; font-weight: 700; color: var(--txt1); line-height: 1.2; }
+    .onb-txt { font-size: 14px; color: var(--txt2); line-height: 1.6; }
+    .onb-dots { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+    .onb-dot { width: 6px; height: 6px; border-radius: 99px; background: var(--bord); }
+    .onb-dot.on { width: 20px; background: var(--acc1); }
+    .onb-cta {
+      margin-top: auto; background: var(--dark); color: #F7F5F1; border: none;
+      border-radius: 16px; padding: 16px; font-family: 'Josefin Sans', sans-serif;
+      font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* ════════════════════════════════════
+       PAYWALL — inchangé
+    ════════════════════════════════════ */
+    .pay { background: var(--surf); height: 100%; display: flex; flex-direction: column; }
+    .pay-hdr {
+      background: var(--dark); padding: 56px 24px 24px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .pay-badge { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--acc2); }
+    .pay-ttl   { font-size: 26px; font-weight: 700; color: #F7F5F1; line-height: 1.2; }
+    .pay-sub   { font-size: 13px; color: #555; margin-top: 4px; }
+    .pay-body  { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    .pay-feat  {
+      background: var(--bg); border-radius: 14px; padding: 14px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .pf-ico {
+      width: 36px; height: 36px; border-radius: 10px; background: var(--dark);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pf-ico svg { width: 18px; height: 18px; color: var(--acc2); }
+    .pf-ttl { font-size: 14px; font-weight: 600; color: var(--txt1); }
+    .pf-dsc { font-size: 12px; color: var(--txt3); margin-top: 2px; }
+    .pay-price {
+      margin-top: auto; background: var(--dark); border-radius: 20px; padding: 18px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .pp-per { font-size: 12px; color: #555; }
+    .pp-amt { font-size: 32px; font-weight: 700; color: #F7F5F1; }
+    .pp-cta {
+      background: var(--acc2); color: var(--dark); border: none; border-radius: 12px;
+      padding: 14px; font-family: 'Josefin Sans', sans-serif; font-size: 13px;
+      font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+      margin-top: 4px;
+    }
+    .pp-fine { font-size: 11px; color: #444; text-align: center; margin-top: 4px; }
+
+    /* palette swatches */
+    .swatches { display: flex; gap: 12px; flex-wrap: wrap; max-width: 1200px; width: 100%; }
+    .sw { display: flex; flex-direction: column; gap: 5px; width: 90px; }
+    .sw-box { height: 56px; border-radius: 10px; }
+    .sw-n { font-size: 10px; color: #555; }
+    .sw-h { font-size: 10px; color: #3a3a3a; }
+
+    /* buttons */
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; max-width: 1200px; width: 100%; }
+    .btn {
+      font-family: 'Josefin Sans', sans-serif; font-size: 12px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase; padding: 13px 20px;
+      border-radius: 13px; border: none; cursor: pointer;
+    }
+    .btn-p  { background: var(--dark); color: #F7F5F1; }
+    .btn-a  { background: var(--acc1); color: #F7F5F1; }
+    .btn-o  { background: transparent; border: 1.5px solid var(--dark); color: var(--dark); }
+    .btn-g  { background: transparent; color: var(--acc1); }
+    .dark-bg { background: var(--dark); padding: 14px; border-radius: 14px; display: flex; gap: 10px; }
+    .btn-pd { background: #F7F5F1; color: var(--dark); }
+    .btn-ad { background: var(--acc2); color: var(--dark); }
+    .btn-od { background: transparent; border: 1.5px solid #383838; color: #F7F5F1; }
+
+    .divider { width: 100%; max-width: 1200px; height: 1px; background: #282828; }
+  </style>
+</head>
+<body>
+
+<div class="page-title">mer de nuage — Direction B (v2)</div>
+<div class="page-sub">Layout raffiné · Score Card Dark sur fond organique</div>
+
+<!-- ─── PALETTE ─── -->
+<div class="section-label">01 — Palette</div>
+<div class="swatches">
+  <div class="sw"><div class="sw-box" style="background:#EFE8DC;border:1px solid #E9E4DA"></div><div class="sw-n">bg.primary</div><div class="sw-h">#EFE8DC</div></div>
+  <div class="sw"><div class="sw-box" style="background:#F7F5F1;border:1px solid #E9E4DA"></div><div class="sw-n">bg.surface</div><div class="sw-h">#F7F5F1</div></div>
+  <div class="sw"><div class="sw-box" style="background:#E9E4DA"></div><div class="sw-n">border</div><div class="sw-h">#E9E4DA</div></div>
+  <div class="sw"><div class="sw-box" style="background:#B28C6E"></div><div class="sw-n">accent.primary</div><div class="sw-h">#B28C6E</div></div>
+  <div class="sw"><div class="sw-box" style="background:#D2BA9C"></div><div class="sw-n">accent.secondary</div><div class="sw-h">#D2BA9C</div></div>
+  <div class="sw"><div class="sw-box" style="background:#1A1A1A"></div><div class="sw-n">dark</div><div class="sw-h">#1A1A1A</div></div>
+  <div class="sw"><div class="sw-box" style="background:#5C9E6E"></div><div class="sw-n">score.high</div><div class="sw-h">#5C9E6E</div></div>
+  <div class="sw"><div class="sw-box" style="background:#D4904A"></div><div class="sw-n">score.med</div><div class="sw-h">#D4904A</div></div>
+  <div class="sw"><div class="sw-box" style="background:#C25C4A"></div><div class="sw-n">score.low</div><div class="sw-h">#C25C4A</div></div>
+</div>
+
+<!-- ─── BOUTONS ─── -->
+<div class="section-label">02 — Buttons</div>
+<div class="btns">
+  <button class="btn btn-p">Continuer</button>
+  <button class="btn btn-a">Activer l'alerte</button>
+  <button class="btn btn-o">Voir les détails</button>
+  <button class="btn btn-g">Ignorer</button>
+  <div class="dark-bg">
+    <button class="btn btn-pd">Continuer</button>
+    <button class="btn btn-ad">Activer l'alerte</button>
+    <button class="btn btn-od">Ignorer</button>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ─── SCREENS ─── -->
+<div class="section-label">03 — Screens · Direction B</div>
+<div class="row">
+
+  <!-- HOME LIGHT -->
+  <div class="wrap">
+    <div class="device-label">Home — Light</div>
+    <div class="phone">
+      <div class="b">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="notch" style="background:#1A1A1A"></div>
+          <span style="font-size:11px">●●●</span>
+        </div>
+        <!-- Search -->
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Rechercher un sommet…
+        </div>
+        <!-- Peak header -->
+        <div class="peak-hdr">
+          <div class="ph-left">
+            <div class="ph-name">Moucherotte</div>
+            <div class="ph-sub">1901m · Massif du Vercors</div>
+          </div>
+          <div class="ph-star">★</div>
+        </div>
+        <!-- Score card -->
+        <div class="scard">
+          <div class="sc-l">
+            <div>
+              <div class="sc-num-wrap">
+                <span class="sc-num">82</span><span class="sc-pct">%</span>
+              </div>
+              <div class="sc-pill">Élevé</div>
+            </div>
+            <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
+          </div>
+          <div class="sc-r">
+            <div class="sc-viz-wrap">
+              <div class="viz-mountain"></div>
+              <div class="viz-cloud"></div>
+              <div class="viz-line"></div>
+              <span class="vl-cloud">☁ 1400m</span>
+              <span class="vl-summit">▲ 1901m</span>
+            </div>
+            <div class="sc-time">
+              <div class="time-pill">06h</div>
+              <div class="time-pill on">08h</div>
+              <div class="time-pill">10h</div>
+              <div class="time-pill">12h</div>
+            </div>
+          </div>
+        </div>
+        <!-- Week strip -->
+        <div class="wstrip">
+          <div class="wday"><span class="dl">Lun</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">12%</span></div>
+          <div class="wday"><span class="dl">Mar</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">44%</span></div>
+          <div class="wday on"><span class="dl">Mer</span><div class="dd"></div><span class="ds">82%</span></div>
+          <div class="wday"><span class="dl">Jeu</span><div class="dd" style="background:#5C9E6E"></div><span class="ds" style="color:#5C9E6E">71%</span></div>
+          <div class="wday"><span class="dl">Ven</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">58%</span></div>
+          <div class="wday"><span class="dl">Sam</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">22%</span></div>
+          <div class="wday"><span class="dl">Dim</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">9%</span></div>
+        </div>
+        <!-- Conditions -->
+        <div class="conds">
+          <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+          <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
+          <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+        </div>
+        <!-- Alerte -->
+        <div class="alert-cta">
+          <div>
+            <div class="alert-cta-txt">🔔 Activer une alerte</div>
+            <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
+          </div>
+          <button class="alert-cta-btn">Activer</button>
+        </div>
+        <!-- Favoris -->
+        <div class="favs-sect">
+          <div class="favs-lbl">Favoris</div>
+          <div class="favs-row">
+            <div class="fchip">
+              <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
+              <span class="fs" style="color:#D4904A">51%</span>
+            </div>
+            <div class="fchip">
+              <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
+              <span class="fs" style="color:#C25C4A">14%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Nav -->
+        <div class="bnav">
+          <div class="nitem on">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Accueil</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span>Recherche</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Favoris</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME DARK -->
+  <div class="wrap">
+    <div class="device-label">Home — Dark</div>
+    <div class="phone">
+      <div class="bd">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="notch" style="background:#000"></div>
+          <span style="font-size:11px;color:#F7F5F1">●●●</span>
+        </div>
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          Rechercher un sommet…
+        </div>
+        <div class="peak-hdr">
+          <div>
+            <div class="ph-name">Moucherotte</div>
+            <div class="ph-sub">1901m · Massif du Vercors</div>
+          </div>
+          <div class="ph-star">★</div>
+        </div>
+        <div class="scard">
+          <div class="sc-l">
+            <div>
+              <div class="sc-num-wrap">
+                <span class="sc-num">82</span><span class="sc-pct">%</span>
+              </div>
+              <div class="sc-pill">Élevé</div>
+            </div>
+            <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
+          </div>
+          <div class="sc-r">
+            <div class="sc-viz-wrap">
+              <div class="viz-mountain"></div>
+              <div class="viz-cloud"></div>
+              <div class="viz-line"></div>
+              <span class="vl-cloud">☁ 1400m</span>
+              <span class="vl-summit">▲ 1901m</span>
+            </div>
+            <div class="sc-time">
+              <div class="time-pill">06h</div>
+              <div class="time-pill on">08h</div>
+              <div class="time-pill">10h</div>
+              <div class="time-pill">12h</div>
+            </div>
+          </div>
+        </div>
+        <div class="wstrip">
+          <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12%</span></div>
+          <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44%</span></div>
+          <div class="wday on"><span class="dl">Mer</span><span class="ds">82%</span></div>
+          <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71%</span></div>
+          <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58%</span></div>
+          <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22%</span></div>
+          <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9%</span></div>
+        </div>
+        <div class="conds">
+          <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+          <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
+          <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+        </div>
+        <div class="alert-cta">
+          <div>
+            <div class="alert-cta-txt">🔔 Activer une alerte</div>
+            <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
+          </div>
+          <button class="alert-cta-btn">Activer</button>
+        </div>
+        <div class="favs-sect">
+          <div class="favs-lbl">Favoris</div>
+          <div class="favs-row">
+            <div class="fchip">
+              <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
+              <span class="fs" style="color:#D4904A">51%</span>
+            </div>
+            <div class="fchip">
+              <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
+              <span class="fs" style="color:#C25C4A">14%</span>
+            </div>
+          </div>
+        </div>
+        <div class="bnav">
+          <div class="nitem on">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <span>Accueil</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span>Recherche</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span>Favoris</span>
+          </div>
+          <div class="nitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="wrap">
+    <div class="device-label">Onboarding</div>
+    <div class="phone">
+      <div class="onb">
+        <div class="onb-img">
+          <svg viewBox="0 0 375 310" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#8AAAB0"/>
+                <stop offset="100%" stop-color="#C8AD8F"/>
+              </linearGradient>
+            </defs>
+            <rect width="375" height="310" fill="url(#sky)"/>
+            <!-- cloud band -->
+            <rect x="0" y="165" width="375" height="30" fill="white" opacity="0.55" rx="0"/>
+            <!-- mountains back -->
+            <polygon points="0,310 80,140 160,220 240,100 320,160 375,130 375,310" fill="#1A1A1A" opacity="0.35"/>
+            <!-- mountains front -->
+            <polygon points="0,310 60,190 130,250 200,130 270,190 340,160 375,175 375,310" fill="#1A1A1A" opacity="0.7"/>
+          </svg>
+          <div class="onb-sb">
+            <span>9:41</span>
+            <div class="notch" style="background:rgba(0,0,0,0.4);"></div>
+            <span>●●●</span>
+          </div>
+        </div>
+        <div class="onb-body">
+          <div class="onb-tag">Étape 2 / 3</div>
+          <div class="onb-ttl">Le score qui change tout</div>
+          <div class="onb-txt">En Dolomites, j'ai grimpé 4h pour rien. Mer de nuage calcule la probabilité exacte pour ton sommet, à l'heure où tu arrives.</div>
+          <div class="onb-dots">
+            <div class="onb-dot"></div>
+            <div class="onb-dot on"></div>
+            <div class="onb-dot"></div>
+          </div>
+          <button class="onb-cta">Continuer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYWALL -->
+  <div class="wrap">
+    <div class="device-label">Paywall</div>
+    <div class="phone">
+      <div class="pay">
+        <div class="pay-hdr">
+          <div class="pay-badge">Passer en illimité</div>
+          <div class="pay-ttl">Prévisions sans limite</div>
+          <div class="pay-sub">Tu as utilisé tes 3 prévisions gratuites ce mois-ci.</div>
+        </div>
+        <div class="pay-body">
+          <div class="pay-feat">
+            <div class="pf-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            </div>
+            <div><div class="pf-ttl">Prévisions illimitées</div><div class="pf-dsc">Tous les sommets, tous les jours</div></div>
+          </div>
+          <div class="pay-feat">
+            <div class="pf-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </div>
+            <div><div class="pf-ttl">Alertes conditions</div><div class="pf-dsc">Notifié quand ça devient probable</div></div>
+          </div>
+          <div class="pay-feat">
+            <div class="pf-ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div><div class="pf-ttl">Prévisions J+7</div><div class="pf-dsc">Planifie ta semaine à l'avance</div></div>
+          </div>
+          <div class="pay-price">
+            <div class="pp-per">Abonnement mensuel</div>
+            <div class="pp-amt">3,99 €<span style="font-size:16px;color:#555;">/mois</span></div>
+            <button class="pp-cta">Commencer l'essai gratuit</button>
+            <div class="pp-fine">7 jours gratuits · annulation facile</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="height:40px"></div>
+
+</body>
+</html>

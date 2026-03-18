@@ -1,0 +1,14 @@
+# BMAD config (local uniquement, non versionné)
+_bmad/
+
+# Claude 
+.claude/commands/*
+
+# OS
+.DS_Store
+
+# Secrets
+.env
+**/.env
+
+.vscode/

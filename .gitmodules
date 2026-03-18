@@ -1,0 +1,12 @@
+[submodule "cloudbreak-mobile"]
+	path = cloudbreak-mobile
+	url = https://github.com/AlexandreMoreau2002/cloudbreak-mobile
+[submodule "mobile"]
+	path = mobile
+	url = https://github.com/AlexandreMoreau2002/cloudbreak-mobile
+[submodule "backend"]
+	path = backend
+	url = https://github.com/AlexandreMoreau2002/cloudbreak-backend
+[submodule "infra"]
+	path = infra
+	url = https://github.com/AlexandreMoreau2002/cloudbreak-infra
