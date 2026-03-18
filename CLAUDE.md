@@ -284,11 +284,17 @@ src/__tests__/features/paywall-conversion.test.tsx  # 2e check → paywall → a
 - Appels réseau dans les composants — dans les hooks uniquement
 
 **Toujours faire :**
-- Imports et déclarations de variables organisés **en escalier** (du plus court au plus long) — quelle que soit la techno :
+- Imports organisés **en escalier** (du plus court au plus long), librairies externes d'abord puis imports internes — quelle que soit la techno :
   ```ts
+  // ✅ Correct — ordre longueur croissante, externe puis interne
   import { Tabs } from 'expo-router';
-  import i18n from '../../utils/i18n';
+  import i18n from '@/utils/i18n';
+  import { useTheme } from '@/contexts/ThemeContext';
+
+  // ❌ Incorrect — ordre aléatoire ou chemins relatifs ../
   import { useTheme } from '../../contexts/ThemeContext';
+  import { Tabs } from 'expo-router';
+  import i18n from '@/utils/i18n';
   ```
 - `AsyncState<T>` pour tout état asynchrone mobile (idle | loading | success | error)
 - Vérifier le cache offline avant tout appel réseau
