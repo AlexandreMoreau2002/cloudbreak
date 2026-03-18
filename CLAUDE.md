@@ -284,6 +284,12 @@ src/__tests__/features/paywall-conversion.test.tsx  # 2e check → paywall → a
 - Appels réseau dans les composants — dans les hooks uniquement
 
 **Toujours faire :**
+- Imports et déclarations de variables organisés **en escalier** (du plus court au plus long) — quelle que soit la techno :
+  ```ts
+  import { Tabs } from 'expo-router';
+  import i18n from '../../utils/i18n';
+  import { useTheme } from '../../contexts/ThemeContext';
+  ```
 - `AsyncState<T>` pour tout état asynchrone mobile (idle | loading | success | error)
 - Vérifier le cache offline avant tout appel réseau
 - Préfixer toutes les clés Redis (`weather:*`, `quota:*`, `cache:*`)
