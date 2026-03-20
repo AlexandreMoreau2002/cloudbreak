@@ -64,7 +64,7 @@ _Ce document se construit collaborativement étape par étape. Les sections sont
 - iOS uniquement MVP — pas d'Android, pas de web
 - StoreKit 2 obligatoire — 100% Apple In-App Purchase
 - Supabase EU (Frankfurt) — auth + RGPD
-- API météo gratuite — OpenWeather ou Weatherbit free tier
+- API météo gratuite — Open-Meteo (provider principal, sans clé) + Météo-France (provider secondaire, précision FR)
 - VPS OVH — IP fixe, SSH, Ubuntu, pas de managed services
 - Pas de licence Apple Developer → simulateur jusqu'à enrôlement (99$/an)
 
@@ -230,7 +230,7 @@ GET    /health                               → heartbeat BetterStack
 
 **Erreurs :** codes HTTP standard + body `{detail: string, code: string}`. Jamais de stack trace en production.
 
-**Provider météo abstrait :** interface Python `WeatherProvider` → `get_forecast(lat, lng, date)` → dict normalisé. Implémentations : `OpenWeatherProvider`, `WeatherbitProvider`. Swap sans modifier `score.py`.
+**Provider météo abstrait :** interface Python `WeatherProvider` → `get_forecast(lat, lng, date)` → dict normalisé. Implémentations : `OpenMeteoProvider` (provider principal MVP, gratuit sans clé, données altimétriques), `MeteoFranceProvider` (provider secondaire FR, haute précision montagne). Swap sans modifier `score.py`.
 
 ### Mobile Architecture
 
@@ -636,8 +636,8 @@ mer-de-nuage/
 │   │   │   ├── weather.py       # cache Redis + dispatch provider
 │   │   │   ├── weather_providers/
 │   │   │   │   ├── base.py      # interface WeatherProvider
-│   │   │   │   ├── openweather.py
-│   │   │   │   └── weatherbit.py
+│   │   │   │   ├── open_meteo.py    # provider principal (gratuit, sans clé)
+│   │   │   │   └── meteo_france.py  # provider secondaire (France, haute précision)
 │   │   │   ├── subscriptions.py # StoreKit 2 receipt verification
 │   │   │   └── notifications.py # push scheduling
 │   │   └── db/
@@ -665,7 +665,7 @@ mer-de-nuage/
 
 **Backend → Supabase :** JWT verification locale (clé publique) — zéro appel réseau par requête
 
-**Backend → API Météo :** interface `WeatherProvider` abstraite · cache Redis intercèpte (TTL 10min) · provider swappable sans toucher `score.py`
+**Backend → API Météo :** interface `WeatherProvider` abstraite · cache Redis intercèpte (TTL 10min) · provider swappable sans toucher `score.py` · Open-Meteo en provider principal (gratuit, sans clé API, données altimétriques) · Météo-France en provider secondaire (France, résolution AROME 1.3km)
 
 **Backend → Redis :** accès via services uniquement · préfixes `weather:*` et `quota:*`
 

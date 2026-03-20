@@ -102,7 +102,7 @@ NFR30 : QA teste les textes longs : noms de sommets > 25 caractères, messages d
 - CI/CD GitHub Actions : pipeline backend (ruff + mypy + pytest + docker build + deploy SSH VPS) et pipeline mobile (eslint + tsc + jest + expo export) — < 5min
 - VPS OVH Ubuntu 24.04 LTS — déploiement via SSH + `docker compose pull && up -d`
 - BetterStack free : heartbeat `/health` 60s → alertes SMS/email < 2min
-- Interface `WeatherProvider` abstraite dès J1 — `base.py` + `openweather.py` + `weatherbit.py`
+- Interface `WeatherProvider` abstraite dès J1 — `base.py` + `open_meteo.py` (provider principal, gratuit sans clé) + `meteo_france.py` (provider secondaire FR)
 - JWT Supabase validé localement côté backend (clé publique) — zéro appel réseau Supabase par requête
 - Quota freemium dans Redis (`quota:{user_id}:{date}`, TTL fin de journée) — backend uniquement
 - Cache météo Redis (`weather:{lat}:{lng}:{date}`, TTL 10min) — partagé toutes requêtes
@@ -523,7 +523,7 @@ So that scores can be calculated and iterated without app updates.
 **Given** l'interface `WeatherProvider` dans `app/services/weather_providers/base.py`
 **When** on appelle `provider.get_forecast(lat, lng, date)`
 **Then** elle retourne un dict normalisé : `{cloud_base, humidity, wind_speed, temperature_valley, temperature_altitude, pressure}`
-**And** `OpenWeatherProvider` et `WeatherbitProvider` implémentent cette interface
+**And** `OpenMeteoProvider` (provider principal MVP) et `MeteoFranceProvider` (provider secondaire FR) implémentent cette interface
 
 **Given** `app/services/score.py`
 **When** on appelle `calculate_score(weather_data, peak_altitude)`

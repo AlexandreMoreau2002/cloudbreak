@@ -14,7 +14,7 @@ Stack retenue :
 - **Auth** : Supabase (JWT validé localement côté backend)
 - **Analytics** : PostHog
 - **Paiement** : StoreKit 2 (iOS In-App Purchase — pas Stripe)
-- **API météo** : OpenWeather / Weatherbit (interface abstraite swappable)
+- **API météo** : Open-Meteo (provider principal, gratuit sans clé) / Météo-France (provider secondaire FR, résolution AROME 1.3km) — interface abstraite swappable
 - **Reverse proxy** : Caddy 2 (HTTPS Let's Encrypt automatique)
 - **Infra** : VPS OVH Ubuntu 24.04, Docker Compose
 
@@ -40,17 +40,23 @@ L'algorithme de score tourne **côté serveur uniquement** — modifiable sans m
 
 ### Score mer de nuage
 
+**Conditions bloquantes (éliminatoires — verdict `"none"`, score 0) :**
+1. `cloud_base >= peak_altitude` → nuages au-dessus ou au niveau du sommet → mer de nuage physiquement impossible
+2. `cloud_cover_low < 20%` → ciel trop dégagé → pas assez de nuages bas
+
+**Score conditionnel (seulement si aucune condition bloquante) :**
+
 ```python
 score = (
-    0.4 * cloud_base_condition   # cloud_base < altitude_sommet
-  + 0.2 * humidity_score
-  + 0.2 * wind_score
-  + 0.2 * inversion_score
+    0.35 * cloud_base_score    # nuages bien sous le sommet
+  + 0.20 * inversion_score     # T(850hPa) - T(925hPa) > 0 → inversion thermique
+  + 0.20 * humidity_score      # humidité relative au sol
+  + 0.15 * wind_score          # vent faible = nuages stables
+  + 0.10 * pressure_score      # anticyclone = conditions stables
 )
-# score → probabilité % → verdict "high" | "medium" | "low"
+# Pas de coefficient saisonnier — la présence/absence de nuages bas détermine le verdict.
+# score → probabilité % → verdict "none" | "high" (≥70) | "medium" (40-69) | "low" (<40)
 ```
-
-Variables météo : `cloud_base`, `humidity`, `wind_speed`, `temperature_valley`, `temperature_altitude`, `pressure`.
 
 ---
 
@@ -61,39 +67,39 @@ Le projet utilise des **git submodules** : chaque sous-projet a son propre repo 
 ```
 cloudbreak/              ← repo racine  (github.com/toi/cloudbreak)
 ├── .git/
-├── .gitmodules          ← références aux submodules
-├── .github/workflows/       # optionnel — intégration globale uniquement
+├── .gitmodules
 ├── CLAUDE.md
-├── _bmad/                   # config BMAD/BMM (versionné dans racine)
-├── _bmad-output/            # artifacts planning (versionné dans racine)
+├── _bmad/                   # config BMAD/BMM
+├── _bmad-output/            # artifacts planning
 ├── mobile/                  ← submodule (github.com/toi/cloudbreak-mobile)
-│   ├── .github/workflows/mobile.yml  # lint + test + build check
 │   ├── app/                 # Expo Router (file-based)
 │   │   ├── (tabs)/index.tsx, search.tsx, favorites.tsx, profile.tsx
 │   │   ├── onboarding.tsx, paywall.tsx
 │   │   └── _layout.tsx
-│   └── src/
-│       ├── components/      # ScoreCard, CloudLayerViz, WeekStrip, etc.
-│       ├── contexts/        # ThemeContext, AuthContext, SubscriptionContext
-│       ├── hooks/           # useScore, usePeaks, useSubscription, etc.
-│       ├── services/        # apiClient.ts, cacheService.ts
-│       ├── constants/       # colors.ts, typography.ts, spacing.ts, flags.ts
-│       └── utils/           # formatScore.ts, dateUtils.ts, i18n.ts
+│   ├── src/
+│   │   ├── components/
+│   │   ├── contexts/
+│   │   ├── hooks/
+│   │   ├── services/
+│   │   │   ├── fetchService.ts      # API_BASE + apiFetch<T>() + re-exports types
+│   │   │   ├── mockData/            # types.ts, user.ts, peaks.ts, score.ts
+│   │   │   └── api/                 # score.ts, peaks.ts, user.ts, validations.ts
+│   │   ├── constants/
+│   │   └── utils/
+│   └── docs/                # documentation technique par story
 ├── backend/                 ← submodule (github.com/toi/cloudbreak-backend)
-│   ├── .github/workflows/backend.yml  # lint + test + build + deploy (main)
 │   ├── app/
-│   │   ├── api/v1/endpoints/  # score.py, peaks.py, auth.py, subscriptions.py, etc.
-│   │   ├── core/              # config.py, security.py, errors.py
-│   │   ├── models/            # SQLAlchemy ORM
-│   │   ├── schemas/           # Pydantic v2
-│   │   ├── services/          # score.py, weather.py, weather_providers/
-│   │   └── db/                # session.py, seed.py
-│   └── tests/
-│       ├── test_*.py          # tests unitaires
-│       └── features/          # tests de feature (flux complets)
+│   │   ├── api/v1/endpoints/
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   └── db/
+│   ├── tests/
+│   └── docs/                # documentation technique par story
 └── infra/                   ← submodule (github.com/toi/cloudbreak-infra)
-    ├── docker-compose.yml     # prod : api + db + redis + caddy
-    ├── docker-compose.dev.yml # dev local : db + redis
+    ├── docker-compose.yml       # prod : api + db + redis + caddy
+    ├── docker-compose.dev.yml   # dev local : api + db + redis (hot reload)
     └── Caddyfile
 ```
 
@@ -135,31 +141,25 @@ git push
 
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt -r requirements-dev.txt
+source .venv/bin/activate   # toujours activer le venv avant make
 
-# Migrations
-alembic upgrade head
-alembic revision --autogenerate -m "description"
-
-# Serveur dev
-uvicorn app.main:app --reload
-
-# Infra locale (db + redis)
-docker compose -f ../infra/docker-compose.dev.yml up -d
-
-# Linter + typage
-ruff check .
-ruff format .
-mypy app/
-
-# Tests
-pytest                                          # tous les tests
-pytest tests/test_score.py -v                  # un fichier
-pytest tests/test_score.py::test_cloud_base -v # un test
-pytest tests/features/ -v                      # tests de feature uniquement
-pytest --cov=app --cov-report=term-missing      # avec couverture
+make help        # affiche toutes les commandes disponibles
+make dev         # lance api + db + redis (Docker, hot reload)
+make down        # arrête les containers
+make logs        # suit les logs en temps réel
+make migrate     # applique les migrations Alembic
+make migration   # génère une nouvelle migration (autogenerate)
+make seed        # insère les données initiales (sommets)
+make validate    # ruff + mypy + pytest --cov (obligatoire avant commit)
+make lint        # ruff check uniquement
+make format      # ruff format (corrige les fichiers)
+make typecheck   # mypy uniquement
+make test        # pytest avec coverage
+make install     # pip install requirements
 ```
+
+> **Important** : Le serveur FastAPI tourne dans Docker (`make dev`). Ne jamais lancer `uvicorn` directement.
+> Les commandes `make` utilisent `.venv/bin/` — activer le venv avant pour `make migration` et `make seed`.
 
 ### Mobile (Expo)
 
@@ -167,134 +167,285 @@ pytest --cov=app --cov-report=term-missing      # avec couverture
 cd mobile
 npm install
 
-npx expo start          # dev server
-npx expo run:ios        # simulateur iOS
+# Première fois ou après ajout module natif
+npx expo run:ios        # compile le build natif + lance Metro
 
-# Qualité
+# Fois suivantes (build déjà installé sur le simulateur)
+npm start               # Metro uniquement
+
 npm run lint            # ESLint
 npx tsc --noEmit        # vérification TypeScript
 npm test                # Jest (tous les tests)
 npm test -- --watch     # mode watch
 npm test -- --coverage  # avec couverture
-npx expo export         # build check (vérifie que le bundle compile)
+npm run build:check     # expo export (vérifie que le bundle compile)
 ```
+
+> **Important** : Ne pas utiliser Expo Go — l'app a des modules natifs incompatibles.
 
 ---
 
-## Workflow de développement (à respecter pour chaque story)
+## Workflow de développement
 
 ### Process obligatoire par story
 
 ```
-1. LIRE   — lire la story dans epics.md (ACs, FRs couverts)
-2. ÉCRIRE — écrire les tests AVANT le code (TDD léger)
-3. IMPLÉM — implémenter jusqu'à ce que les tests passent
-4. FIX    — corriger jusqu'à zéro erreur lint + typage + tests
-5. DOC    — créer/mettre à jour toute la documentation (voir règles ci-dessous)
-6. QA     — vérifier manuellement chaque AC Given/When/Then
-7. CI     — vérifier que le pipeline CI passe (lint + test + build)
-8. DONE   — mettre la story en "done" dans sprint-status.yaml
+1. LIRE    — lire la story dans epics.md (ACs, FRs couverts)
+2. ÉCRIRE  — écrire les tests AVANT le code (TDD léger)
+3. IMPLÉM  — implémenter jusqu'à ce que les tests passent
+4. FIX     — corriger jusqu'à zéro erreur lint + typage + tests
+5. TEST    — lancer make validate (backend) ou npm test (mobile) automatiquement
+6. DOC     — mettre à jour la documentation technique (voir règles ci-dessous)
+7. QA      — vérifier manuellement chaque AC Given/When/Then + fournir instructions de test
+8. CI      — vérifier que le pipeline CI passe
+9. DONE    — mettre la story en "done" dans sprint-status.yaml
 ```
-
-### Règles de documentation (obligatoires à chaque story, fix, ou modif)
-
-Toute modification du projet — story, bugfix, changement d'infra, ajout de dépendance — doit mettre à jour la documentation concernée **avant le commit final**.
-
-**1. Fichier story `docs/story-{id}-{slug}.md`**
-Créé pour chaque nouvelle story, dans le submodule concerné :
-```
-backend/docs/story-1-2-setup-backend.md
-backend/docs/story-3-1-algorithme-score.md
-mobile/docs/story-1-3-setup-mobile.md
-```
-Contenu obligatoire :
-- **Ce qui a été fait** — liste des fichiers créés/modifiés avec leur rôle
-- **Comment ça fonctionne** — explication du fonctionnement technique
-- **Comment tester** — commandes étape par étape pour vérifier que ça marche
-- **Acceptance Criteria vérifiés** — checklist des ACs de la story
-
-**2. README du submodule**
-Mettre à jour si la story change : installation, commandes, structure, variables d'environnement, ports, ou comportement observable.
-
-**3. `docs/security.md`**
-Mettre à jour si la story touche : auth, ports exposés, secrets, données utilisateur, dépendances sensibles, ou config réseau.
-
-**4. `CLAUDE.md` (repo racine)**
-Mettre à jour si la story change : stack, structure du projet, conventions de code, workflow, ou git flow.
-
-> Règle simple : **si quelqu'un qui rejoint le projet demain ne comprend pas ce qui a changé en lisant la doc, la doc est incomplète.**
 
 ### Règle des tests : un fichier de test par fichier source
 
-**Backend — tests unitaires co-localisés logiquement dans `tests/` :**
+**Backend — tests unitaires dans `tests/` :**
 ```
 app/services/score.py         → tests/test_score.py
 app/services/weather.py       → tests/test_weather.py
 app/api/v1/endpoints/score.py → tests/test_api_score.py
 app/core/security.py          → tests/test_security.py
-# etc. — chaque module a son test_*.py
 ```
 
 **Backend — tests de feature dans `tests/features/` (flux HTTP complets) :**
 ```
-tests/features/test_feature_score_flow.py      # quota → cache → algo → réponse
-tests/features/test_feature_auth_flow.py       # inscription → token → appel protégé
-tests/features/test_feature_subscription.py    # freemium → paywall → upgrade
+tests/features/test_feature_score_flow.py
+tests/features/test_feature_auth_flow.py
+tests/features/test_feature_subscription.py
 ```
 
-**Mobile — tests unitaires co-localisés avec le fichier source :**
+**Mobile — tests co-localisés avec le fichier source :**
 ```
 src/components/ScoreCard.tsx          → src/components/ScoreCard.test.tsx
-src/components/CloudLayerViz.tsx      → src/components/CloudLayerViz.test.tsx
 src/hooks/useScore.ts                 → src/hooks/useScore.test.ts
-src/services/apiClient.ts             → src/services/apiClient.test.ts
-src/utils/formatScore.ts              → src/utils/formatScore.test.ts
-# etc. — chaque fichier a son .test.tsx/.test.ts
+src/services/fetchService.ts          → src/services/fetchService.test.ts
+src/services/api/score.ts             → src/services/api/score.test.ts
+src/services/api/peaks.ts             → src/services/api/peaks.test.ts
+src/services/api/user.ts              → src/services/api/user.test.ts
+src/services/api/validations.ts       → src/services/api/validations.test.ts
 ```
 
-**Mobile — tests de feature dans `src/__tests__/features/` (parcours utilisateur) :**
+**Mobile — tests de feature dans `src/__tests__/features/` :**
 ```
-src/__tests__/features/score-consultation.test.tsx  # chercher sommet → voir score
-src/__tests__/features/auth-flow.test.tsx            # inscription → écran principal
-src/__tests__/features/paywall-conversion.test.tsx  # 2e check → paywall → abonnement
+src/__tests__/features/score-consultation.test.tsx
+src/__tests__/features/auth-flow.test.tsx
+src/__tests__/features/paywall-conversion.test.tsx
 ```
 
 ### Ce qu'on teste vs ce qu'on ne teste pas
 
 **À tester obligatoirement :**
-- Algo score (tous les cas limites : cloud_base, seuils, inversion)
+- Algo score (tous les cas limites : cloud_base, seuils, inversion, hard gate)
 - Quota freemium Redis (1 check/jour, reset, Premium bypass)
 - JWT validation (token valide, expiré, invalide)
 - Cache offline mobile (hit, miss, TTL expiré)
-- Composants UI critiques (ScoreCard, PaywallScreen) — rendu + états
-- Hooks réseau (useScore, useSubscription) — états AsyncState
+- Composants UI critiques (ScoreCard, PaywallScreen)
+- Hooks réseau (useScore, useSubscription)
 
 **Peut être léger ou omis en MVP :**
-- Composants purement visuels sans logique (ConditionBadge, PeakFavoriteChip)
-- Utilitaires trivials (dateUtils formatage basique)
+- Composants purement visuels sans logique
+- Utilitaires triviaux (formatage basique)
 - Seed DB (testé une fois manuellement)
 
-### Patterns de code à respecter
+---
+
+## Règles d'orchestration — agents et contexte
+
+### Principe : Claude reste orchestrateur
+
+Pour toute tâche non triviale, utiliser des **sous-agents spécialisés** plutôt que tout faire dans le contexte principal :
+
+| Agent | Rôle | Quand l'utiliser |
+|-------|------|-----------------|
+| `Explore` | Lecture seule — explore la codebase, cherche des fichiers | Recherche > 3 fichiers à lire |
+| `Plan` | Lecture seule — conçoit une implémentation | Avant de coder une story complexe |
+| `general-purpose` | Accès complet — implémente du code | Implémentation d'un module isolé |
+| `qa-reviewer` | Accès complet — review générique | Vérification de qualité générale |
+| `cloudbreak-dev-reviewer` | **Spécialisé Cloudbreak** — vérifie les patterns, ACs, doc | **Après chaque story implémentée** |
+| `cloudbreak-security` | **Spécialisé Cloudbreak** — audit sécurité, met à jour `security.md` | **Après toute story touchant auth, data, API, secrets** |
+
+**Règle obligatoire après chaque story :**
+1. Lancer `cloudbreak-dev-reviewer` — vérifie patterns + ACs + doc
+2. Si la story touche auth / data / API / secrets → lancer `cloudbreak-security` en parallèle
+
+**Quand garder dans le contexte principal :**
+- Décisions d'architecture
+- Corrections courtes (< 20 lignes)
+- Réponses à des questions directes
+
+---
+
+## Auto-amélioration — journal des erreurs
+
+### Principe
+
+Chaque erreur rencontrée — qu'elle vienne du code, des outils, de la configuration ou du workflow — est loggée dans le fichier mémoire projet pour ne plus se reproduire.
+
+**Fichier** : `/Users/alex/.claude/projects/-Users-alex-Desktop-dev-cloudbreak/memory/MEMORY.md`
+
+**Ce qui doit être loggé :**
+- Erreur de configuration (ex: `script.py.mako` manquant dans alembic)
+- Commande qui ne marche pas sans contexte (ex: `alembic` sans `PYTHONPATH=.`)
+- Comportement inattendu d'une lib ou d'un outil
+- Erreur répétée plus d'une fois
+
+**Format d'entrée :**
+```
+## Erreurs connues
+- [outil] description courte → solution appliquée
+```
+
+---
+
+## Tests automatiques — règle systématique
+
+### Après chaque tâche
+
+1. **Claude lance les tests automatiquement** — sans attendre que l'utilisateur le demande
+2. **Si les tests échouent** — corriger immédiatement avant de répondre
+3. **Fournir toujours les instructions de test manuel** — fichier `.http`, commande curl, ou étapes simulateur
+
+### Backend — validation automatique après chaque modification
+
+```bash
+make validate   # ruff + mypy + pytest --cov — doit passer à 100%
+```
+
+### Mobile — validation automatique après chaque modification
+
+```bash
+npm test && npx tsc --noEmit && npm run lint
+```
+
+### Instructions de test manuel — toujours fournies
+
+À chaque fin de story ou modification notable, fournir :
+- La ou les requêtes HTTP à envoyer (fichier `.http` ou instructions)
+- Le résultat attendu (status code + body)
+- Les cas d'erreur à vérifier
+
+---
+
+## Mode debug — auto-feedback et OODA loop
+
+### Principe
+
+Des points de log sont placés **en permanence** dans le code aux endroits clés. Ils sont silencieux en production et activables à la demande pour diagnostiquer un problème.
+
+### Backend Python — logger conditionnel
+
+```python
+import logging
+logger = logging.getLogger(__name__)
+
+# Log clé — toujours présent, niveau DEBUG (silencieux en prod)
+logger.debug("score_detail", extra={"cloud_base": cloud_base, "peak_alt": peak_altitude, "score": score})
+```
+
+Activer le mode debug dans Docker :
+```bash
+# Dans docker-compose.dev.yml, ajouter :
+environment:
+  - LOG_LEVEL=DEBUG
+```
+
+Ou ponctuellement :
+```bash
+docker exec cloudbreak-backend env LOG_LEVEL=DEBUG
+```
+
+### Mobile TypeScript — console.debug conditionnel
+
+```typescript
+// flags.ts
+export const DEBUG = __DEV__ && true;  // false en prod automatiquement
+
+// Dans les hooks et services — toujours présent
+if (DEBUG) console.debug('[useScore] fetching', { peakId, date });
+if (DEBUG) console.debug('[apiFetch] response', { status, data });
+```
+
+### Où placer les logs debug obligatoirement
+
+**Backend :**
+- Entrée et sortie de `calculate_score()` avec toutes les composantes
+- Résultat du hard gate (cloud_base vs peak_altitude)
+- Cache hit/miss Redis avec la clé
+- Réponse brute Open-Meteo avant parsing
+
+**Mobile :**
+- Chaque transition d'état `AsyncState` (idle → loading → success/error)
+- Résultat du cache offline (hit/miss/expired)
+- Chaque appel `apiFetch` (url, params, status)
+
+### OODA loop — principe d'auto-correction
+
+Quand un comportement est inattendu :
+1. **Observer** — activer debug, lire les logs
+2. **Orienter** — identifier le fichier et la ligne source du problème
+3. **Décider** — corriger le code ou la config
+4. **Agir** — appliquer le fix, relancer les tests, désactiver le debug
+
+---
+
+## Documentation technique — règles obligatoires
+
+### À chaque story, fix, ou modification notable
+
+**1. Fichier story `docs/story-{epic}-{num}-{slug}.md`** dans le submodule concerné
+
+```
+backend/docs/story-3-1-algorithme-score.md
+mobile/docs/story-3-4-scorecard-ecran-principal.md
+```
+
+Contenu obligatoire :
+- **Ce qui a été fait** — liste des fichiers créés/modifiés avec leur rôle
+- **Comment ça fonctionne** — explication technique du fonctionnement
+- **Comment tester** — commandes et étapes pour vérifier
+- **Acceptance Criteria vérifiés** — checklist des ACs
+
+**2. `docs/product-audit.md`** dans le submodule backend
+
+Mettre à jour la section "Ce qui est fonctionnel" après chaque story complétée.
+
+**3. README du submodule**
+
+Mettre à jour si la story change : installation, commandes, structure, variables d'environnement, ports, comportement observable.
+
+**4. `docs/security.md`**
+
+Mettre à jour si la story touche : auth, ports, secrets, données utilisateur, dépendances sensibles, config réseau.
+
+**5. `CLAUDE.md` (repo racine)**
+
+Mettre à jour si la story change : stack, structure, conventions de code, workflow, git flow, ou formule de score.
+
+> Règle simple : **si quelqu'un qui rejoint le projet demain ne comprend pas ce qui a changé en lisant la doc, la doc est incomplète.**
+
+---
+
+## Patterns de code à respecter
 
 **Ne JAMAIS faire :**
-- `print()` ou `logger.debug()` en production (backend)
+- `print()` en production backend — utiliser `logger.info/debug/error`
 - `try/catch` dans les composants React — dans les hooks uniquement
 - Strings UI hardcodées dans les composants — utiliser i18n.ts
 - Réponses API avec wrapper `{"status": "ok", "data": ...}` — réponses directes
 - Appels réseau dans les composants — dans les hooks uniquement
+- `uvicorn` directement — passer par `make dev`
 
 **Toujours faire :**
-- Imports organisés **en escalier** (du plus court au plus long), librairies externes d'abord puis imports internes — quelle que soit la techno :
+- Imports organisés **en escalier** (du plus court au plus long), externes puis internes :
   ```ts
-  // ✅ Correct — ordre longueur croissante, externe puis interne
+  // ✅ Correct
   import { Tabs } from 'expo-router';
   import i18n from '@/utils/i18n';
   import { useTheme } from '@/contexts/ThemeContext';
-
-  // ❌ Incorrect — ordre aléatoire ou chemins relatifs ../
-  import { useTheme } from '../../contexts/ThemeContext';
-  import { Tabs } from 'expo-router';
-  import i18n from '@/utils/i18n';
   ```
 - `AsyncState<T>` pour tout état asynchrone mobile (idle | loading | success | error)
 - Vérifier le cache offline avant tout appel réseau
@@ -302,6 +453,7 @@ src/__tests__/features/paywall-conversion.test.tsx  # 2e check → paywall → a
 - Logs backend JSON structurés (`logger.info("event", extra={...})`)
 - Erreurs API format `{"detail": "...", "code": "ERROR_CODE"}`
 - Dates ISO 8601 UTC partout
+- Logs debug aux points clés (voir section Mode debug)
 
 ---
 
@@ -323,12 +475,12 @@ src/__tests__/features/paywall-conversion.test.tsx  # 2e check → paywall → a
 ```
 DATABASE_URL
 REDIS_URL
-WEATHER_API_KEY
 SUPABASE_URL
 SUPABASE_KEY          # clé publique pour validation JWT locale
 POSTHOG_API_KEY
 EXPO_ACCESS_TOKEN     # pour Expo Push Notifications
 # Pas de STRIPE_SECRET_KEY — paiements via StoreKit 2 uniquement
+# Pas de WEATHER_API_KEY — Open-Meteo est gratuit sans clé
 ```
 
 ---
