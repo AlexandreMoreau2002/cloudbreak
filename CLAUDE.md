@@ -392,6 +392,12 @@ Quand un comportement est inattendu :
 
 ---
 
+## Idées et suggestions de nouvelles features
+
+Toute idée ou suggestion de nouvelle feature — qu'elle vienne de l'utilisateur ou émerge pendant le développement — doit être ajoutée dans `_bmad-output/planning-artifacts/prd.md`, dans la section V2 ou Vision selon la maturité. Juste l'idée, sans détailler.
+
+---
+
 ## Documentation technique — règles obligatoires
 
 ### À chaque story, fix, ou modification notable

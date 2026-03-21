@@ -125,6 +125,8 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - Amélioration algo par régression logistique sur données terrain
 - Android
 - Dashboard monitoring évolué + stats business visuelles
+- **Contribution utilisateur de spots** : l'user soumet coordonnées GPS + nom depuis l'app → LLM (Claude Haiku) normalise (slug, capitalisation, déduplication probable) → altitude via Open-Meteo Elevation → insertion en DB avec modération légère
+- **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
 
 ### Vision (Phase 3)
 
