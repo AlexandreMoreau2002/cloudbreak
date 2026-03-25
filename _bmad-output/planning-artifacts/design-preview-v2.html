@@ -45,9 +45,58 @@
     }
 
     .row { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+    .stack { display: flex; flex-direction: column; gap: 28px; max-width: 1240px; width: 100%; }
+    .screen-section {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      padding: 36px 28px 32px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(42,42,42,0.82) 0%, rgba(26,26,26,0.94) 100%);
+      box-shadow: 0 32px 90px rgba(0,0,0,0.28);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .screen-header { display: flex; justify-content: space-between; align-items: end; gap: 20px; flex-wrap: wrap; margin-bottom: 6px; }
+    .screen-kicker { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #9A8C76; }
+    .screen-title { font-size: 24px; font-weight: 700; color: #F7F5F1; margin-top: 2px; }
+    .screen-sub { font-size: 13px; color: #8E8A84; margin-top: 10px; line-height: 1.55; max-width: 720px; }
+    .screen-grid { display: grid; gap: 36px 28px; justify-content: center; }
+    .screen-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .screen-grid.one { grid-template-columns: minmax(0, 1fr); }
+    .screen-grid.center { justify-items: center; }
+    .bonus-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .bonus-card {
+      background: linear-gradient(180deg, rgba(247,245,241,0.98) 0%, rgba(239,232,220,0.95) 100%);
+      border: 1px solid rgba(233,228,218,0.9);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 150px;
+    }
+    .bonus-kicker { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #9A8C76; }
+    .bonus-title { font-size: 20px; font-weight: 700; color: var(--txt1); }
+    .bonus-copy { font-size: 13px; line-height: 1.55; color: var(--txt2); }
+    .bonus-meta { margin-top: auto; font-size: 11px; color: #8A7C67; letter-spacing: 0.8px; text-transform: uppercase; }
+    @media (max-width: 900px) {
+      .screen-grid.two,
+      .bonus-grid {
+        grid-template-columns: 1fr;
+      }
+      .screen-section {
+        padding: 26px 18px 24px;
+      }
+    }
 
-    .wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-    .device-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #555; }
+    .wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .device-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #6C655C; }
 
     /* ── PHONE FRAME ── */
     .phone {
@@ -68,7 +117,7 @@
 
     /* ════════════════════════════════════════
        DIRECTION B AFFINÉE — Light
-       Barre recherche → sommet header → card score dark → week → conds → alerte → favoris → nav
+       Barre recherche → sommet header → card score claire → week → conds → alerte → favoris → nav
     ════════════════════════════════════════ */
     .b { background: var(--bg); height: 100%; display: flex; flex-direction: column; overflow: hidden; }
     .b .status-bar { color: var(--txt1); }
@@ -99,11 +148,14 @@
       font-size: 16px;
     }
 
-    /* Score card dark */
+    /* Score card light */
     .b .scard {
       margin: 0 16px;
-      background: var(--dark); border-radius: 22px; padding: 20px 22px;
+      background: linear-gradient(180deg, #FBF9F5 0%, #F4EEE5 100%);
+      border: 1px solid rgba(178,140,110,0.16);
+      border-radius: 22px; padding: 20px 22px;
       display: flex; gap: 18px; align-items: stretch;
+      box-shadow: 0 18px 36px rgba(178,140,110,0.08);
     }
     .b .sc-l { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; min-width: 110px; }
     .b .sc-num-wrap { display: flex; align-items: baseline; gap: 2px; }
@@ -112,47 +164,49 @@
     .b .sc-pill {
       font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
       padding: 4px 10px; border-radius: 99px; align-self: flex-start;
-      background: rgba(92,158,110,0.18); color: var(--sh);
+      background: rgba(92,158,110,0.14); color: var(--sh);
     }
-    .b .sc-desc { font-size: 11px; color: #555; line-height: 1.4; }
+    .b .sc-desc { font-size: 11px; color: var(--txt2); line-height: 1.4; }
 
     /* Viz colonne droite */
     .b .sc-r { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
     .b .sc-viz-wrap {
       flex: 1; position: relative; min-height: 80px;
-      background: var(--dark2); border-radius: 12px; overflow: hidden; padding: 8px;
+      background: linear-gradient(180deg, #ECE6DC 0%, #E1D8CB 100%);
+      border: 1px solid rgba(178,140,110,0.14);
+      border-radius: 12px; overflow: hidden; padding: 8px;
     }
     /* mountain silhouette via clip-path */
     .b .viz-mountain {
       position: absolute; bottom: 0; left: 0; right: 0; height: 70px;
-      background: #2a2a2a;
+      background: linear-gradient(180deg, rgba(58,58,58,0.18) 0%, rgba(26,26,26,0.26) 100%);
       clip-path: polygon(0% 100%, 30% 100%, 50% 15%, 70% 100%, 100% 100%);
     }
     .b .viz-cloud {
       position: absolute; left: 0; right: 0; height: 16px;
-      background: var(--sh); opacity: 0.35; border-radius: 4px;
+      background: rgba(92,158,110,0.28); border-radius: 999px;
       bottom: 42px;
     }
     .b .viz-line {
       position: absolute; left: 0; right: 0; height: 1px;
-      background: var(--sh); opacity: 0.6; bottom: 42px;
+      background: rgba(92,158,110,0.48); bottom: 42px;
     }
     .b .viz-labels {
       position: absolute; left: 6px; right: 6px;
       display: flex; flex-direction: column; gap: 0;
     }
     .b .vl-cloud  { font-size: 9px; color: var(--sh); position: absolute; bottom: 50px; left: 6px; }
-    .b .vl-summit { font-size: 9px; color: #555; position: absolute; bottom: 18px; right: 6px; text-align: right; }
+    .b .vl-summit { font-size: 9px; color: rgba(26,26,26,0.42); position: absolute; bottom: 18px; right: 6px; text-align: right; }
     .b .sc-time {
       margin-top: 8px;
       display: flex; gap: 6px;
     }
     .b .time-pill {
-      flex: 1; background: var(--dark3); border: 1px solid var(--dbord);
+      flex: 1; background: rgba(255,255,255,0.55); border: 1px solid rgba(178,140,110,0.16);
       border-radius: 8px; padding: 5px 0; text-align: center;
-      font-size: 10px; color: #555; font-weight: 600;
+      font-size: 10px; color: rgba(26,26,26,0.40); font-weight: 600;
     }
-    .b .time-pill.on { background: rgba(92,158,110,0.15); border-color: rgba(92,158,110,0.3); color: var(--sh); }
+    .b .time-pill.on { background: rgba(92,158,110,0.12); border-color: rgba(92,158,110,0.24); color: var(--sh); }
 
     /* Week strip */
     .b .wstrip { display: flex; gap: 5px; padding: 12px 16px; }
@@ -378,42 +432,99 @@
       cursor: pointer;
     }
 
+    .onbd { background: #191919; height: 100%; display: flex; flex-direction: column; }
+    .onbd .onb-img {
+      background: linear-gradient(165deg, #64767A 0%, #384347 38%, #201F1F 100%);
+    }
+    .onbd .onb-img::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(26,26,26,0) 0%, rgba(26,26,26,0.18) 44%, rgba(26,26,26,0.76) 80%, #1A1A1A 100%);
+      pointer-events: none;
+    }
+    .onbd .onb-sb { color: rgba(255,255,255,0.82); }
+    .onbd .onb-sb .notch { background: rgba(0,0,0,0.68); }
+    .onbd .onb-body {
+      background: linear-gradient(180deg, #1B1B1B 0%, #141414 100%);
+      box-shadow: 0 -12px 32px rgba(0,0,0,0.28);
+    }
+    .onbd .onb-tag { color: var(--acc2); }
+    .onbd .onb-ttl { color: #F7F5F1; }
+    .onbd .onb-txt { color: rgba(247,245,241,0.66); }
+    .onbd .onb-dot { background: rgba(255,255,255,0.14); }
+    .onbd .onb-dot.on { background: var(--acc2); }
+    .onbd .onb-cta {
+      background: linear-gradient(180deg, #E3D0B1 0%, #D2BA9C 100%);
+      color: var(--dark);
+    }
+
     /* ════════════════════════════════════
-       PAYWALL — inchangé
+       PAYWALL — light
     ════════════════════════════════════ */
     .pay { background: var(--surf); height: 100%; display: flex; flex-direction: column; }
     .pay-hdr {
-      background: var(--dark); padding: 56px 24px 24px;
+      background: linear-gradient(180deg, #F6F0E6 0%, #EEE3D4 100%); padding: 56px 24px 24px;
       display: flex; flex-direction: column; gap: 6px;
+      border-bottom: 1px solid rgba(178,140,110,0.12);
     }
-    .pay-badge { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--acc2); }
-    .pay-ttl   { font-size: 26px; font-weight: 700; color: #F7F5F1; line-height: 1.2; }
-    .pay-sub   { font-size: 13px; color: #555; margin-top: 4px; }
+    .pay-badge { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--acc1); }
+    .pay-ttl   { font-size: 26px; font-weight: 700; color: var(--txt1); line-height: 1.2; }
+    .pay-sub   { font-size: 13px; color: var(--txt2); margin-top: 4px; }
     .pay-body  { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
     .pay-feat  {
-      background: var(--bg); border-radius: 14px; padding: 14px;
+      background: linear-gradient(180deg, #F5EFE4 0%, #EFE6D9 100%); border-radius: 14px; padding: 14px;
       display: flex; align-items: flex-start; gap: 12px;
+      border: 1px solid rgba(178,140,110,0.10);
     }
     .pf-ico {
-      width: 36px; height: 36px; border-radius: 10px; background: var(--dark);
+      width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(180deg, #F0E6D8 0%, #E6D7C2 100%);
+      border: 1px solid rgba(178,140,110,0.16);
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .pf-ico svg { width: 18px; height: 18px; color: var(--acc2); }
+    .pf-ico svg { width: 18px; height: 18px; color: var(--acc1); }
     .pf-ttl { font-size: 14px; font-weight: 600; color: var(--txt1); }
     .pf-dsc { font-size: 12px; color: var(--txt3); margin-top: 2px; }
     .pay-price {
-      margin-top: auto; background: var(--dark); border-radius: 20px; padding: 18px;
+      margin-top: auto; background: linear-gradient(180deg, #F6F0E7 0%, #EEDFCC 100%); border-radius: 20px; padding: 18px;
       display: flex; flex-direction: column; gap: 6px;
+      border: 1px solid rgba(178,140,110,0.12);
     }
-    .pp-per { font-size: 12px; color: #555; }
-    .pp-amt { font-size: 32px; font-weight: 700; color: #F7F5F1; }
+    .pp-per { font-size: 12px; color: var(--txt3); }
+    .pp-amt { font-size: 32px; font-weight: 700; color: var(--txt1); }
     .pp-cta {
-      background: var(--acc2); color: var(--dark); border: none; border-radius: 12px;
+      background: linear-gradient(180deg, #BFD5C1 0%, #97BB9B 100%);
+      color: #224228; border: none; border-radius: 12px;
       padding: 14px; font-family: 'Josefin Sans', sans-serif; font-size: 13px;
       font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
       margin-top: 4px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
     }
-    .pp-fine { font-size: 11px; color: #444; text-align: center; margin-top: 4px; }
+    .pp-fine { font-size: 11px; color: #8A7C67; text-align: center; margin-top: 4px; }
+
+    .payd { background: var(--dark); height: 100%; display: flex; flex-direction: column; }
+    .payd .pay-hdr {
+      background: linear-gradient(180deg, #202020 0%, #171717 100%);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .payd .pay-badge { color: var(--acc2); }
+    .payd .pay-ttl { color: #F7F5F1; }
+    .payd .pay-sub { color: #777; }
+    .payd .pay-body { background: var(--dark); }
+    .payd .pay-feat {
+      background: var(--dark2);
+      border: 1px solid var(--dbord);
+    }
+    .payd .pf-ttl { color: #F7F5F1; }
+    .payd .pf-dsc { color: #777; }
+    .payd .pay-price {
+      background: linear-gradient(180deg, #242424 0%, #1A1A1A 100%);
+      border: 1px solid var(--dbord);
+    }
+    .payd .pp-per { color: #777; }
+    .payd .pp-amt { color: #F7F5F1; }
+    .payd .pp-cta { background: var(--acc2); color: var(--dark); }
+    .payd .pp-fine { color: #666; }
 
     /* palette swatches */
     .swatches { display: flex; gap: 12px; flex-wrap: wrap; max-width: 1200px; width: 100%; }
@@ -444,7 +555,7 @@
 <body>
 
 <div class="page-title">mer de nuage — Direction B (v2)</div>
-<div class="page-sub">Layout raffiné · Score Card Dark sur fond organique</div>
+<div class="page-sub">Layout raffiné · Score Card claire sur fond organique</div>
 
 <!-- ─── PALETTE ─── -->
 <div class="section-label">01 — Palette</div>
@@ -478,304 +589,397 @@
 
 <!-- ─── SCREENS ─── -->
 <div class="section-label">03 — Screens · Direction B</div>
-<div class="row">
-
-  <!-- HOME LIGHT -->
-  <div class="wrap">
-    <div class="device-label">Home — Light</div>
-    <div class="phone">
-      <div class="b">
-        <div class="status-bar">
-          <span>9:41</span>
-          <div class="notch" style="background:#1A1A1A"></div>
-          <span style="font-size:11px">●●●</span>
-        </div>
-        <!-- Search -->
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Rechercher un sommet…
-        </div>
-        <!-- Peak header -->
-        <div class="peak-hdr">
-          <div class="ph-left">
-            <div class="ph-name">Moucherotte</div>
-            <div class="ph-sub">1901m · Massif du Vercors</div>
-          </div>
-          <div class="ph-star">★</div>
-        </div>
-        <!-- Score card -->
-        <div class="scard">
-          <div class="sc-l">
-            <div>
-              <div class="sc-num-wrap">
-                <span class="sc-num">82</span><span class="sc-pct">%</span>
+<div class="stack">
+  <section class="screen-section">
+    <div class="screen-header">
+      <div>
+        <div class="screen-kicker">Ligne 01</div>
+        <div class="screen-title">Home Dashboard</div>
+        <div class="screen-sub">Deux lectures du dashboard principal, en light puis en dark, sur la même hiérarchie BMAD validée.</div>
+      </div>
+    </div>
+    <div class="screen-grid two">
+      <div class="wrap">
+        <div class="device-label">Home — Light</div>
+        <div class="phone">
+          <div class="b">
+            <div class="status-bar">
+              <span>9:41</span>
+              <div class="notch" style="background:#1A1A1A"></div>
+              <span style="font-size:11px">●●●</span>
+            </div>
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Rechercher un sommet…
+            </div>
+            <div class="peak-hdr">
+              <div class="ph-left">
+                <div class="ph-name">Moucherotte</div>
+                <div class="ph-sub">1901m · Massif du Vercors</div>
               </div>
-              <div class="sc-pill">Élevé</div>
+              <div class="ph-star">★</div>
             </div>
-            <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
-          </div>
-          <div class="sc-r">
-            <div class="sc-viz-wrap">
-              <div class="viz-mountain"></div>
-              <div class="viz-cloud"></div>
-              <div class="viz-line"></div>
-              <span class="vl-cloud">☁ 1400m</span>
-              <span class="vl-summit">▲ 1901m</span>
-            </div>
-            <div class="sc-time">
-              <div class="time-pill">06h</div>
-              <div class="time-pill on">08h</div>
-              <div class="time-pill">10h</div>
-              <div class="time-pill">12h</div>
-            </div>
-          </div>
-        </div>
-        <!-- Week strip -->
-        <div class="wstrip">
-          <div class="wday"><span class="dl">Lun</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">12%</span></div>
-          <div class="wday"><span class="dl">Mar</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">44%</span></div>
-          <div class="wday on"><span class="dl">Mer</span><div class="dd"></div><span class="ds">82%</span></div>
-          <div class="wday"><span class="dl">Jeu</span><div class="dd" style="background:#5C9E6E"></div><span class="ds" style="color:#5C9E6E">71%</span></div>
-          <div class="wday"><span class="dl">Ven</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">58%</span></div>
-          <div class="wday"><span class="dl">Sam</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">22%</span></div>
-          <div class="wday"><span class="dl">Dim</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">9%</span></div>
-        </div>
-        <!-- Conditions -->
-        <div class="conds">
-          <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
-          <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
-          <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
-        </div>
-        <!-- Alerte -->
-        <div class="alert-cta">
-          <div>
-            <div class="alert-cta-txt">🔔 Activer une alerte</div>
-            <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
-          </div>
-          <button class="alert-cta-btn">Activer</button>
-        </div>
-        <!-- Favoris -->
-        <div class="favs-sect">
-          <div class="favs-lbl">Favoris</div>
-          <div class="favs-row">
-            <div class="fchip">
-              <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
-              <span class="fs" style="color:#D4904A">51%</span>
-            </div>
-            <div class="fchip">
-              <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
-              <span class="fs" style="color:#C25C4A">14%</span>
-            </div>
-          </div>
-        </div>
-        <!-- Nav -->
-        <div class="bnav">
-          <div class="nitem on">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span>Accueil</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <span>Recherche</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span>Favoris</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Profil</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HOME DARK -->
-  <div class="wrap">
-    <div class="device-label">Home — Dark</div>
-    <div class="phone">
-      <div class="bd">
-        <div class="status-bar">
-          <span>9:41</span>
-          <div class="notch" style="background:#000"></div>
-          <span style="font-size:11px;color:#F7F5F1">●●●</span>
-        </div>
-        <div class="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          Rechercher un sommet…
-        </div>
-        <div class="peak-hdr">
-          <div>
-            <div class="ph-name">Moucherotte</div>
-            <div class="ph-sub">1901m · Massif du Vercors</div>
-          </div>
-          <div class="ph-star">★</div>
-        </div>
-        <div class="scard">
-          <div class="sc-l">
-            <div>
-              <div class="sc-num-wrap">
-                <span class="sc-num">82</span><span class="sc-pct">%</span>
+            <div class="scard">
+              <div class="sc-l">
+                <div>
+                  <div class="sc-num-wrap">
+                    <span class="sc-num">82</span><span class="sc-pct">%</span>
+                  </div>
+                  <div class="sc-pill">Élevé</div>
+                </div>
+                <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
               </div>
-              <div class="sc-pill">Élevé</div>
+              <div class="sc-r">
+                <div class="sc-viz-wrap">
+                  <div class="viz-mountain"></div>
+                  <div class="viz-cloud"></div>
+                  <div class="viz-line"></div>
+                  <span class="vl-cloud">☁ 1400m</span>
+                  <span class="vl-summit">▲ 1901m</span>
+                </div>
+                <div class="sc-time">
+                  <div class="time-pill">06h</div>
+                  <div class="time-pill on">08h</div>
+                  <div class="time-pill">10h</div>
+                  <div class="time-pill">12h</div>
+                </div>
+              </div>
             </div>
-            <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
-          </div>
-          <div class="sc-r">
-            <div class="sc-viz-wrap">
-              <div class="viz-mountain"></div>
-              <div class="viz-cloud"></div>
-              <div class="viz-line"></div>
-              <span class="vl-cloud">☁ 1400m</span>
-              <span class="vl-summit">▲ 1901m</span>
+            <div class="wstrip">
+              <div class="wday"><span class="dl">Lun</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">12%</span></div>
+              <div class="wday"><span class="dl">Mar</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">44%</span></div>
+              <div class="wday on"><span class="dl">Mer</span><div class="dd"></div><span class="ds">82%</span></div>
+              <div class="wday"><span class="dl">Jeu</span><div class="dd" style="background:#5C9E6E"></div><span class="ds" style="color:#5C9E6E">71%</span></div>
+              <div class="wday"><span class="dl">Ven</span><div class="dd" style="background:#D4904A"></div><span class="ds" style="color:#D4904A">58%</span></div>
+              <div class="wday"><span class="dl">Sam</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">22%</span></div>
+              <div class="wday"><span class="dl">Dim</span><div class="dd" style="background:#C25C4A"></div><span class="ds" style="color:#C25C4A">9%</span></div>
             </div>
-            <div class="sc-time">
-              <div class="time-pill">06h</div>
-              <div class="time-pill on">08h</div>
-              <div class="time-pill">10h</div>
-              <div class="time-pill">12h</div>
+            <div class="conds">
+              <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+              <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
+              <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+            </div>
+            <div class="alert-cta">
+              <div>
+                <div class="alert-cta-txt">🔔 Activer une alerte</div>
+                <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
+              </div>
+              <button class="alert-cta-btn">Activer</button>
+            </div>
+            <div class="favs-sect">
+              <div class="favs-lbl">Favoris</div>
+              <div class="favs-row">
+                <div class="fchip">
+                  <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
+                  <span class="fs" style="color:#D4904A">51%</span>
+                </div>
+                <div class="fchip">
+                  <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
+                  <span class="fs" style="color:#C25C4A">14%</span>
+                </div>
+              </div>
+            </div>
+            <div class="bnav">
+              <div class="nitem on">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Accueil</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <span>Recherche</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span>Favoris</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profil</span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="wstrip">
-          <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12%</span></div>
-          <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44%</span></div>
-          <div class="wday on"><span class="dl">Mer</span><span class="ds">82%</span></div>
-          <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71%</span></div>
-          <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58%</span></div>
-          <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22%</span></div>
-          <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9%</span></div>
-        </div>
-        <div class="conds">
-          <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
-          <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
-          <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
-        </div>
-        <div class="alert-cta">
-          <div>
-            <div class="alert-cta-txt">🔔 Activer une alerte</div>
-            <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
-          </div>
-          <button class="alert-cta-btn">Activer</button>
-        </div>
-        <div class="favs-sect">
-          <div class="favs-lbl">Favoris</div>
-          <div class="favs-row">
-            <div class="fchip">
-              <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
-              <span class="fs" style="color:#D4904A">51%</span>
+      </div>
+
+      <div class="wrap">
+        <div class="device-label">Home — Dark</div>
+        <div class="phone">
+          <div class="bd">
+            <div class="status-bar">
+              <span>9:41</span>
+              <div class="notch" style="background:#000"></div>
+              <span style="font-size:11px;color:#F7F5F1">●●●</span>
             </div>
-            <div class="fchip">
-              <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
-              <span class="fs" style="color:#C25C4A">14%</span>
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              Rechercher un sommet…
             </div>
-          </div>
-        </div>
-        <div class="bnav">
-          <div class="nitem on">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            <span>Accueil</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <span>Recherche</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            <span>Favoris</span>
-          </div>
-          <div class="nitem">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Profil</span>
+            <div class="peak-hdr">
+              <div>
+                <div class="ph-name">Moucherotte</div>
+                <div class="ph-sub">1901m · Massif du Vercors</div>
+              </div>
+              <div class="ph-star">★</div>
+            </div>
+            <div class="scard">
+              <div class="sc-l">
+                <div>
+                  <div class="sc-num-wrap">
+                    <span class="sc-num">82</span><span class="sc-pct">%</span>
+                  </div>
+                  <div class="sc-pill">Élevé</div>
+                </div>
+                <div class="sc-desc">Mer de nuage<br>probable ce matin</div>
+              </div>
+              <div class="sc-r">
+                <div class="sc-viz-wrap">
+                  <div class="viz-mountain"></div>
+                  <div class="viz-cloud"></div>
+                  <div class="viz-line"></div>
+                  <span class="vl-cloud">☁ 1400m</span>
+                  <span class="vl-summit">▲ 1901m</span>
+                </div>
+                <div class="sc-time">
+                  <div class="time-pill">06h</div>
+                  <div class="time-pill on">08h</div>
+                  <div class="time-pill">10h</div>
+                  <div class="time-pill">12h</div>
+                </div>
+              </div>
+            </div>
+            <div class="wstrip">
+              <div class="wday"><span class="dl">Lun</span><span class="ds" style="color:#C25C4A">12%</span></div>
+              <div class="wday"><span class="dl">Mar</span><span class="ds" style="color:#D4904A">44%</span></div>
+              <div class="wday on"><span class="dl">Mer</span><span class="ds">82%</span></div>
+              <div class="wday"><span class="dl">Jeu</span><span class="ds" style="color:#5C9E6E">71%</span></div>
+              <div class="wday"><span class="dl">Ven</span><span class="ds" style="color:#D4904A">58%</span></div>
+              <div class="wday"><span class="dl">Sam</span><span class="ds" style="color:#C25C4A">22%</span></div>
+              <div class="wday"><span class="dl">Dim</span><span class="ds" style="color:#C25C4A">9%</span></div>
+            </div>
+            <div class="conds">
+              <div class="cbadge"><span class="cb-l">Humidité</span><span class="cb-v">84%</span></div>
+              <div class="cbadge"><span class="cb-l">Vent</span><span class="cb-v">12 km/h</span></div>
+              <div class="cbadge"><span class="cb-l">Inversion</span><span class="cb-v">Oui</span></div>
+            </div>
+            <div class="alert-cta">
+              <div>
+                <div class="alert-cta-txt">🔔 Activer une alerte</div>
+                <div class="alert-cta-sub">Notifié si score > 70% ce sommet</div>
+              </div>
+              <button class="alert-cta-btn">Activer</button>
+            </div>
+            <div class="favs-sect">
+              <div class="favs-lbl">Favoris</div>
+              <div class="favs-row">
+                <div class="fchip">
+                  <div><div class="fn">Chartreuse</div><div class="fa">1602m</div></div>
+                  <span class="fs" style="color:#D4904A">51%</span>
+                </div>
+                <div class="fchip">
+                  <div><div class="fn">Taillefer</div><div class="fa">2857m</div></div>
+                  <span class="fs" style="color:#C25C4A">14%</span>
+                </div>
+              </div>
+            </div>
+            <div class="bnav">
+              <div class="nitem on">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                <span>Accueil</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <span>Recherche</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <span>Favoris</span>
+              </div>
+              <div class="nitem">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profil</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ONBOARDING -->
-  <div class="wrap">
-    <div class="device-label">Onboarding</div>
-    <div class="phone">
-      <div class="onb">
-        <div class="onb-img">
-          <svg viewBox="0 0 375 310" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#8AAAB0"/>
-                <stop offset="100%" stop-color="#C8AD8F"/>
-              </linearGradient>
-            </defs>
-            <rect width="375" height="310" fill="url(#sky)"/>
-            <!-- cloud band -->
-            <rect x="0" y="165" width="375" height="30" fill="white" opacity="0.55" rx="0"/>
-            <!-- mountains back -->
-            <polygon points="0,310 80,140 160,220 240,100 320,160 375,130 375,310" fill="#1A1A1A" opacity="0.35"/>
-            <!-- mountains front -->
-            <polygon points="0,310 60,190 130,250 200,130 270,190 340,160 375,175 375,310" fill="#1A1A1A" opacity="0.7"/>
-          </svg>
-          <div class="onb-sb">
-            <span>9:41</span>
-            <div class="notch" style="background:rgba(0,0,0,0.4);"></div>
-            <span>●●●</span>
-          </div>
-        </div>
-        <div class="onb-body">
-          <div class="onb-tag">Étape 2 / 3</div>
-          <div class="onb-ttl">Le score qui change tout</div>
-          <div class="onb-txt">En Dolomites, j'ai grimpé 4h pour rien. Mer de nuage calcule la probabilité exacte pour ton sommet, à l'heure où tu arrives.</div>
-          <div class="onb-dots">
-            <div class="onb-dot"></div>
-            <div class="onb-dot on"></div>
-            <div class="onb-dot"></div>
-          </div>
-          <button class="onb-cta">Continuer</button>
-        </div>
+  <section class="screen-section">
+    <div class="screen-header">
+      <div>
+        <div class="screen-kicker">Ligne 02</div>
+        <div class="screen-title">Onboarding Story</div>
+        <div class="screen-sub">La narration d’entrée existe maintenant en deux atmosphères: beige éditoriale et dark premium, avec la même histoire Dolomites.</div>
       </div>
     </div>
-  </div>
-
-  <!-- PAYWALL -->
-  <div class="wrap">
-    <div class="device-label">Paywall</div>
-    <div class="phone">
-      <div class="pay">
-        <div class="pay-hdr">
-          <div class="pay-badge">Passer en illimité</div>
-          <div class="pay-ttl">Prévisions sans limite</div>
-          <div class="pay-sub">Tu as utilisé tes 3 prévisions gratuites ce mois-ci.</div>
-        </div>
-        <div class="pay-body">
-          <div class="pay-feat">
-            <div class="pf-ico">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+    <div class="screen-grid two">
+      <div class="wrap">
+        <div class="device-label">Onboarding — Light</div>
+        <div class="phone">
+          <div class="onb">
+            <div class="onb-img">
+              <svg viewBox="0 0 375 310" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#8AAAB0"/>
+                    <stop offset="100%" stop-color="#C8AD8F"/>
+                  </linearGradient>
+                </defs>
+                <rect width="375" height="310" fill="url(#sky)"/>
+                <rect x="0" y="165" width="375" height="30" fill="white" opacity="0.55" rx="0"/>
+                <polygon points="0,310 80,140 160,220 240,100 320,160 375,130 375,310" fill="#1A1A1A" opacity="0.35"/>
+                <polygon points="0,310 60,190 130,250 200,130 270,190 340,160 375,175 375,310" fill="#1A1A1A" opacity="0.7"/>
+              </svg>
+              <div class="onb-sb">
+                <span>9:41</span>
+                <div class="notch" style="background:rgba(0,0,0,0.4);"></div>
+                <span>●●●</span>
+              </div>
             </div>
-            <div><div class="pf-ttl">Prévisions illimitées</div><div class="pf-dsc">Tous les sommets, tous les jours</div></div>
-          </div>
-          <div class="pay-feat">
-            <div class="pf-ico">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <div class="onb-body">
+              <div class="onb-tag">Étape 2 / 3</div>
+              <div class="onb-ttl">Le score qui change tout</div>
+              <div class="onb-txt">En Dolomites, j'ai grimpé 4h pour rien. Mer de nuage calcule la probabilité exacte pour ton sommet, à l'heure où tu arrives.</div>
+              <div class="onb-dots">
+                <div class="onb-dot"></div>
+                <div class="onb-dot on"></div>
+                <div class="onb-dot"></div>
+              </div>
+              <button class="onb-cta">Continuer</button>
             </div>
-            <div><div class="pf-ttl">Alertes conditions</div><div class="pf-dsc">Notifié quand ça devient probable</div></div>
-          </div>
-          <div class="pay-feat">
-            <div class="pf-ico">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div><div class="pf-ttl">Prévisions J+7</div><div class="pf-dsc">Planifie ta semaine à l'avance</div></div>
-          </div>
-          <div class="pay-price">
-            <div class="pp-per">Abonnement mensuel</div>
-            <div class="pp-amt">3,99 €<span style="font-size:16px;color:#555;">/mois</span></div>
-            <button class="pp-cta">Commencer l'essai gratuit</button>
-            <div class="pp-fine">7 jours gratuits · annulation facile</div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
+      <div class="wrap">
+        <div class="device-label">Onboarding — Dark</div>
+        <div class="phone">
+          <div class="onbd">
+            <div class="onb-img">
+              <svg viewBox="0 0 375 310" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="sky-dark" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#7A8B8F"/>
+                    <stop offset="100%" stop-color="#2B2C30"/>
+                  </linearGradient>
+                </defs>
+                <rect width="375" height="310" fill="url(#sky-dark)"/>
+                <rect x="0" y="172" width="375" height="26" fill="#F4EEE5" opacity="0.42" rx="0"/>
+                <polygon points="0,310 70,155 150,235 238,112 315,170 375,146 375,310" fill="#0D0D0D" opacity="0.36"/>
+                <polygon points="0,310 58,198 126,256 202,128 272,192 340,165 375,176 375,310" fill="#121212" opacity="0.82"/>
+              </svg>
+              <div class="onb-sb">
+                <span>9:41</span>
+                <div class="notch"></div>
+                <span>●●●</span>
+              </div>
+            </div>
+            <div class="onb-body">
+              <div class="onb-tag">Étape 2 / 3</div>
+              <div class="onb-ttl">Le score qui change tout</div>
+              <div class="onb-txt">Le score ne te vend pas du rêve. Il te dit honnêtement quand ça vaut la peine de partir tôt, et quand il vaut mieux rester dormir.</div>
+              <div class="onb-dots">
+                <div class="onb-dot"></div>
+                <div class="onb-dot on"></div>
+                <div class="onb-dot"></div>
+              </div>
+              <button class="onb-cta">Continuer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen-section">
+    <div class="screen-header">
+      <div>
+        <div class="screen-kicker">Ligne 03</div>
+        <div class="screen-title">Paywall</div>
+        <div class="screen-sub">Deux déclinaisons du même écran premium, en light puis en dark, pour comparer la monétisation dans les deux atmosphères.</div>
+      </div>
+    </div>
+    <div class="screen-grid two">
+      <div class="wrap">
+        <div class="device-label">Paywall — Light</div>
+        <div class="phone">
+          <div class="pay">
+            <div class="pay-hdr">
+              <div class="pay-badge">Passer en illimité</div>
+              <div class="pay-ttl">Prévisions sans limite</div>
+              <div class="pay-sub">Tu as utilisé tes 3 prévisions gratuites ce mois-ci.</div>
+            </div>
+            <div class="pay-body">
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                </div>
+                <div><div class="pf-ttl">Prévisions illimitées</div><div class="pf-dsc">Tous les sommets, tous les jours</div></div>
+              </div>
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <div><div class="pf-ttl">Alertes conditions</div><div class="pf-dsc">Notifié quand ça devient probable</div></div>
+              </div>
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div><div class="pf-ttl">Prévisions J+7</div><div class="pf-dsc">Planifie ta semaine à l'avance</div></div>
+              </div>
+              <div class="pay-price">
+                <div class="pp-per">Abonnement mensuel</div>
+                <div class="pp-amt">3,99 €<span style="font-size:16px;color:#555;">/mois</span></div>
+                <button class="pp-cta">Commencer l'essai gratuit</button>
+                <div class="pp-fine">7 jours gratuits · annulation facile</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="device-label">Paywall — Dark</div>
+        <div class="phone">
+          <div class="payd">
+            <div class="pay-hdr">
+              <div class="pay-badge">Passer en illimité</div>
+              <div class="pay-ttl">Prévisions sans limite</div>
+              <div class="pay-sub">Tu as utilisé tes 3 prévisions gratuites ce mois-ci.</div>
+            </div>
+            <div class="pay-body">
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                </div>
+                <div><div class="pf-ttl">Prévisions illimitées</div><div class="pf-dsc">Tous les sommets, tous les jours</div></div>
+              </div>
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <div><div class="pf-ttl">Alertes conditions</div><div class="pf-dsc">Notifié quand ça devient probable</div></div>
+              </div>
+              <div class="pay-feat">
+                <div class="pf-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div><div class="pf-ttl">Prévisions J+7</div><div class="pf-dsc">Planifie ta semaine à l'avance</div></div>
+              </div>
+              <div class="pay-price">
+                <div class="pp-per">Abonnement mensuel</div>
+                <div class="pp-amt">3,99 €<span style="font-size:16px;color:#777;">/mois</span></div>
+                <button class="pp-cta">Commencer l'essai gratuit</button>
+                <div class="pp-fine">7 jours gratuits · annulation facile</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div style="height:40px"></div>
