@@ -22,22 +22,6 @@ git clone --recurse-submodules https://github.com/AlexandreMoreau2002/cloudbreak
 git submodule update --init --recursive
 ```
 
-## Dépannage mobile
-
-### Arrêter complètement le simulateur iOS
-
-Sur macOS, `Cmd+Q` ferme souvent seulement l'interface de `Simulator.app`. Le device iOS simulé peut rester démarré en arrière-plan via `CoreSimulator`.
-
-Pour arrêter complètement le simulateur et ses services :
-
-```bash
-killall Simulator
-xcrun simctl shutdown all
-killall -9 com.apple.CoreSimulator.CoreSimulatorService
-```
-
-À utiliser si le simulateur semble "encore ouvert", bloqué, ou si un relaunch Expo/iOS repart sur un état cassé.
-
 ## Agents BMAD
 
 Les agents BMAD (workflows IA de planification et développement) sont stockés dans `_bmad/` — non versionné, à installer manuellement sur chaque machine.
