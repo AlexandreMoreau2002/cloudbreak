@@ -74,7 +74,7 @@ development_status:
   3-2-seed-base-donnees-sommets: done                     # 21 597 sommets en DB (OSM + manuels)
   3-3-recherche-sommet-favoris: done                      # Recherche + favoris + hooks mobile
   3-4-ecran-principal-scorecard-affichage-verdict: done # ScoreCard + useScore + cache offline + navigation search/favoris → home
-  3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: done  # Détail conditions + fenêtre + lever du soleil + stabilité + WeekStrip
+  3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: backlog
   3-6-message-contextuel-hors-saison-deep-link-partage: backlog
   epic-3-retrospective: optional
 
