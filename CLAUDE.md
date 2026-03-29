@@ -558,6 +558,14 @@ EXPO_ACCESS_TOKEN     # pour Expo Push Notifications
 
 ---
 
+## ⚠️ Avant Release 1.0.0
+
+- **Deep link partage (story 3.6)** : l'URL de share est actuellement un placeholder `reminder_modify_before_mep@cloudbreak.com/sommet/{slug}` → à remplacer par le vrai domaine + config Universal Links iOS (`.well-known/apple-app-site-association`) quand le domaine sera réservé
+- **Supabase "Confirm email"** : actuellement désactivé en dev → à réactiver avant release
+- **MountainBackground (login)** : visuellement insuffisant → rework visuel avant release
+
+---
+
 ## Endpoints API (MVP)
 
 ```
