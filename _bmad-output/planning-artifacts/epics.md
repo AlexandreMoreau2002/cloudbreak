@@ -193,6 +193,8 @@ Les utilisateurs peuvent créer un compte, s'authentifier, gérer leurs préfér
 Les utilisateurs peuvent rechercher un sommet, consulter le verdict probabiliste avec score, détail des conditions météo, fenêtre temporelle optimale, indicateur de stabilité et message contextuel hors-saison. L'app affiche un message dégradé gracieux en cas d'indisponibilité.
 **FRs couverts :** FR1, FR2, FR3, FR4, FR5, FR6, FR7, FR8, FR9, FR10, FR11, FR38
 
+**Note backlog UX/API :** prévoir une prochaine story mobile dédiée à un composant générique d'erreur API réutilisable (`400/500/service indisponible`) pour homogénéiser `score`, `search` et `favorites`.
+
 ### Epic 4: Freemium & Monétisation
 Les utilisateurs voient la limite gratuite (1 check/jour), rencontrent le paywall au bon moment, peuvent s'abonner en Premium mensuel (5€/mois) ou Pro annuel (45€/an) via StoreKit 2, démarrer un trial gratuit. Les abonnés accèdent aux consultations illimitées.
 **FRs couverts :** FR16, FR17, FR18, FR19, FR20, FR21
