@@ -23,6 +23,10 @@ Mobile code is TypeScript with Expo ESLint defaults. Prefer PascalCase for React
 
 Mobile tests use Jest with `jest-expo` and `@testing-library/react-native`; keep tests beside the source file. Backend tests use pytest and coverage, with unit tests in `backend/tests/` and broader flow tests in `backend/tests/features/`. Before opening a PR, run `npm run validate` for mobile changes and `make validate` for backend changes.
 
+## Dev Tracking — TODO.md
+
+`TODO.md` at the repository root is the **dev notebook**: pending manual tests, open story status (implemented / to merge / backlog), in-progress agent tasks, and quick notes (tokens, useful commands, decisions). Read it at the start of each session to resume where work left off. Update it after completing a story or closing a chantier.
+
 ## Commit & Pull Request Guidelines
 
 Recent history uses Conventional Commit prefixes such as `docs:`, `chore:`, and scoped forms like `docs(algo):`. Keep messages imperative and focused, for example `feat: add peak favorites endpoint`. For submodule work, commit inside the submodule first, then update the root submodule reference with a `chore:` commit. PRs should state the affected area (`mobile`, `backend`, `infra`, or root docs), summarize behavior changes, link the related issue or story, and include screenshots for UI changes.

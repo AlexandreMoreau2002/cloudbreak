@@ -1,8 +1,10 @@
 # BMAD config (local uniquement, non versionné)
 _bmad/
 
-# Claude 
+# Claude
 .claude/commands/*
+.claude/skills/
+.claude/worktrees/
 
 # OS
 .DS_Store
@@ -12,3 +14,7 @@ _bmad/
 **/.env
 
 .vscode/
+# Added by code-review-graph
+.code-review-graph/
+
+TODO.md

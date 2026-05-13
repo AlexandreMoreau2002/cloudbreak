@@ -68,13 +68,13 @@ development_status:
   # EPIC 3: Score Mer de Nuage & Consultation de Prévision
   # FRs: FR1-FR11, FR38
   # ─────────────────────────────────────────────────────────────
-  epic-3: backlog
-  3-1-algorithme-score-endpoint-api-score: backlog
-  3-2-seed-base-donnees-sommets: backlog
-  3-3-recherche-sommet-favoris: backlog
-  3-4-ecran-principal-scorecard-affichage-verdict: backlog
-  3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: backlog
-  3-6-message-contextuel-hors-saison-deep-link-partage: backlog
+  epic-3: in-progress
+  3-1-algorithme-score-endpoint-api-score: done
+  3-2-seed-base-donnees-sommets: done
+  3-3-recherche-sommet-favoris: done
+  3-4-ecran-principal-scorecard-affichage-verdict: done
+  3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: done
+  3-6-message-contextuel-hors-saison-deep-link-partage: deferred  # blocké par domaine + Apple config
   epic-3-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
