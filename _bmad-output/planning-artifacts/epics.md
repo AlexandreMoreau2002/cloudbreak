@@ -38,11 +38,11 @@ FR15 : L'utilisateur peut accorder ou refuser la géolocalisation sans blocage d
 FR16 : L'utilisateur non-payant peut effectuer 1 consultation de score par jour
 FR17 : L'utilisateur voit un paywall naturel au 2e check quotidien avec message de conversion
 FR18 : L'utilisateur peut s'abonner en Premium mensuel (5€/mois) via StoreKit 2
-FR19 : L'utilisateur peut s'abonner en Pro annuel (45€/an) via StoreKit 2
-FR20 : L'utilisateur Premium/Pro peut effectuer des consultations illimitées
+FR19 : L'utilisateur peut s'abonner en Premium annuel (45€/an) via StoreKit 2
+FR20 : L'utilisateur Premium peut effectuer des consultations illimitées
 FR21 : L'utilisateur peut démarrer une période d'essai gratuit avant de s'abonner
-FR22 : L'utilisateur Premium/Pro reçoit des alertes push proactives sur ses sommets favoris quand les conditions sont idéales
-FR23 : L'utilisateur Premium/Pro reçoit des alertes push régionales quand une mer de nuage est prévue dans sa région
+FR22 : L'utilisateur Premium reçoit des alertes push proactives sur ses sommets favoris quand les conditions sont idéales
+FR23 : L'utilisateur Premium reçoit des alertes push régionales quand une mer de nuage est prévue dans sa région
 FR24 : L'utilisateur reçoit une notification GPS à l'arrivée à proximité d'un sommet consulté
 FR25 : L'utilisateur peut configurer ou désactiver chaque type de notification indépendamment
 FR26 : L'utilisateur peut confirmer ou infirmer la prévision depuis le terrain (oui/non)
@@ -155,11 +155,11 @@ FR15 → Epic 2 — Géolocalisation accordée/refusée sans blocage
 FR16 → Epic 4 — Limite 1 consultation/jour utilisateur gratuit
 FR17 → Epic 4 — Paywall naturel au 2e check avec message conversion
 FR18 → Epic 4 — Abonnement Premium mensuel 5€/mois (StoreKit 2)
-FR19 → Epic 4 — Abonnement Pro annuel 45€/an (StoreKit 2)
-FR20 → Epic 4 — Consultations illimitées Premium/Pro
+FR19 → Epic 4 — Abonnement Premium annuel 45€/an (StoreKit 2)
+FR20 → Epic 4 — Consultations illimitées Premium
 FR21 → Epic 4 — Trial gratuit avant abonnement
-FR22 → Epic 5 — Alertes push favoris (conditions idéales) — Premium/Pro
-FR23 → Epic 5 — Alertes push régionales mer de nuage — Premium/Pro
+FR22 → Epic 5 — Alertes push favoris (conditions idéales) — Premium
+FR23 → Epic 5 — Alertes push régionales mer de nuage — Premium
 FR24 → Epic 5 — Notification GPS à l'arrivée au sommet consulté
 FR25 → Epic 5 — Configuration/désactivation notifications par type
 FR26 → Epic 6 — Confirmation/infirmation prévision depuis terrain
@@ -751,37 +751,29 @@ So that I understand the value of upgrading before being asked to pay.
 **Given** `PaywallScreen`
 **When** il s'affiche
 **Then** le message est formulé en bénéfice : "Débloquer les prévisions illimitées"
-**And** deux options sont visibles : "Premium — 5€/mois" et "Pro — 45€/an"
+**And** deux options sont visibles : "Mensuel — 5€/mois" et "Annuel — 45€/an" (plan unique : Premium)
 **And** "Essai gratuit 7 jours" est mis en avant visuellement
-
-**Given** un utilisateur gratuit sur l'écran principal
-**When** il peut encore faire 1 check
-**Then** un compteur discret "1 prévision gratuite restante aujourd'hui" est visible sous le score
 
 ---
 
-### Story 4.3: Abonnements StoreKit 2 (Premium & Pro)
+### Story 4.3: Abonnements StoreKit 2 (Premium mensuel & annuel)
 
 As a user,
-I want to subscribe to Premium or Pro via Apple In-App Purchase,
+I want to subscribe to Premium via Apple In-App Purchase (monthly or annual),
 So that I get unlimited forecasts with native, secure payment.
 
 **Acceptance Criteria:**
 
 **Given** `PaywallScreen` affiché
-**When** l'utilisateur appuie sur "Premium — 5€/mois"
+**When** l'utilisateur choisit "Mensuel — 5€/mois" ou "Annuel — 45€/an"
 **Then** StoreKit 2 déclenche le sheet de paiement natif iOS
 **And** Apple gère la transaction (aucun numéro de carte dans l'app)
 
 **Given** la transaction StoreKit 2 réussie
 **When** l'app reçoit le receipt
 **Then** elle appelle `POST /api/v1/user/subscription/verify` avec le receipt encodé
-**And** le backend vérifie la receipt Apple (sandbox en dev, production en prod) et met à jour `subscriptions` en DB
+**And** le backend vérifie la receipt Apple (sandbox en dev, production en prod) et met à jour `subscriptions` en DB avec `plan: "premium"`
 **And** `SubscriptionContext` est mis à jour → quota Redis ignoré pour cet utilisateur
-
-**Given** l'abonnement Pro annuel (45€/an)
-**When** il est souscrit
-**Then** le même flow s'applique avec `plan: "pro"` en DB
 
 **Given** un utilisateur en trial gratuit (FR21)
 **When** il active le trial
