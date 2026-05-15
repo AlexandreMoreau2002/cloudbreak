@@ -10,7 +10,7 @@
   - Page profil redesignée (user card, banner pro, préférences apparence/langue)
   - PaywallContext partagé entre tous les onglets
   - Sandbox CloudLayerViz extrait vers `/sandbox`
-  - 416 tests ✅, TypeScript clean ✅
+  - 432 tests ✅, coverage mobile 100% ✅, TypeScript clean ✅
 
 ---
 

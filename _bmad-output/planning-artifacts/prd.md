@@ -127,6 +127,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - Dashboard monitoring évolué + stats business visuelles
 - **Contribution utilisateur de spots** : l'user soumet coordonnées GPS + nom depuis l'app → LLM (Claude Haiku) normalise (slug, capitalisation, déduplication probable) → altitude via Open-Meteo Elevation → insertion en DB avec modération légère
 - **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
+- **Refonte visuelle FavoritesGrid** : la grille de favoris sur l'écran d'accueil (état vide et avec sommet) est fonctionnelle mais minimaliste — remplacer par un design plus riche (score du jour visible sur chaque carte, score coloré, massif affiché, style cohérent avec la ScoreCard) aligné sur la proposition Claude Design
 
 ### Vision (Phase 3)
 

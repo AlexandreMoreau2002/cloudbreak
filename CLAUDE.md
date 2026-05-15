@@ -53,23 +53,43 @@ L'algorithme de score tourne **côté serveur uniquement** — modifiable sans m
 
 ### Score mer de nuage
 
+**`cloud_base`** : calculé via méthode Skew-T à partir des données de température et de point de rosée — ce n'est pas un champ direct Open-Meteo.
+
 **Conditions bloquantes (éliminatoires — verdict `"none"`, score 0) :**
 1. `cloud_base >= peak_altitude` → nuages au-dessus ou au niveau du sommet → mer de nuage physiquement impossible
-2. `cloud_cover_low < 20%` → ciel trop dégagé → pas assez de nuages bas
+2. `cloud_cover_low < 45%` → couche basse trop fragmentée → pas assez de nuages bas pour scorer
 
 **Score conditionnel (seulement si aucune condition bloquante) :**
 
 ```python
 score = (
     0.35 * cloud_base_score    # nuages bien sous le sommet
-  + 0.20 * inversion_score     # T(850hPa) - T(925hPa) > 0 → inversion thermique
+  + 0.20 * inversion_score     # T(850hPa) - T(925hPa) → inversion thermique
   + 0.20 * humidity_score      # humidité relative au sol
   + 0.15 * wind_score          # vent faible = nuages stables
   + 0.10 * pressure_score      # anticyclone = conditions stables
 )
-# Pas de coefficient saisonnier — la présence/absence de nuages bas détermine le verdict.
-# score → probabilité % → verdict "none" | "high" (≥70) | "medium" (40-69) | "low" (<40)
+# score → probabilité % → verdict "none" | "high" | "medium" (40-69) | "low" (<40)
 ```
+
+**Système de caps (`_apply_score_caps`) — appliqué après le score brut, avant le verdict :**
+
+| Condition | Cap absolu | Facteur multiplicatif |
+|-----------|------------|----------------------|
+| Pas d'inversion (T850 ≤ T925) | 39 | ×0.55 |
+| `cloud_base` > sommet − 150 m | 55 | ×0.78 |
+| `cloud_cover_low` < 55% | 55 | ×0.82 |
+| Vent ≥ 20 km/h | 39 | ×0.60 |
+
+Le score final est `min(cap_absolu, int(round(score_brut × facteur)))` pour chaque condition active.
+
+**Verdict `"high"` — conditions strictes (toutes requises) :**
+- `final_score >= 70` (après caps)
+- Inversion détectée : `T(850hPa) > T(925hPa)`
+- `cloud_base <= peak_altitude − 150 m` (nuages bien sous le sommet)
+- `cloud_cover_low >= 55%`
+
+Si `final_score >= 70` mais une de ces conditions manque, le verdict tombe à `"medium"`.
 
 ---
 
