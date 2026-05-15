@@ -502,7 +502,8 @@ So that I exercise my right to erasure under GDPR.
 
 ---
 
-✅ **Epic 2 complète — 4 stories (couverture FR12, FR13, FR14, FR15)**
+✅ **Epic 2 spécification complète — 4 stories rédigées (couverture FR12, FR13, FR14, FR15)**
+> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store)
 
 ---
 
