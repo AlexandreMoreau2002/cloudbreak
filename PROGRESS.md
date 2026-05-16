@@ -65,6 +65,16 @@
 
 ---
 
+## Backlog technique (post-MVP)
+
+- 🔲 Provider Météo-France AROME — champ `ceiling` (base nuageuse directe, résolution 1.3km) pour remplacer/valider l'estimation Skew-T actuelle. Bloquant pour calibration terrain.
+- 🔲 Refonte visuelle FavoritesGrid — score du jour visible sur chaque carte, couleur, massif
+- 🔲 Persistance `selectedPeak` en AsyncStorage — survie au kill complet de l'app
+- 🔲 Sign in with Apple — V2, seulement si on ajoute un autre provider social
+- 🔲 Onboarding narratif (Story 7.1) — post-MVP
+
+---
+
 ## Hors scope / UI scaffolds (mergés)
 
 - ✅ Page profil redesignée + composants (UserCard, ProBanner, SettingsRow)
