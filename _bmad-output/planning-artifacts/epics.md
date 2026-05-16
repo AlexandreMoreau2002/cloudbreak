@@ -97,10 +97,14 @@ NFR30 : QA teste les textes longs : noms de sommets > 25 caractères, messages d
 **Architecture Technique :**
 - Starter template : `npx create-expo-app mobile --template default@sdk-55` — Expo SDK 55, React Native 0.83.2, New Architecture uniquement (Epic 1, Story 1)
 - Backend FastAPI 0.135 + Python 3.12 + Pydantic v2 + SQLAlchemy async + Alembic — setup initial (Epic 1)
-- Docker Compose stack production : `api` (Gunicorn+Uvicorn) + `db` (PostgreSQL 16) + `redis` (Redis 7) + `caddy` (HTTPS auto Let's Encrypt)
-- `docker-compose.dev.yml` pour environnement local (db + redis uniquement)
-- CI/CD GitHub Actions : pipeline backend (ruff + mypy + pytest + docker build + deploy SSH VPS) et pipeline mobile (eslint + tsc + jest + expo export) — < 5min
-- VPS OVH Ubuntu 24.04 LTS — déploiement via SSH + `docker compose pull && up -d`
+- **Infra prod : Dokploy** (self-hosted PaaS sur VPS OVH) — remplace Docker Compose manuel + Caddy + deploy.sh
+  - Traefik intégré (reverse proxy + Let's Encrypt auto)
+  - UI web pour gérer services, env vars, déploiements
+  - Webhook GitHub → redeploy automatique sur push `main`
+  - Services managés : `api` (Gunicorn+Uvicorn), `db` (PostgreSQL 16), `redis` (Redis 7)
+- `docker-compose.dev.yml` pour environnement local (db + redis uniquement) — inchangé
+- CI/CD GitHub Actions : pipeline backend (ruff + mypy + pytest + docker build) et pipeline mobile (eslint + tsc + jest + expo export) — < 5min (le deploy est géré par Dokploy via webhook, pas par GitHub Actions)
+- VPS OVH Ubuntu 24.04 LTS
 - BetterStack free : heartbeat `/health` 60s → alertes SMS/email < 2min
 - Interface `WeatherProvider` abstraite dès J1 — `base.py` + `open_meteo.py` (provider principal, gratuit sans clé) + `meteo_france.py` (provider secondaire FR)
 - JWT Supabase validé localement côté backend (clé publique) — zéro appel réseau Supabase par requête
@@ -221,32 +225,41 @@ Les développeurs peuvent coder, tester et déployer en local et en CI/CD sur VP
 
 ---
 
-### Story 1.1: Setup Infra VPS & Docker Compose Production
+### Story 1.1: Setup Infra VPS & Dokploy Production
 
 As a developer (Alex),
-I want a reproducible Docker Compose stack deployed on OVH VPS with HTTPS,
-So that the application can be deployed and accessible securely from day one.
+I want Dokploy installed on an OVH VPS to manage deployments via a web UI with HTTPS auto,
+So that I can deploy, redeploy, and monitor services without manual SSH + Docker Compose commands.
+
+> **Infra retenue : Dokploy** (self-hosted PaaS) — remplace le setup manuel Docker Compose + Caddy + deploy.sh.
+> Dokploy intègre Traefik (reverse proxy + Let's Encrypt auto), une UI web pour gérer les apps/envs/déploiements,
+> et supporte les déploiements Git-based (webhook push → redeploy automatique).
 
 **Acceptance Criteria:**
 
-**Given** un VPS OVH Ubuntu 24.04 LTS avec Docker installé
-**When** on exécute `docker compose up -d` depuis `infra/`
-**Then** les 4 services démarrent : `api` (FastAPI), `db` (PostgreSQL 16), `redis` (Redis 7), `caddy` (reverse proxy)
-**And** Caddy obtient automatiquement un certificat Let's Encrypt valide
+**Given** un VPS OVH Ubuntu 24.04 LTS
+**When** on exécute le script d'installation Dokploy (`curl -sSL https://dokploy.com/install.sh | sh`)
+**Then** Dokploy est accessible sur `https://{domain}:3000` avec interface web
+**And** Traefik est opérationnel comme reverse proxy avec certificat Let's Encrypt valide
+
+**Given** Dokploy installé et configuré
+**When** on crée un projet "cloudbreak" avec les services `api`, `db`, `redis`
+**Then** chaque service est configuré avec ses variables d'environnement (depuis `.env.example`)
 **And** `GET https://{domain}/health` répond 200
 
-**Given** le stack est en production
-**When** on redémarre le VPS
-**Then** tous les services redémarrent automatiquement (`restart: unless-stopped`)
+**Given** un push sur la branche `main` de `cloudbreak-backend`
+**When** le webhook GitHub est configuré dans Dokploy
+**Then** Dokploy redéploie automatiquement le service `api` en < 3 minutes
 
-**Given** `infra/scripts/deploy.sh`
-**When** on l'exécute via SSH
-**Then** il effectue `docker compose pull && docker compose up -d` et termine sans erreur
+**Given** le VPS redémarre
+**When** Docker redémarre
+**Then** Dokploy et tous les services redémarrent automatiquement
 
-**Given** les fichiers de configuration
-**When** on inspecte le repo
-**Then** `infra/docker-compose.yml`, `infra/docker-compose.dev.yml`, `infra/Caddyfile`, `infra/.env.example` et `infra/scripts/deploy.sh` existent
+**Given** les fichiers de configuration locaux (dev)
+**When** on inspecte le repo `infra/`
+**Then** `infra/docker-compose.dev.yml` (db + redis uniquement) et `infra/.env.example` existent
 **And** aucun secret n'est committé (`.env` dans `.gitignore`)
+**And** `infra/README.md` documente la procédure d'installation Dokploy + configuration initiale
 
 ---
 
@@ -330,7 +343,8 @@ So that regressions are detected in < 5 minutes and production is always deploya
 
 **Given** un push sur `main` uniquement dans `backend/`
 **When** tous les jobs quality + build sont verts
-**Then** le job `deploy` se connecte au VPS OVH via SSH et exécute `infra/scripts/deploy.sh`
+**Then** GitHub Actions notifie Dokploy via webhook → Dokploy redéploie le service `api` automatiquement
+**And** aucun secret SSH VPS n'est nécessaire dans GitHub Actions (Dokploy gère le deploy)
 
 **Given** un push sur `main` ou `develop` dans `mobile/`
 **When** le workflow `.github/workflows/mobile.yml` s'exécute
@@ -339,11 +353,12 @@ So that regressions are detected in < 5 minutes and production is always deploya
 
 **Given** un test ou lint qui échoue
 **When** le pipeline s'exécute
-**Then** le job échoue immédiatement et aucun déploiement n'est déclenché
+**Then** le job échoue immédiatement et Dokploy n'est pas notifié (pas de redeploy)
 
 **Given** les secrets GitHub Actions
 **When** on inspecte la configuration
-**Then** `VPS_SSH_KEY`, `VPS_HOST`, `DATABASE_URL`, `WEATHER_API_KEY` sont configurés comme secrets (pas en clair)
+**Then** `DOKPLOY_WEBHOOK_URL`, `DATABASE_URL` sont configurés comme secrets (pas en clair)
+**And** aucun `VPS_SSH_KEY` n'est requis — le deploy passe par le webhook Dokploy
 
 ---
 

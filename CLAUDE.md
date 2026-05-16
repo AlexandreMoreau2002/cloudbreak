@@ -28,8 +28,7 @@ Stack retenue :
 - **Analytics** : PostHog
 - **Paiement** : StoreKit 2 (iOS In-App Purchase — pas Stripe)
 - **API météo** : Open-Meteo (provider principal, gratuit sans clé) / Météo-France (provider secondaire FR, résolution AROME 1.3km) — interface abstraite swappable
-- **Reverse proxy** : Caddy 2 (HTTPS Let's Encrypt automatique)
-- **Infra** : VPS OVH Ubuntu 24.04, Docker Compose
+- **Infra prod** : Dokploy (self-hosted PaaS) sur VPS OVH Ubuntu 24.04 — Traefik intégré (HTTPS Let's Encrypt auto), UI web, webhook GitHub → redeploy auto. Remplace Docker Compose + Caddy + deploy.sh manuel.
 
 ---
 
@@ -131,9 +130,10 @@ cloudbreak/              ← repo racine  (github.com/toi/cloudbreak)
 │   ├── tests/
 │   └── docs/                # documentation technique par story
 └── infra/                   ← submodule (github.com/toi/cloudbreak-infra)
-    ├── docker-compose.yml       # prod : api + db + redis + caddy
     ├── docker-compose.dev.yml   # dev local : api + db + redis (hot reload)
-    └── Caddyfile
+    ├── .env.example             # template variables d'environnement
+    └── README.md                # procédure installation Dokploy + config initiale
+    # Note : pas de docker-compose.yml prod ni Caddyfile — le prod est géré par Dokploy (UI web + Traefik)
 ```
 
 ### Git Flow — branches (submodules uniquement)
