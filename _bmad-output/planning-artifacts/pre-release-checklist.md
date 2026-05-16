@@ -3,11 +3,12 @@
 ## Dépendances externes — À régler avant release
 
 ### 🌐 Infrastructure & Domaine
-- [ ] **VPS OVH réservé** — Ubuntu 24.04 avec resources suffisantes (cf. CLAUDE.md infra)
+- [ ] **VPS OVH réservé** — Ubuntu 24.04, minimum 4GB RAM (FastAPI + PostgreSQL + Redis + Traefik + Dokploy)
+- [ ] **Dokploy installé** — `curl -sSL https://dokploy.com/install.sh | sh` — remplace Caddy + Docker Compose manuel
 - [ ] **Domaine principale** — ex: `cloudbreak.fr` ou `merdenua.ge`
 - [ ] **DNS configuré** — pointage vers VPS
-- [ ] **Certificat SSL/TLS** — Let's Encrypt via Caddy 2 (automatique via Caddyfile)
-- [ ] **Reverse proxy Caddy** — Caddyfile finalisé pour multi-domaines (snoroc.fr + cloudbreak.fr envisageable)
+- [ ] **Certificat SSL/TLS** — Let's Encrypt via Traefik (géré automatiquement par Dokploy)
+- [ ] **App backend configurée dans Dokploy** — docker-compose.yml importé, env vars saisies dans l'UI, auto-deploy sur push `main`
 
 ### 🔒 Apple Developer Program
 - [ ] **Compte Apple Developer** — inscription et souscription ($99/an)

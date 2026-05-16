@@ -118,6 +118,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 
 ### V2 — Growth (Phase 2)
 
+- **Anonymisation compte à la suppression** : remplacer le hard delete actuel par un soft delete anonymisé (email → `deleted@deleted.com`, user_id remplacé par hash dans toutes les tables liées) pour conserver les métriques de churn (durée avant suppression, plan au moment du départ, etc.) tout en restant conforme RGPD — à implémenter quand les tables `predictions` et `terrain_validations` seront créées
 - Feed social par sommet (photos + conditions)
 - Mode découverte par région ("4 sommets au-dessus des nuages ce weekend")
 - Timeline visuelle altitude de la couche sur 12-24h

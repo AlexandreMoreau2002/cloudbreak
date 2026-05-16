@@ -21,7 +21,6 @@
             "type": "command",
             "command": "code-review-graph status",
             "timeout": 10
-          }
         ]
       }
     ]

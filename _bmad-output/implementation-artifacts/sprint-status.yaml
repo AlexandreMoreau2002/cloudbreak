@@ -61,7 +61,7 @@ development_status:
   2-1-inscription-connexion-utilisateur-supabase-auth: done
   2-2-gestion-preferences-notifications: backlog
   2-3-permission-geolocalisation-opt-in-sans-blocage: backlog
-  2-4-suppression-compte-donnees-personnelles-rgpd: backlog
+  2-4-suppression-compte-donnees-personnelles-rgpd: done
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

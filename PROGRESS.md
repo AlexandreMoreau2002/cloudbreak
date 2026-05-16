@@ -20,7 +20,7 @@
 - ✅ 2.1 Inscription et connexion (Supabase Auth)
 - ⏸ 2.2 Préférences notifications *(dépend Epic 5)*
 - ⏸ 2.3 Permission géolocalisation opt-in *(dépend Epic 5)*
-- 🔲 2.4 Suppression compte + données RGPD ⚠️ *bloquant App Store*
+- ✅ 2.4 Suppression compte + données RGPD ⚠️ *bloquant App Store*
 
 ---
 
