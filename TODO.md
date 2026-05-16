@@ -6,12 +6,7 @@
 
 ## En cours
 
-- [ ] **PR #13 — feature/profile-page-ui** — à merger sur develop
-  - Page profil redesignée (user card, banner pro, préférences apparence/langue)
-  - PaywallContext partagé entre tous les onglets
-  - Sandbox CloudLayerViz extrait vers `/sandbox`
-  - 450 tests ✅, coverage mobile 100% ✅, TypeScript clean ✅, lint clean ✅
-  - 201 tests backend ✅, coverage backend 100% ✅, Ruff clean ✅, mypy clean ✅
+_Rien en cours — toutes les stories MVP actives sont mergées._
 
 ---
 
@@ -20,7 +15,6 @@
 - [ ] **Story 4.3** — StoreKit 2 paiement réel — le banner paywall est là, mais le bouton ne fait rien
 - [ ] **Story 7.1** — Onboarding narratif (3 slides, premier lancement, flag AsyncStorage) — post-MVP
 - [ ] **Story 2.2** — Préférences notifications (toggles sur page profil)
-- [ ] **Story 2.4** — Suppression compte RGPD
 - [ ] **Story 3.6** — Deep link partage — bloqué par domaine + Apple Universal Links config
 
 ---
@@ -41,6 +35,7 @@
 
 | Story | PR | Date |
 |---|---|---|
+| Story 2.4 — Suppression compte RGPD | backend PR #11, mobile PR #14 | 2026-05-16 |
 | Story 4.1 — Quota freemium backend | backend PR #10 | session précédente |
 | Story 4.2 — Paywall mobile | mobile PR #12 | session précédente |
 | Story 3.4 — ScoreCard + écran principal | — | session précédente |
