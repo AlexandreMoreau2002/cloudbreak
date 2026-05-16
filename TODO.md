@@ -10,12 +10,22 @@ _Rien en cours — toutes les stories MVP actives sont mergées._
 
 ---
 
-## Backlog stories (ordre de priorité MVP)
+## Prochaines stories faisables (pure dev, sans Apple Dev ni VPS)
 
-- [ ] **Story 4.3** — StoreKit 2 paiement réel — le banner paywall est là, mais le bouton ne fait rien
-- [ ] **Story 7.1** — Onboarding narratif (3 slides, premier lancement, flag AsyncStorage) — post-MVP
-- [ ] **Story 2.2** — Préférences notifications (toggles sur page profil)
-- [ ] **Story 3.6** — Deep link partage — bloqué par domaine + Apple Universal Links config
+| Story | Contenu | Complexité |
+|---|---|---|
+| **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI |
+| **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran |
+| **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait |
+| **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile |
+
+## Backlog stories (bloquées)
+
+- [ ] **Story 4.3** — StoreKit 2 paiement réel — 🔴 bloqué par compte Apple Dev (99$/an)
+- [ ] **Epic 5** — Notifications push — 🔴 bloqué par compte Apple Dev (certificats APNs)
+- [ ] **Story 2.2** — Préférences notifications — 🔴 bloqué par Epic 5
+- [ ] **Epic 1** — Infra, CI/CD, monitoring — 🔴 bloqué par VPS
+- [ ] **Story 3.6** — Deep link partage — 🔴 bloqué par domaine + Apple Universal Links config
 
 ---
 
