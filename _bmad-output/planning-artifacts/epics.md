@@ -390,7 +390,42 @@ So that I can sleep without worrying and track key product metrics from launch.
 
 ---
 
-✅ **Epic 1 complète — 5 stories (couverture FR35, FR36, FR37 + fondation technique complète)**
+---
+
+### Story 1.6: Dashboard Ops Admin — Interface Monitoring Unifiée ⏸ post-MVP
+
+> **Scope post-MVP** — Au lancement, BetterStack (uptime/latence) + PostHog (events business) + Dokploy UI (santé services) couvrent les besoins opérationnels sans code supplémentaire. Cette story devient pertinente quand l'app tourne en prod avec des volumes réels.
+
+As an administrator (Alex),
+I want a unified ops dashboard in Cloudbreak's visual identity,
+So that I can monitor all production metrics from a single interface without switching between BetterStack, PostHog, and Dokploy.
+
+**Stack envisagée :**
+- Frontend : Next.js (ou React + Vite) déployé comme service dans Dokploy, DA Cloudbreak dark mode
+- Backend : endpoint `GET /admin/metrics` protégé (token admin, jamais exposé mobile)
+- Sources : FastAPI logs → métriques agrégées, Redis INFO (cache hits/misses), PostHog API (conversions, DAU), Traefik metrics
+
+**Acceptance Criteria:**
+
+**Given** le dashboard ops accessible sur `https://ops.{domain}`
+**When** l'administrateur s'authentifie
+**Then** il voit en temps réel : taux réponses 200/5xx, latence P50/P95/P99, requêtes/min (graphe 24h), cache météo hit rate, utilisateurs actifs, conversions Pro 7j
+
+**Given** la section Services
+**When** le dashboard se charge
+**Then** chaque service (FastAPI, PostgreSQL, Redis, Traefik, PostHog) affiche son uptime % et latence moyenne
+
+**Given** un service qui passe en erreur (uptime < 99%)
+**When** le dashboard est ouvert
+**Then** le service est mis en évidence (indicateur rouge) avec timestamp du dernier incident
+
+**Given** la section Quotas utilisateurs
+**When** l'admin consulte le dashboard
+**Then** il voit la distribution Free/Premium et le taux de dépassement de quota quotidien
+
+---
+
+✅ **Epic 1 — 5 stories MVP + 1 story post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
 
 ---
 

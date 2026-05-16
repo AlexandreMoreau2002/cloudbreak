@@ -125,7 +125,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - Résumé météo général enrichi hors-saison
 - Amélioration algo par régression logistique sur données terrain
 - Android
-- Dashboard monitoring évolué + stats business visuelles
+- **Dashboard Ops Admin web** : interface admin unifiée (Next.js, DA Cloudbreak dark) déployée comme service dans Dokploy — métriques temps réel (réponses 200/5xx, latence P50/P95/P99, requêtes/min, cache météo hits/misses, quotas utilisateurs), statut services (FastAPI, PostgreSQL, Redis, Traefik), conversions Pro et utilisateurs actifs via PostHog API. Données exposées par un endpoint `/admin/metrics` protégé côté backend. BetterStack + PostHog natifs suffisent au MVP — ce dashboard est pertinent quand l'app a des volumes réels à visualiser.
 - **Contribution utilisateur de spots** : l'user soumet coordonnées GPS + nom depuis l'app → LLM (Claude Haiku) normalise (slug, capitalisation, déduplication probable) → altitude via Open-Meteo Elevation → insertion en DB avec modération légère
 - **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
 - **Refonte visuelle FavoritesGrid** : la grille de favoris sur l'écran d'accueil (état vide et avec sommet) est fonctionnelle mais minimaliste — remplacer par un design plus riche (score du jour visible sur chaque carte, score coloré, massif affiché, style cohérent avec la ScoreCard) aligné sur la proposition Claude Design
