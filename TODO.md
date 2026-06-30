@@ -12,12 +12,14 @@ _Rien en cours — toutes les stories MVP actives sont mergées._
 
 ## Prochaines stories faisables (pure dev, sans Apple Dev ni VPS)
 
-| Story | Contenu | Complexité |
-|---|---|---|
-| **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI |
-| **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran |
-| **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait |
-| **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile |
+| Story | Contenu | Complexité | Status |
+|---|---|---|---|
+| **4.4** | Conformité Apple App Store — Privacy Policy backend, liens légaux paywall, Restore Purchases stub, section Légal profil | 🟢 Simple | `ready-for-dev` |
+| **7.3** | Système unifié états UI — `ErrorState`, `LoadingSpinner`, `FavoritesSkeleton`, brancher `EmptyState` | 🟢 Simple | `ready-for-dev` |
+| **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
+| **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
+| **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait | `backlog` |
+| **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile | `backlog` |
 
 ## Backlog stories (bloquées)
 

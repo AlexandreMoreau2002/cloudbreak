@@ -47,7 +47,7 @@ development_status:
   # ─────────────────────────────────────────────────────────────
   epic-1: backlog
   1-1-setup-infra-vps-docker-compose-production: backlog
-  1-2-setup-backend-fastapi-squelette-complet: backlog
+  1-2-setup-backend-fastapi-squelette-complet: backlog< 
   1-3-setup-mobile-expo-squelette-design-system: backlog
   1-4-cicd-github-actions-backend-mobile: backlog
   1-5-monitoring-betterstack-posthog-initial: backlog
@@ -85,6 +85,7 @@ development_status:
   4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
   4-3-abonnements-storekit-2-premium-pro: backlog
+  4-4-conformite-apple-app-store: ready-for-dev
   epic-4-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -113,4 +114,28 @@ development_status:
   epic-7: backlog
   7-1-parcours-onboarding-narratif: backlog
   7-2-mode-offline-light-cache-ttl: backlog
+  7-3-systeme-unifie-etats-ui: ready-for-dev
   epic-7-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # EPIC 8: Growth & Mécaniques Virales (V2 — post-MVP)
+  # Refs: go-to-market.md, prd.md section V2
+  # Dépend de Epic 6 (validation terrain) pour les badges
+  # ─────────────────────────────────────────────────────────────
+  epic-8: backlog
+  8-1-carte-prediction-partageable: backlog          # V1.1 — priorité haute, faible complexité
+  8-2-systeme-parrainage: backlog                    # V1.1 — 1 mois Premium pour les deux
+  8-3-badges-et-niveaux-gamification: backlog        # V1.2 — 6 niveaux + 15 badges terrain
+  8-4-replay-prediction-photo-terrain: backlog       # V2 — prédiction vs réalité partageable
+  8-5-recap-annuel-tes-nuages: backlog               # V2 — Spotify Wrapped, jan 2027
+  epic-8-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # EPIC 9: Landing Page & Présence Web (V2 — pré-lancement)
+  # Refs: aso-landing-page.md, go-to-market.md
+  # Dépend de : domaine cloudbreak.fr réservé
+  # ─────────────────────────────────────────────────────────────
+  epic-9: backlog
+  9-1-landing-page-cloudbreak-fr: backlog            # HTML/CSS statique sur Dokploy, deep links, SEO
+  9-2-optimisation-aso-app-store: backlog            # Titre / sous-titre / keywords / description / screenshots
+  epic-9-retrospective: optional

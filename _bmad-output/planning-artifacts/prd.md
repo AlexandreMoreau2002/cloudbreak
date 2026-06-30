@@ -118,6 +118,11 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 
 ### V2 — Growth (Phase 2)
 
+- **Carte de prédiction partageable** : image générée automatiquement (sommet + score + verdict + date + logo Cloudbreak) prête pour Instagram/TikTok/Stories — bouton "Partager" sur l'écran de score, partage via feuille native iOS. C'est le principal vecteur de croissance organique.
+- **Parrainage** : chaque user Premium génère un code unique → l'invité entre le code → les deux reçoivent 1 mois Premium gratuit. Activation après la première validation terrain de l'invité (anti-abus). Max 5 filleuls par compte.
+- **Badges & niveaux** : hauts faits ancrés dans l'activité réelle (pas l'utilisation de l'app). Niveaux basés sur validations terrain : Explorateur → Chasseur de nuages → Guetteur des cimes → Maître des sommets → Architecte des nuages. Badges géographiques (massifs), temporels (saisons), terrain (altitude, heure). Affichés dans l'onglet Profil.
+- **Replay de prédiction** : si l'utilisateur a joint une photo terrain, l'app génère une image "prédiction vs réalité" (score d'avant + photo terrain + "Confirmé ✅") — très partageable sur les réseaux sociaux.
+- **Récap annuel "Tes nuages [année]"** : notification push début janvier, récap des validations, massifs visités, meilleure prédiction, niveau atteint — format scrollable in-app + partage natif. Timing : V2 pour janvier 2027.
 - **Anonymisation compte à la suppression** : remplacer le hard delete actuel par un soft delete anonymisé (email → `deleted@deleted.com`, user_id remplacé par hash dans toutes les tables liées) pour conserver les métriques de churn (durée avant suppression, plan au moment du départ, etc.) tout en restant conforme RGPD — à implémenter quand les tables `predictions` et `terrain_validations` seront créées
 - Feed social par sommet (photos + conditions)
 - Mode découverte par région ("4 sommets au-dessus des nuages ce weekend")

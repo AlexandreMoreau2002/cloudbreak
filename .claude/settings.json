@@ -21,6 +21,18 @@
             "type": "command",
             "command": "code-review-graph status",
             "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"🗂 INDEX.md — pense à le mettre à jour si tu as créé ou modifié des docs cette session.\"}'",
+            "timeout": 5
+          }
         ]
       }
     ]

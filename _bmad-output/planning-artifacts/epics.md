@@ -837,7 +837,37 @@ So that I get unlimited forecasts with native, secure payment.
 
 ---
 
-✅ **Epic 4 complète — 3 stories (couverture FR16–FR21)**
+### Story 4.4: Conformité Apple App Store — Legal, Paywall & Restauration achats
+
+En tant que solo dev qui soumet l'app sur l'App Store,
+je veux que toutes les exigences légales et de conformité Apple soient implémentées avant la soumission,
+afin que l'app soit acceptée dès la première review et ne soit jamais bannie pour non-conformité.
+
+**Acceptance Criteria:**
+
+**Given** le backend démarré,
+**When** `GET /legal/privacy` est appelé,
+**Then** une page HTML valide avec la Privacy Policy est retournée.
+**And** `GET /legal/cgu` retourne les CGU de même.
+
+**Given** l'utilisateur sur l'écran Profil,
+**When** il scrolle jusqu'à la section "Légal",
+**Then** il voit "Politique de confidentialité", "Conditions d'utilisation", "Support" — chacun ouvre le lien dans le navigateur système.
+
+**Given** le paywall affiché,
+**When** l'utilisateur le consulte,
+**Then** des liens "Politique de confidentialité" et "CGU" sont visibles sous le CTA.
+**And** un bouton "Restaurer les achats" est présent (stub en attente de story 4.3).
+
+**Given** la story complétée,
+**Then** `backend/docs/security.md` est mis à jour avec la checklist App Privacy Apple (SDK + données déclarées).
+
+**Source :** Notion [🛡️ Apple App Store — Risques de bannissement & conformité]
+**Story file :** `_bmad-output/implementation-artifacts/4-4-conformite-apple-app-store.md`
+
+---
+
+✅ **Epic 4 complète — 4 stories (couverture FR16–FR21 + conformité App Store)**
 
 ---
 
@@ -1066,6 +1096,255 @@ So that I can still check conditions on the mountain without signal.
 **Given** le réseau revient
 **When** l'utilisateur pull-to-refresh
 **Then** les données fraîches sont récupérées et le bandeau disparaît
+
+---
+
+### Story 7.3: Système unifié états UI — loading, skeletons, erreurs, états vides
+
+En tant qu'utilisateur de Cloudbreak,
+je veux que tous les états transitoires de l'app soient cohérents et bien traités visuellement,
+afin que l'app paraisse finalisée et professionnelle au lancement sur l'App Store.
+
+**Contexte :** inventaire exhaustif dans `_bmad-output/planning-artifacts/PLAN-etats.md` — 15 états identifiés sur 5 screens.
+
+**Acceptance Criteria:**
+
+**Given** une erreur réseau/API sur n'importe quel screen,
+**When** `state.status === 'error'`,
+**Then** `<ErrorState />` s'affiche uniformément (icône 40px, padding `Spacing.lg`) — plus de `errorCard` inline.
+
+**Given** le chargement dans Search ou Favorites,
+**When** `state.status === 'loading'`,
+**Then** `<LoadingSpinner />` ou `<FavoritesSkeleton />` s'affiche — plus d'`ActivityIndicator` nu.
+
+**Given** la liste favoris ou résultats de recherche vides,
+**When** `state.data.length === 0`,
+**Then** `<EmptyState />` (composant existant, actuellement non branché) s'affiche.
+
+**Given** le quota dépassé sur Home,
+**Then** `<ErrorState variant="quota" />` avec CTA "Passer Premium" s'affiche.
+
+**Given** le bouton submit du login en cours de chargement,
+**Then** un spinner s'affiche à la place du texte (plus de simple changement de libellé).
+
+**Given** la modal de suppression de compte,
+**Then** le spinner utilise `colors.surface` (plus de `#fff` hardcodé).
+
+**Composants à créer :** `ErrorState`, `LoadingSpinner`, `FavoritesSkeleton`
+**Composants à brancher :** `EmptyState` (existant, jamais utilisé)
+**Story file :** `_bmad-output/implementation-artifacts/7-3-systeme-unifie-etats-ui.md`
+
+---
+
+✅ **Epic 7 — 3 stories (couverture FR30–FR34 + cohérence UX états)**
+
+---
+
+## Epic 8: Growth & Mécaniques Virales (V2)
+
+**Objectif :** Activer la croissance organique via le parrainage, la gamification et le partage natif. Toutes ces features sont post-MVP — elles s'appuient sur la boucle de validation terrain déjà en place (Epic 6).
+
+**FRs couverts :** nouveaux — voir go-to-market.md et prd.md section V2
+
+---
+
+### Story 8.1: Carte de Prédiction Partageable
+
+As a user,
+I want to share a beautiful prediction card before my hike,
+So that my followers discover Cloudbreak naturally through my content.
+
+**Acceptance Criteria:**
+
+**Given** l'utilisateur consulte un score sur l'écran principal
+**When** il appuie sur le bouton "Partager"
+**Then** une image est générée automatiquement (iOS `UIGraphicsImageRenderer`) avec : nom du sommet, altitude, score %, verdict coloré, date/heure, logo Cloudbreak discret
+**And** la feuille de partage native iOS s'ouvre avec l'image prête
+
+**Given** l'image générée
+**When** elle est partagée sur Instagram ou TikTok
+**Then** elle respecte la palette Cloudbreak (`#EFE8DC`, Josefin Sans 700) et est lisible sur fond sombre comme clair
+
+**Given** le partage complété
+**When** quelqu'un clique le lien éventuel
+**Then** il est redirigé vers la landing page cloudbreak.fr/sommet/{slug}
+
+---
+
+### Story 8.2: Système de Parrainage
+
+As a Premium user,
+I want to invite friends and earn a free month,
+So that I'm rewarded for growing the community.
+
+**Acceptance Criteria:**
+
+**Given** l'utilisateur est Premium et accède à l'onglet Profil
+**When** il appuie sur "Inviter un ami"
+**Then** un code unique de parrainage lui est affiché + bouton partage natif iOS
+
+**Given** un nouvel utilisateur entre un code de parrainage à l'inscription
+**When** il complète sa première validation terrain
+**Then** les deux comptes reçoivent 1 mois Premium gratuit
+
+**Given** le parrain a déjà 5 filleuls convertis
+**When** un 6e essaie d'utiliser son code
+**Then** le code est refusé avec message explicatif (anti-abus)
+
+**Given** le parrain n'est plus Premium au moment où le filleul valide
+**When** l'activation se déclenche
+**Then** seul le filleul reçoit le mois gratuit — le parrain est notifié qu'il doit être Premium pour en bénéficier
+
+---
+
+### Story 8.3: Badges & Niveaux de Progression
+
+As a user,
+I want to earn badges for my real outdoor achievements,
+So that the app reflects my mountain experiences, not just my app usage.
+
+**Acceptance Criteria:**
+
+**Given** l'utilisateur ouvre l'onglet Profil
+**When** il fait défiler vers le bas
+**Then** il voit sa section "Mes hauts faits" avec son niveau actuel et ses badges débloqués
+
+**Given** les niveaux : 0=Curieux / 1=Explorateur (1 val.) / 2=Chasseur de nuages (5) / 3=Guetteur des cimes (15) / 4=Maître des sommets (30) / 5=Architecte des nuages (50+)
+**When** l'utilisateur atteint un seuil
+**Then** une animation in-app se déclenche + notification locale "Nouveau niveau débloqué 🎉"
+
+**Given** les badges terrain : ☁️ Premier nuage / 📍 Chasseur local (3 sommets) / ✅ Bonne prédiction / 🌅 Lève-tôt (avant 7h) / 🌄 Crépuscule (après 19h) / 🎯 Précision (5 correctes consécutives) / 📸 Photographe (3 photos jointes)
+**When** la condition est remplie à la validation terrain
+**Then** le badge se débloque immédiatement avec animation
+
+**Given** les badges géographie : 🏔️ Alpin (>2000m) / 🌋 Volcanique / ⛰️ Pyrénéen / Vosgien / Cévenol / Jurassien / 🗺️ Grand explorateur (3 massifs)
+**When** le backend détecte la région/altitude du sommet validé
+**Then** le badge correspondant se débloque
+
+**Given** les badges saison : ❄️ Mer d'hiver (jan-fév) / 🌸 Réveil printanier (mars) / 🍂 Automne doré (oct-nov)
+**When** la validation est effectuée dans la période correspondante
+**Then** le badge se débloque
+
+**Given** les badges communauté : 🤝 Parrain (1er filleul converti) / 🌟 Ambassadeur (3 filleuls)
+**When** la conversion est confirmée côté backend
+**Then** le badge se débloque sur le compte du parrain
+
+**Note :** badges non visibles par les autres utilisateurs dans cette version (pas de profil public).
+
+---
+
+### Story 8.4: Replay de Prédiction
+
+As a user,
+I want to share a "prediction vs reality" card after my hike,
+So that I can show my followers how accurate the forecast was.
+
+**Acceptance Criteria:**
+
+**Given** l'utilisateur a validé une prédiction terrain avec photo jointe
+**When** il accède à l'historique de cette validation
+**Then** un bouton "Créer mon replay" est disponible
+
+**Given** l'utilisateur génère un replay
+**When** l'image est créée
+**Then** elle contient : score prédit + photo terrain + verdict "Confirmé ✅" ou "Infirmé ❌" + nom du sommet + date
+
+**Given** le replay partagé sur les réseaux
+**When** un non-utilisateur le voit
+**Then** il comprend immédiatement le concept de l'app (preuve sociale authentique)
+
+---
+
+### Story 8.5: Récap Annuel "Tes nuages [année]"
+
+As a user,
+I want a yearly summary of my sea of clouds experiences,
+So that I can share my mountain year and feel connected to the Cloudbreak community.
+
+**Acceptance Criteria:**
+
+**Given** le 1er janvier à 9h
+**When** l'utilisateur a effectué au moins 1 validation dans l'année écoulée
+**Then** il reçoit une notification push "Ton année Cloudbreak est prête ☁️"
+
+**Given** l'utilisateur ouvre le récap
+**When** il fait défiler l'écran
+**Then** il voit : nombre de validations, massifs visités, meilleure prédiction (score + sommet), niveau atteint, comparaison communauté (top X%)
+
+**Given** l'écran récap affiché
+**When** l'utilisateur appuie sur "Partager mon récap"
+**Then** la capture d'écran iOS native s'ouvre prête à partager
+
+---
+
+## Epic 9: Landing Page & Présence Web (V2 — pré-lancement)
+
+**Objectif :** Créer une présence web qui génère du trafic organique Google, sert de destination aux deep links partagés, et renforce la crédibilité auprès de la presse et des partenaires.
+
+**Dépendances :** domaine cloudbreak.fr réservé, Dokploy configuré (déjà en place)
+
+---
+
+### Story 9.1: Landing Page cloudbreak.fr
+
+As a potential user who discovers Cloudbreak via a shared link or Google,
+I want a clear and compelling landing page,
+So that I understand the app immediately and download it.
+
+**Acceptance Criteria:**
+
+**Given** un visiteur arrive sur cloudbreak.fr
+**When** la page se charge
+**Then** le temps de chargement est < 2s et la page est indexable par Google (pas de JS-only rendering)
+
+**Given** la page chargée
+**When** le visiteur lit le hero
+**Then** il voit : H1 "Sais-tu si ça vaut le coup de te lever à 5h du matin ?" + sous-titre + CTA App Store + visuel mer de nuage + mockup iPhone
+
+**Given** le visiteur scroll
+**When** il parcourt la page
+**Then** il voit dans l'ordre : comment ça marche (3 étapes) → pour qui (4 profils) → pourquoi Cloudbreak → télécharger
+
+**Given** une prédiction partagée via deep link (ex: cloudbreak.fr/sommet/colombier)
+**When** un non-utilisateur iOS clique le lien
+**Then** il voit la page du sommet avec le score prédit + CTA "Télécharger pour voir ta prévision"
+
+**Given** la page en ligne
+**When** Google l'indexe
+**Then** les balises SEO sont correctes : `<title>`, meta description, H1, schema.org `SoftwareApplication`, images avec `alt` descriptifs
+
+**Stack :** HTML/CSS statique déployé comme service Dokploy, Traefik HTTPS automatique sur cloudbreak.fr
+
+---
+
+### Story 9.2: Optimisation ASO App Store
+
+As the app developer,
+I want an optimized App Store listing,
+So that Cloudbreak ranks in the top 10 for "mer de nuage" and related searches.
+
+**Acceptance Criteria:**
+
+**Given** la soumission App Store
+**When** le listing est en ligne
+**Then** le titre est "Cloudbreak — Mer de nuage" (≤30 chars), le sous-titre est "Prédiction météo sommet" (≤30 chars)
+
+**Given** le champ keywords (100 chars)
+**When** rempli
+**Then** il contient : `mer,nuage,sommet,météo,montagne,rando,inversion,cloud,altitude,prévision,alpinisme,nuages,paysage` sans répétition des mots du titre/sous-titre
+
+**Given** la description App Store
+**When** les 3 premières lignes s'affichent (avant "Plus")
+**Then** elles commencent par "Sais-tu si ça vaut le coup de te lever à 5h du matin ?" et expliquent le verdict en 3 phrases maximum
+
+**Given** les 5 screenshots obligatoires (format 6.9")
+**When** un visiteur les parcourt
+**Then** screenshot 1 : score "84% — Haute probabilité 🟢" avec photo de mer de nuage + texte "Sais-tu si ça vaut le coup ?" — screenshot 2 : recherche/favoris — screenshot 3 : détail météo — screenshot 4 : notification push — screenshot 5 : validation terrain
+**And** le fond respecte la palette `#EFE8DC`, texte Josefin Sans 700
+
+**Given** les catégories
+**When** soumises
+**Then** primaire = Météo, secondaire = Sport et activité de plein air
 
 ---
 
