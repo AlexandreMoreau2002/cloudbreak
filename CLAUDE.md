@@ -364,6 +364,20 @@ npm test && npx tsc --noEmit && npm run lint
 - Le résultat attendu (status code + body)
 - Les cas d'erreur à vérifier
 
+### Nouvel endpoint API — fichier `.http` obligatoire
+
+**Règle stricte** : tout nouvel endpoint backend (`GET`, `POST`, `PATCH`, `DELETE`) doit avoir sa ou ses requêtes ajoutées dans un fichier `backend/http/{domaine}.http` — jamais testé uniquement via l'app mobile/interface.
+
+**Pourquoi** : pouvoir tester un endpoint indépendamment de l'UI est une garantie de sécurité — ça permet de vérifier les cas limites (token absent, token expiré, payload malformé, permissions) sans dépendre du comportement du frontend qui peut masquer ou empêcher certains appels.
+
+**À couvrir dans le `.http` pour chaque endpoint :**
+- Requête nominale (cas de succès)
+- Sans `Authorization` header (si protégé) → doit renvoyer 401/403
+- Avec un payload invalide → doit renvoyer 422/400
+- Cas métier spécifiques (quota dépassé, ressource inexistante, permissions insuffisantes)
+
+**Fichier à utiliser** : le fichier `.http` existant du domaine si pertinent (ex: `favorites.http`, `score.http`), sinon en créer un nouveau nommé par domaine fonctionnel.
+
 ---
 
 ## Mode debug — auto-feedback et OODA loop
