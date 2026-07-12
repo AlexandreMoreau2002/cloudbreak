@@ -471,6 +471,26 @@ Mettre à jour si la story change : stack, structure, conventions de code, workf
 
 ---
 
+## Checklist de test Notion — à chaque départ de story
+
+**Au démarrage de toute nouvelle story** (pas à la fin — dès que le plan/les branches sont créés), créer une sous-page Notion checklist de test, en sous-page de la page racine **"Cloudbreak - mer de nuage"** (`page_id: 325964bd-a185-8035-8585-ff14ef1f76c6`).
+
+**Titre** : `✅ Tests story {num} — {titre court}` (même convention que la page 7.3).
+
+**Contenu obligatoire :**
+1. **Ce que ça implique** — impact côté front (mobile) et côté back (backend), en 3-6 lignes par côté : fichiers créés/modifiés, écrans/endpoints touchés
+2. **Tests automatiques** — commandes `make validate` / `npm run validate` avec checkboxes par sous-check (lint, types, tests, build)
+3. **Tests manuels** — un bloc par AC de la story, avec des checkboxes granulaires (une checkbox = une action + un résultat attendu vérifiable)
+4. **Résumé** — tableau récapitulatif zone / tests / état (☐)
+
+**Cette page Notion complète — ne remplace pas — les livrables classiques :**
+- `docs/story-{epic}-{num}-{slug}.md` (doc feature + guide de test manuel)
+- fichier `http/{ticket}.http` (endpoints API à tester) — garder tant qu'il reste des éléments techniques/API à vérifier
+
+La page Notion sert de **checklist de progression cochable en live** pendant la session de test manuel (avantage : accessible du téléphone pendant qu'on teste sur le simulateur, contrairement à un fichier markdown local).
+
+---
+
 ## Patterns de code à respecter
 
 **Ne JAMAIS faire :**
