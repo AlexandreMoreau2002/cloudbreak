@@ -6,7 +6,7 @@
 
 ## En cours
 
-_Rien en cours — toutes les stories MVP actives sont mergées._
+_Rien en cours._
 
 ---
 
@@ -15,7 +15,6 @@ _Rien en cours — toutes les stories MVP actives sont mergées._
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
 | **4.4** | Conformité Apple App Store — Privacy Policy backend, liens légaux paywall, Restore Purchases stub, section Légal profil | 🟢 Simple | `ready-for-dev` |
-| **7.3** | Système unifié états UI — `ErrorState`, `LoadingSpinner`, `FavoritesSkeleton`, brancher `EmptyState` | 🟢 Simple | `ready-for-dev` |
 | **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
 | **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
 | **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait | `backlog` |
@@ -47,6 +46,7 @@ _Rien en cours — toutes les stories MVP actives sont mergées._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 7.3 — Système unifié états UI | mobile PR #15 | 2026-07-01 |
 | Story 2.4 — Suppression compte RGPD | backend PR #11, mobile PR #14 | 2026-05-16 |
 | Story 4.1 — Quota freemium backend | backend PR #10 | session précédente |
 | Story 4.2 — Paywall mobile | mobile PR #12 | session précédente |
