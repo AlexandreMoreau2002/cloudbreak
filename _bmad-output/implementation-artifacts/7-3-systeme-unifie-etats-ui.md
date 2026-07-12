@@ -132,6 +132,18 @@ L'inventaire complet a été fait dans `_bmad-output/planning-artifacts/PLAN-eta
   - [ ] `npm run validate` doit passer
   - [ ] Vérifier visuellement sur simulateur : Home / Search / Favorites dans chaque état
 
+- [ ] **T12 — Mettre à jour CLAUDE.md : convention composants UI états**
+  - [ ] Ajouter dans la section "Patterns de code à respecter" la règle obligatoire : tout état `loading` / `error` / `empty` doit passer par `<LoadingSpinner />`, `<ErrorState />`, `<EmptyState />`, `<FavoritesSkeleton />` ou `<ScoreSkeleton />` — zéro `ActivityIndicator` nu ou JSX inline dans les screens
+  - [ ] Documenter les props standard de chaque composant (une ligne par composant, avec l'usage minimal)
+  - [ ] Ajouter la règle : tout nouveau screen mobile doit gérer les 3 états (`loading`, `error`, `empty`) via ces composants dès sa création — pas en rattrapage
+
+- [ ] **T13 — Audit code mort post-story**
+  - [ ] Vérifier que `styles.errorCard` est bien supprimé de `index.tsx` (plus de référence StyleSheet)
+  - [ ] Vérifier qu'aucun `ActivityIndicator` nu ne subsiste dans les screens (`grep -r "ActivityIndicator" src/app/`)
+  - [ ] Vérifier qu'`EmptyState` n'a plus de version inline dans les screens (`grep -r "Pas encore de favoris\|aucun résultat" src/`)
+  - [ ] Vérifier que `#fff` hardcodé est absent des composants modifiés (`grep -r "#fff" src/components/profile/`)
+  - [ ] Si des occurrences subsistent → les corriger ou les documenter comme exceptions justifiées
+
 ---
 
 ## Dev Notes
