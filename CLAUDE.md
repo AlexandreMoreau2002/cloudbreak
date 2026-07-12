@@ -480,6 +480,7 @@ Mettre à jour si la story change : stack, structure, conventions de code, workf
 - Réponses API avec wrapper `{"status": "ok", "data": ...}` — réponses directes
 - Appels réseau dans les composants — dans les hooks uniquement
 - `uvicorn` directement — passer par `make dev`
+- États loading/error/empty inline dans les écrans mobile — utiliser les composants unifiés (voir `mobile/CLAUDE.md` section "Composants UI états")
 
 **Toujours faire :**
 - Imports organisés **en escalier** (du plus court au plus long), externes puis internes :
