@@ -14,7 +14,6 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **4.4** | Conformité Apple App Store — liens légaux paywall (vers `ops.cloudbreak.fr`), Restore Purchases stub, section Légal profil | 🟢 Simple | `dev terminé` — branche `feature/4-4-conformite-apple-app-store` squashée, en attente de test manuel avant PR |
 | **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
 | **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
 | **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait | `backlog` |
@@ -52,6 +51,7 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 4.4 — Conformité Apple App Store | backend PR #12, mobile PR #17 | 2026-07-13 |
 | Story 4.5 — Service web cloudbreak-ops (pages légales) | cloudbreak-ops PR #2 | 2026-07-13 |
 | Story 7.3 — Système unifié états UI | mobile PR #15 | 2026-07-01 |
 | Story 2.4 — Suppression compte RGPD | backend PR #11, mobile PR #14 | 2026-05-16 |

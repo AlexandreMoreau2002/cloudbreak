@@ -85,7 +85,7 @@ development_status:
   4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
   4-3-abonnements-storekit-2-premium-pro: backlog
-  4-4-conformite-apple-app-store: ready-for-dev
+  4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) — voir TODO.md pour le risque "essai gratuit" non résolu
   4-5-service-web-cloudbreak-ops-pages-legales: done   # mergée sur develop (repo cloudbreak-ops, PR #2)
   epic-4-retrospective: optional
 
