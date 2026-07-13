@@ -232,8 +232,30 @@ npm run build:check     # expo export (vérifie que le bundle compile)
 7. DOC     — mettre à jour la documentation technique (voir règles ci-dessous)
 8. QA      — vérifier manuellement chaque AC Given/When/Then + fournir instructions de test
 9. CI      — vérifier que le pipeline CI passe
-10. DONE   — mettre la story en "done" dans sprint-status.yaml
+10. DONE   — clôture complète de la story, voir section "Clôture de story" ci-dessous
 ```
+
+### Clôture de story — checklist obligatoire
+
+Une fois la CI verte sur la PR, ne pas s'arrêter au merge : la story n'est vraiment "done" que quand cette checklist est passée en entier.
+
+```
+1. MERGE     — merger la PR en **squash** (`gh pr merge --squash` ou bouton "Squash and merge") : un seul commit propre sur develop par story, pas de commit de merge superflu
+2. NOTION    — mettre à jour la page Notion checklist de la story (cocher les cases faites, noter les écarts) — voir section "Checklist de test Notion"
+3. STATUS    — sprint-status.yaml : passer la story en "done" (ou "review" si des points restent hors scope, avec commentaire)
+4. TODO.md   — déplacer l'entrée de "En cours"/"Dette technique" vers le tableau "Mergé sur develop ✅" (story, PR, date)
+5. DOC       — vérifier que les docs obligatoires sont à jour (docs/story-*.md, product-audit.md, security.md, README, CLAUDE.md racine si la story en change le contenu)
+6. SUBMODULE — dans le repo racine : `git add <submodule>` + commit `chore: update <submodule> ref — story X mergée sur develop`, push
+7. LOCAL ENV — remettre l'environnement local sur develop dans le(s) submodule(s) concerné(s) :
+   git checkout develop && git pull
+   git branch -d feature/nom-story         # supprimer la branche locale (déjà mergée)
+   git push origin --delete feature/nom-story   # si pas auto-supprimée côté GitHub
+8. DEPS      — si package.json/requirements ont changé sur develop : réinstaller (npm install / pip install -r requirements) avant de reprendre du travail
+9. VERIF     — `git status` propre sur chaque submodule + repo racine avant de considérer la story clôturée
+10. SUITE    — proposer la suite logique : prochaine story faisable dans l'epic en cours, story bloquante à débloquer en priorité, ou epic suivant si l'epic courant est complet (s'appuyer sur epics.md + sprint-status.yaml, pas sur la mémoire de la session)
+```
+
+**Règle** : les étapes 6 et 7 sont celles qu'on oublie le plus souvent (submodule qui reste sur l'ancienne ref, working dir resté sur la feature branch) — toujours les vérifier explicitement, pas seulement "je pense que c'est bon". Les étapes 2 (Notion) et 4 (TODO.md) sont obligatoires même pour une story qui semble mineure — ne jamais les sauter parce que "ça n'en vaut pas la peine".
 
 ### Règle des tests : un fichier de test par fichier source
 

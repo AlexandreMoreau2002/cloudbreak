@@ -867,7 +867,30 @@ afin que l'app soit acceptée dès la première review et ne soit jamais bannie 
 
 ---
 
-✅ **Epic 4 complète — 4 stories (couverture FR16–FR21 + conformité App Store)**
+### Story 4.5: Service web Cloudbreak Ops — Pages légales
+
+En tant que solo dev qui doit fournir des URLs de Politique de confidentialité et de CGU aux stores,
+je veux un service web dédié qui héberge ces pages légales,
+afin de répondre à l'AC1 de la story 4.4 sans dépendre du backend FastAPI, et de poser la base d'un futur dashboard ops.
+
+**Given** le service `cloudbreak-ops` (nouveau repo submodule, Next.js 16 App Router + TypeScript),
+**When** on accède à `/fr/cgu` ou `/fr/privacy`,
+**Then** la page correspondante s'affiche (200), avec sommaire ancré et contenu légal complet.
+
+**Given** le service,
+**When** on consulte sa configuration,
+**Then** aucune valeur n'est en dur — tout passe par `.env`/`.env.example`, documentés avec les URLs à fournir à App Store Connect une fois déployé.
+
+**Given** la story complétée,
+**Then** `npm run validate` (format, lint, typecheck, tests unitaires, build, e2e) passe et une CI GitHub Actions est en place.
+
+**Source :** suite directe de la story 4.4 (AC1), décision de créer un service web dédié plutôt que de patcher le backend — voir `docs/superpowers/specs/2026-07-13-cloudbreak-ops-legal-pages-design.md`
+**Repo :** `cloudbreak-ops` (submodule `ops/`) — PR `feature/4-5-service-web-legal-pages` → `develop` (https://github.com/AlexandreMoreau2002/cloudbreak-ops/pull/2)
+**Story file (dans le submodule) :** `ops/docs/story-1-legal-pages.md`
+
+---
+
+✅ **Epic 4 complète — 5 stories (couverture FR16–FR21 + conformité App Store + service web légal)**
 
 ---
 

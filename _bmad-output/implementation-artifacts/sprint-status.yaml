@@ -86,6 +86,7 @@ development_status:
   4-2-paywall-mobile-conversion: done
   4-3-abonnements-storekit-2-premium-pro: backlog
   4-4-conformite-apple-app-store: ready-for-dev
+  4-5-service-web-cloudbreak-ops-pages-legales: done   # mergée sur develop (repo cloudbreak-ops, PR #2)
   epic-4-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

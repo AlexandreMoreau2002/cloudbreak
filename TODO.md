@@ -6,7 +6,7 @@
 
 ## En cours
 
-_Rien en cours._
+_Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 ---
 
@@ -14,7 +14,7 @@ _Rien en cours._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **4.4** | Conformité Apple App Store — Privacy Policy backend, liens légaux paywall, Restore Purchases stub, section Légal profil | 🟢 Simple | `ready-for-dev` |
+| **4.4** | Conformité Apple App Store — liens légaux paywall (vers `ops.cloudbreak.fr`), Restore Purchases stub, section Légal profil | 🟢 Simple | `ready-for-dev` — débloqué, 4.5 a fourni l'hébergement des pages légales |
 | **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
 | **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
 | **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait | `backlog` |
@@ -39,6 +39,11 @@ _Rien en cours._
 - [ ] **Supabase "Confirm email"** — désactivé en dev, à réactiver avant release 1.0.0
 - [ ] **Deep link partage** — URL placeholder `reminder_modify_before_mep@cloudbreak.com/sommet/{slug}` → vrai domaine + config Universal Links iOS
 - [ ] **MountainBackground (login)** — visuellement insuffisant, rework avant release 1.0.0
+- [ ] **CGU/Privacy `cloudbreak-ops`** — contenu substantiel déjà rédigé (pas du placeholder générique), mais à valider/compléter avant soumission store :
+  - `messages/fr.json` : `cgu.updated` / `privacy.updated` sont littéralement `"à définir avant publication"` → mettre la vraie date
+  - Identité légale incomplète : `src/content/cgu.ts` section 1 dit juste "développeur individuel", pas de raison sociale / SIRET / adresse — à ajouter si le statut juridique l'exige (auto-entrepreneur, société...)
+  - Vérifier que `support@cloudbreak.app` est une adresse réellement active
+  - Une fois à jour : mettre à jour `mobile/src/constants/legalUrls.ts` avec les URLs définitives (`ops.cloudbreak.fr`) + App Store Connect (voir `ops/docs/story-1-legal-pages.md`)
 
 ---
 
@@ -46,6 +51,7 @@ _Rien en cours._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 4.5 — Service web cloudbreak-ops (pages légales) | cloudbreak-ops PR #2 | 2026-07-13 |
 | Story 7.3 — Système unifié états UI | mobile PR #15 | 2026-07-01 |
 | Story 2.4 — Suppression compte RGPD | backend PR #11, mobile PR #14 | 2026-05-16 |
 | Story 4.1 — Quota freemium backend | backend PR #10 | session précédente |
