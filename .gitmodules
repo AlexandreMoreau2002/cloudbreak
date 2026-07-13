@@ -10,3 +10,7 @@
 [submodule "infra"]
 	path = infra
 	url = https://github.com/AlexandreMoreau2002/cloudbreak-infra
+[submodule "ops"]
+	path = ops
+	url = https://github.com/AlexandreMoreau2002/cloudbreak-ops
+	branch = develop
