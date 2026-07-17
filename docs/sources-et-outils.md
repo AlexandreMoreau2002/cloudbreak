@@ -34,6 +34,33 @@ Répertorie les services tiers, sources de données, et outils externes utilisé
 - **Clé API** : non requise pour l'usage gratuit (≤ 10 000 appels/jour)
 - **Résolution** : modèles horaires, données altimétriques SRTM 90m
 
+#### Fréquence de rafraîchissement — deux couches de cache distinctes
+
+Le projet a **deux TTL différents, à deux niveaux différents**, à ne pas confondre :
+
+```
+Open-Meteo (source)
+      │
+      ▼
+  Cache Redis backend — TTL 10 min (600s)
+  (backend/app/services/weather.py:23)
+  Limite : pas de sens d'appeler Open-Meteo plus souvent,
+  la donnée météo brute ne change pas plus vite que ça
+      │
+      ▼
+  API backend (GET /api/v1/score)
+      │
+      ▼
+  Cache AsyncStorage mobile — TTL 3h
+  (mobile/src/hooks/useWeekData.ts, CACHE_TTL_MS)
+  Usage : mode offline-light (story 7.2) — garder le dernier
+  score reçu affichable sans réseau, pas de re-fetch météo
+```
+
+- **Backend (10 min)** : évite de sur-solliciter Open-Meteo (limite gratuite 10 000 appels/jour) — ce n'est pas du temps réel, la météo ne bouge pas assez vite pour justifier un TTL plus court.
+- **Mobile (3h)** : n'a aucun lien avec la fraîcheur météo réelle — c'est une fenêtre de tolérance pour l'usage hors-ligne en randonnée (pas de réseau en montagne). Passé 3h, l'app préfère dire "données non disponibles" plutôt qu'afficher un score potentiellement obsolète sans avertir.
+- Ces deux caches ne se resynchronisent pas l'un l'autre — le mobile peut très bien afficher une donnée de 2h50 alors que le backend a déjà une donnée plus fraîche en cache depuis 10 min. C'est un choix assumé (voir `mobile/docs/story-7-2-mode-offline.md`).
+
 ### Météo-France (AROME)
 - **Site** : https://portail-api.meteofrance.fr
 - **Ce que c'est** : provider secondaire FR, modèle AROME à résolution 1.3km — meilleur que Open-Meteo sur le territoire français
