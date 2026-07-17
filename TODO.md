@@ -6,7 +6,8 @@
 
 ## En cours
 
-_Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
+- [ ] **Story 7.2 — Mode offline-light & cache TTL** (mobile) — implémentée, testée, doc faite, review dev + sécurité passées. Branche `feature/7-2-mode-offline-cache-ttl` (base `develop`). `npm run validate` vert.
+  - Reste : ouvrir la PR mobile, test manuel simulateur (checklist Notion créée : https://app.notion.com/p/3a0964bda1858105aa67e43aa753cc44), puis clôture complète (squash merge, submodule ref, suppression branche)
 
 ---
 
@@ -16,7 +17,6 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 |---|---|---|---|
 | **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
 | **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
-| **7.2** | Mode offline — bandeau "données de X min", message si cache expiré | 🟡 Moyen — déjà 80% fait | `backlog` |
 | **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile | `backlog` |
 
 ## Backlog stories (bloquées)
@@ -44,6 +44,7 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
   - **Adresse email support pas encore choisie** — `mobile/src/constants/legalUrls.ts` lit `EXPO_PUBLIC_SUPPORT_EMAIL` (fallback `support@cloudbreak.app`, un placeholder). Une fois la vraie adresse décidée : définir la variable en prod (secrets EAS) + vérifier que c'est une boîte mail active et surveillée avant la review Apple
   - Une fois à jour : mettre à jour `mobile/src/constants/legalUrls.ts` avec les URLs définitives (`ops.cloudbreak.fr`) + App Store Connect (voir `ops/docs/story-1-legal-pages.md`)
 - [ ] **Paywall — badge "Essai gratuit 7 jours"** — réintégré dans `PaywallHeader.tsx`/`PaywallCTA.tsx` (story 4.4) sans mécanisme StoreKit 2 réel pour l'honorer → risque de rejet Apple. Avant soumission : soit câbler un vrai essai via StoreKit 2 (story 4.3), soit retirer à nouveau le badge/CTA
+- [ ] **JWT Supabase stocké en clair dans AsyncStorage** (découvert lors de l'audit sécurité story 7.2) — `mobile/src/services/supabaseClient.ts:10` utilise `AsyncStorage` comme backend de session au lieu d'`expo-secure-store`. `docs/security.md` disait à tort que c'était déjà via SecureStore (corrigé). À migrer avant release 1.0.0.
 
 ---
 
