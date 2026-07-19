@@ -6,8 +6,8 @@
 
 ## En cours
 
-- [ ] **Story 7.2 — Mode offline-light & cache TTL** (mobile) — implémentée, testée, doc faite, review dev + sécurité passées. Branche `feature/7-2-mode-offline-cache-ttl` (base `develop`). `npm run validate` vert.
-  - Reste : ouvrir la PR mobile, test manuel simulateur (checklist Notion créée : https://app.notion.com/p/3a0964bda1858105aa67e43aa753cc44), puis clôture complète (squash merge, submodule ref, suppression branche)
+- [ ] **Story 7.2 — Mode offline-light & cache TTL** (mobile) — implémentée, testée (auto + manuel simulateur, 4 AC validés), doc faite, review dev + sécurité passées, PR ouverte : [cloudbreak-mobile#18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18). Checklist Notion 100% cochée : https://app.notion.com/p/3a0964bda1858105aa67e43aa753cc44
+  - Reste : merger la PR (squash), puis clôture complète (Notion déjà fait, submodule ref, suppression branche locale/distante)
 
 ---
 
