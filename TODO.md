@@ -6,8 +6,7 @@
 
 ## En cours
 
-- [ ] **Story 7.2 — Mode offline-light & cache TTL** (mobile) — implémentée, testée (auto + manuel simulateur, 4 AC validés), doc faite, review dev + sécurité passées, PR ouverte : [cloudbreak-mobile#18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18). Checklist Notion 100% cochée : https://app.notion.com/p/3a0964bda1858105aa67e43aa753cc44
-  - Reste : merger la PR (squash), puis clôture complète (Notion déjà fait, submodule ref, suppression branche locale/distante)
+_Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 ---
 
@@ -52,6 +51,7 @@
 
 | Story | PR | Date |
 |---|---|---|
+| Story 7.2 — Mode offline-light & cache TTL | [mobile PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18) | 2026-07-19 |
 | Fix — Prix après essai gratuit dynamique intégré au bouton CTA paywall | mobile commit `6ec9ae5` (direct sur develop) | 2026-07-17 |
 | Story 4.4 — Conformité Apple App Store | backend PR #12, mobile PR #17 | 2026-07-13 |
 | Story 4.5 — Service web cloudbreak-ops (pages légales) | cloudbreak-ops PR #2 | 2026-07-13 |
