@@ -135,6 +135,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
 - **Refonte visuelle FavoritesGrid** : la grille de favoris sur l'écran d'accueil (état vide et avec sommet) est fonctionnelle mais minimaliste — remplacer par un design plus riche (score du jour visible sur chaque carte, score coloré, massif affiché, style cohérent avec la ScoreCard) aligné sur la proposition Claude Design
 - **Intégration PostHog mobile** derrière `src/services/analytics.ts` (stub posé en story 7.1)
+- **Message de clarté sur le quota freemium** (1 sommet gratuit/jour) : prévenir l'utilisateur qu'il doit bien choisir son sommet du jour, pour limiter la frustration ressentie sur la limite — voir aussi si le modèle freemium lui-même (1 check/jour) mérite d'être revu à la lumière des retours des premiers utilisateurs
 
 ### Vision (Phase 3)
 
