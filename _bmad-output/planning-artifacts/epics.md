@@ -425,7 +425,41 @@ So that I can monitor all production metrics from a single interface without swi
 
 ---
 
-✅ **Epic 1 — 5 stories MVP + 1 story post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
+### Story 1.7: Taxonomie & Instrumentation Events PostHog (Stub)
+
+As a developer (Alex),
+I want une taxonomie d'events business définie et câblée derrière les stubs `analytics.ts` (mobile) et `analytics.py` (backend, nouveau),
+So that l'app soit instrumentée dès le MVP, sans attendre le branchement du vrai SDK PostHog (story 1.5), pour ne rien perdre des tout premiers utilisateurs.
+
+**Source design :** `docs/superpowers/specs/2026-07-21-story-1-7-posthog-taxonomy-design.md` — taxonomie complète (backend + mobile), convention de nommage, principe "un seul propriétaire par event" (backend = vérité métier persistée, mobile = UI pure).
+
+**Note :** aucun compte PostHog ni SDK réel requis — pur stub qui logge en DEBUG. Le câblage du vrai SDK reste story 1.5 (post-MVP). Les events de validation terrain (Epic 6) et `subscription_started` réel (story 4.3) sont réservés mais non câblés ici.
+
+**Acceptance Criteria:**
+
+**Given** un point de câblage backend (score calculé, quota dépassé/bypass, favori ajouté/retiré, compte supprimé)
+**When** l'action se produit
+**Then** `track(event, user_id, properties)` du stub `app/services/analytics.py` est appelé avec le nom d'event et les propriétés exacts de la spec, sans appel réseau
+
+**Given** un point de câblage mobile (onboarding, auth, score/home, recherche, paywall, profil, session)
+**When** l'action utilisateur correspondante se produit
+**Then** `track()` du stub `analytics.ts` est appelé avec le nom d'event et les propriétés exacts de la spec
+
+**Given** l'app qui passe en arrière-plan puis revient au premier plan
+**When** ces transitions se produisent
+**Then** `app_backgrounded` porte une `session_duration_ms` cohérente
+
+**Given** une recherche de sommet
+**When** `search_performed` est émis
+**Then** aucune propriété ne contient le texte brut saisi (uniquement `query_length` et `results_count`)
+
+**Given** l'ajout ou le retrait d'un favori
+**When** l'action aboutit
+**Then** un seul event est émis (backend), aucun event mobile équivalent pour la même action
+
+---
+
+✅ **Epic 1 — 6 stories MVP + 1 story post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
 
 ---
 
