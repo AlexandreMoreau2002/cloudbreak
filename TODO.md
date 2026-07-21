@@ -6,7 +6,7 @@
 
 ## En cours
 
-_Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
+_Rien en cours._
 
 ---
 
@@ -14,7 +14,6 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **7.1** | Onboarding narratif — 3 slides au premier lancement, flag AsyncStorage | 🟢 Simple — pure UI | `backlog` |
 | **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
 | **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile | `backlog` |
 
@@ -51,6 +50,7 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 7.1 — Parcours onboarding narratif | backend PR #13, [mobile PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/19) | 2026-07-21 |
 | Story 7.2 — Mode offline-light & cache TTL | [mobile PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18) | 2026-07-19 |
 | Fix — Prix après essai gratuit dynamique intégré au bouton CTA paywall | mobile commit `6ec9ae5` (direct sur develop) | 2026-07-17 |
 | Story 4.4 — Conformité Apple App Store | backend PR #12, mobile PR #17 | 2026-07-13 |
@@ -81,6 +81,7 @@ _Rien en cours actuellement — voir "Prochaines stories faisables" ci-dessous._
 
 ## Notes vrac
 
+- Analytics / PostHog : pas branche pour l'instant. Stub mobile `src/services/analytics.ts` uniquement ; les events seront ajoutes quand l'app sera plus proche de la sortie. Voir `docs/analytics-posthog.md`.
 - Compte de test Premium : `pro@cloudbreak.app` → token dans `.vscode/settings.json`
 - Reset quota Redis : `docker exec cloudbreak-redis redis-cli FLUSHDB`
 - Subscription Premium en DB requise pour bypass quota : `make seed-test`

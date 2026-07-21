@@ -113,7 +113,7 @@ development_status:
   # FRs: FR30-FR34
   # ─────────────────────────────────────────────────────────────
   epic-7: backlog
-  7-1-parcours-onboarding-narratif: backlog
+  7-1-parcours-onboarding-narratif: done
   7-2-mode-offline-light-cache-ttl: done
   7-3-systeme-unifie-etats-ui: ready-for-dev
   epic-7-retrospective: optional

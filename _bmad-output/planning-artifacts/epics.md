@@ -1063,32 +1063,40 @@ As a new user,
 I want to experience a compelling onboarding that explains the product's unique value,
 So that I understand what sea of clouds forecasting is and why I need it.
 
+**Source design :** handoff Claude Design (`design_handoff_onboarding`) — pixel-fidèle exigé.
+
+**Note :** la géolocalisation sort du scope (reste story 2.3) ; la recherche de sommets a été rendue publique côté backend (endpoints `peaks/search` et `peaks/{slug}` sans auth) pour permettre la sélection d'un sommet par défaut avant login.
+
 **Acceptance Criteria:**
 
 **Given** le premier lancement de l'app (flag `onboarding_completed` absent)
 **When** l'app démarre
-**Then** `onboarding.tsx` s'affiche automatiquement (pas l'écran principal)
+**Then** `/onboarding` s'affiche automatiquement (splash), pas l'écran principal
 
 **Given** l'écran onboarding
 **When** l'utilisateur le parcourt
-**Then** 3 slides s'enchaînent via `OnboardingSlide` :
-- Slide 1 : Le problème ("Tu as monté 1h pour ça...") — image Dolomites, fond sombre
-- Slide 2 : La solution ("mer de nuage prédit si ça vaut le coup") — demo score 87% 🟢
-- Slide 3 : Les permissions — notification push + géolocalisation, refus possible sans blocage
+**Then** le splash enchaîne sur un rideau mer de nuage (curtain, une seule fois), puis 3 écrans fidèles au handoff :
+- Bienvenue — hero illustration mer de nuage + CTA Continuer
+- Sommet par défaut — 6 sommets curés + recherche, sélection unique
+- Notifications — 2 cartes preview, CTA "Autoriser les notifications" ou "Plus tard"
 
-**Given** slide 3 (permissions)
-**When** l'utilisateur refuse les deux permissions
-**Then** il continue quand même vers l'écran principal sans message d'erreur ni friction
+**Given** l'écran Notifications
+**When** l'utilisateur refuse la permission notification (ou choisit "Plus tard")
+**Then** il continue quand même sans message d'erreur ni friction
 
-**Given** la fin de l'onboarding
-**When** l'utilisateur appuie sur "Commencer"
+**Given** la fin de l'onboarding (via "Autoriser" ou "Plus tard")
+**When** l'utilisateur termine le dernier écran
 **Then** le flag `onboarding_completed: true` est sauvegardé en `AsyncStorage`
-**And** l'event `onboarding_complete` est envoyé à PostHog
-**And** l'utilisateur est redirigé vers l'écran principal
+**And** l'event `onboarding_complete` est tracké (stub `analytics.ts`, PostHog branché ultérieurement)
+**And** l'utilisateur est redirigé vers login (ou l'écran principal si une session existe déjà)
 
 **Given** un utilisateur qui rouvre l'app
 **When** `onboarding_completed: true` est en `AsyncStorage`
 **Then** l'onboarding ne s'affiche plus jamais
+
+**Given** le sommet sélectionné sur l'écran "Sommet par défaut"
+**When** l'utilisateur arrive pour la première fois sur l'écran principal
+**Then** ce sommet apparaît comme sommet sélectionné
 
 ---
 
