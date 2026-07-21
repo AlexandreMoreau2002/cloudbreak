@@ -50,6 +50,7 @@ _Rien en cours._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 1.7 — Taxonomie & instrumentation events PostHog (stub) | backend PR #14, [mobile PR #20](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/20) | 2026-07-21 |
 | Story 7.1 — Parcours onboarding narratif | backend PR #13, [mobile PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/19) | 2026-07-21 |
 | Story 7.2 — Mode offline-light & cache TTL | [mobile PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18) | 2026-07-19 |
 | Fix — Prix après essai gratuit dynamique intégré au bouton CTA paywall | mobile commit `6ec9ae5` (direct sur develop) | 2026-07-17 |
@@ -81,7 +82,7 @@ _Rien en cours._
 
 ## Notes vrac
 
-- Analytics / PostHog : pas branche pour l'instant. Stub mobile `src/services/analytics.ts` uniquement ; les events seront ajoutes quand l'app sera plus proche de la sortie. Voir `docs/analytics-posthog.md`.
+- Analytics / PostHog : taxonomie complète (~31 events) définie et câblée en stub DEBUG-only (story 1.7) — toujours pas de compte PostHog ni SDK réel, prévu story 1.5. Voir `docs/analytics-posthog.md`.
 - Compte de test Premium : `pro@cloudbreak.app` → token dans `.vscode/settings.json`
 - Reset quota Redis : `docker exec cloudbreak-redis redis-cli FLUSHDB`
 - Subscription Premium en DB requise pour bypass quota : `make seed-test`

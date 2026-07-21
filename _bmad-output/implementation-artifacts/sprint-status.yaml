@@ -51,7 +51,7 @@ development_status:
   1-3-setup-mobile-expo-squelette-design-system: backlog
   1-4-cicd-github-actions-backend-mobile: backlog
   1-5-monitoring-betterstack-posthog-initial: backlog
-  1-7-taxonomie-instrumentation-posthog: ready-for-dev
+  1-7-taxonomie-instrumentation-posthog: done
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
