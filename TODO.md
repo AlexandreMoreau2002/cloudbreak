@@ -6,7 +6,8 @@
 
 ## En cours
 
-_Rien en cours._
+- [ ] **Story 2.3** — test manuel simulateur restant (guide dans `mobile/docs/story-2-3-permission-geolocalisation.md`), bloqué précédemment par un souci Xcode/runtime iOS 26.5 (résolu depuis, à confirmer)
+- [ ] **Branche `chore/i18n-dev-buttons-profile`** (mobile, poussée sur origin, pas encore en PR) — i18n des 3 boutons DEV du Profil (`DEV · CloudLayerViz Sandbox` / `Reset sommet sélectionné` / `Rejouer l'onboarding`), dette pré-existante repérée pendant la review de la 2.3
 
 ---
 
@@ -14,7 +15,6 @@ _Rien en cours._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **2.3** | Géolocalisation opt-in — demande permission `expo-location`, "Pas maintenant" sans blocage | 🟢 Simple — un écran | `backlog` |
 | **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile | `backlog` |
 
 ## Backlog stories (bloquées)
@@ -50,6 +50,7 @@ _Rien en cours._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 2.3 — Permission géolocalisation opt-in sans blocage | [mobile PR #21](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/21) | 2026-07-22 |
 | Story 1.7 — Taxonomie & instrumentation events PostHog (stub) | backend PR #14, [mobile PR #20](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/20) | 2026-07-21 |
 | Story 7.1 — Parcours onboarding narratif | backend PR #13, [mobile PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/19) | 2026-07-21 |
 | Story 7.2 — Mode offline-light & cache TTL | [mobile PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/18) | 2026-07-19 |
