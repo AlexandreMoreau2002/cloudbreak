@@ -6,8 +6,7 @@
 
 ## En cours
 
-- [ ] **Story 2.3** — test manuel simulateur restant (guide dans `mobile/docs/story-2-3-permission-geolocalisation.md`), bloqué précédemment par un souci Xcode/runtime iOS 26.5 (résolu depuis, à confirmer)
-- [ ] **Branche `chore/i18n-dev-buttons-profile`** (mobile, poussée sur origin, pas encore en PR) — i18n des 3 boutons DEV du Profil (`DEV · CloudLayerViz Sandbox` / `Reset sommet sélectionné` / `Rejouer l'onboarding`), dette pré-existante repérée pendant la review de la 2.3
+_Rien en cours._
 
 ---
 
@@ -42,6 +41,7 @@
   - **Adresse email support pas encore choisie** — `mobile/src/constants/legalUrls.ts` lit `EXPO_PUBLIC_SUPPORT_EMAIL` (fallback `support@cloudbreak.app`, un placeholder). Une fois la vraie adresse décidée : définir la variable en prod (secrets EAS) + vérifier que c'est une boîte mail active et surveillée avant la review Apple
   - Une fois à jour : mettre à jour `mobile/src/constants/legalUrls.ts` avec les URLs définitives (`ops.cloudbreak.fr`) + App Store Connect (voir `ops/docs/story-1-legal-pages.md`)
 - [ ] **Paywall — badge "Essai gratuit 7 jours"** — réintégré dans `PaywallHeader.tsx`/`PaywallCTA.tsx` (story 4.4) sans mécanisme StoreKit 2 réel pour l'honorer → risque de rejet Apple. Avant soumission : soit câbler un vrai essai via StoreKit 2 (story 4.3), soit retirer à nouveau le badge/CTA
+- [ ] **Boutons DEV du Profil non i18n** (`mobile/src/app/(tabs)/profile.tsx`) — `DEV · CloudLayerViz Sandbox` / `DEV · Reset sommet sélectionné` / `DEV · Rejouer l'onboarding` sont des strings hardcodées (`__DEV__`-only, jamais vues en prod, mais violent la règle projet). Un fix existait sur une branche abandonnée à la demande de l'utilisateur — à refaire si on veut le corriger.
 - [ ] **JWT Supabase stocké en clair dans AsyncStorage** (découvert lors de l'audit sécurité story 7.2) — `mobile/src/services/supabaseClient.ts:10` utilise `AsyncStorage` comme backend de session au lieu d'`expo-secure-store`. `docs/security.md` disait à tort que c'était déjà via SecureStore (corrigé). À migrer avant release 1.0.0.
 
 ---
