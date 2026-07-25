@@ -14,7 +14,7 @@ _Rien en cours._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **6.1** | Validation terrain — bouton confirmer/infirmer une prédiction depuis l'app | 🟡 Moyen — backend + mobile | `backlog` |
+| **6.2** | Photo optionnelle validation terrain + calcul taux de précision par zone | 🟡 Moyen — backend (storage à choisir, probablement Supabase Storage) + mobile | `backlog` |
 
 ## Backlog stories (bloquées)
 
@@ -50,6 +50,7 @@ _Rien en cours._
 
 | Story | PR | Date |
 |---|---|---|
+| Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |
 | Fix — Bugs test manuel iPhone : favoris offline, onboarding, skeleton | mobile commit `34b42d0` (direct sur develop) | 2026-07-24 |
 | Story 2.3 — Permission géolocalisation opt-in sans blocage | [mobile PR #21](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/21) | 2026-07-22 |
 | Story 1.7 — Taxonomie & instrumentation events PostHog (stub) | backend PR #14, [mobile PR #20](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/20) | 2026-07-21 |
@@ -78,6 +79,7 @@ _Rien en cours._
 | `backend/http/score.http` | Tests score génériques |
 | `backend/http/peaks.http` | Tests recherche sommets |
 | `backend/http/favorites.http` | Tests favoris |
+| `backend/http/validations.http` | Tests validation terrain (story 6.1) |
 | `backend/http/auth.http` | Tests auth |
 
 ---
