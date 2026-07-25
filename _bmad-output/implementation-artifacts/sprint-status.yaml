@@ -104,8 +104,8 @@ development_status:
   # EPIC 6: Validation Terrain & Data Flywheel
   # FRs: FR26-FR29
   # ─────────────────────────────────────────────────────────────
-  epic-6: backlog
-  6-1-validation-terrain-confirmation-infirmation: backlog
+  epic-6: in-progress
+  6-1-validation-terrain-confirmation-infirmation: done   # mergée sur develop (backend PR #15, mobile PR #22) — sans photo (6.2) ni notif push (Epic 5 bloqué)
   6-2-photo-optionnelle-calcul-taux-de-precision: backlog
   epic-6-retrospective: optional
 
