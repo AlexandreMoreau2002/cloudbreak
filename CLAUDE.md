@@ -626,9 +626,9 @@ Agent(
 |-------|--------------|
 | `users` | `id` (UUID Supabase), `push_token`, `notif_favorites`, `notif_regional`, `notif_terrain` |
 | `peaks` | `id`, `name`, `slug`, `lat`, `lng`, `altitude` |
-| `predictions` | `peak_id`, `user_id`, `date`, `hour`, `score`, `verdict`, `cloud_base`, `created_at` |
+| `predictions` | `peak_id`, `user_id`, `date`, `hour`, `score`, `verdict`, `cloud_base`, `created_at` — implémentée story 6.1, une ligne écrite (best-effort) à chaque `GET /api/v1/score` |
 | `subscriptions` | `user_id`, `plan`, `status`, `expires_at` |
-| `terrain_validations` | `prediction_id`, `user_id`, `result`, `photo_url`, `lat`, `lng`, `validated_at` |
+| `terrain_validations` | `prediction_id`, `user_id`, `result`, `photo_url`, `lat`, `lng`, `validated_at` — implémentée story 6.1, `photo_url` toujours `null` (story 6.2) |
 | `events` | `user_id`, `name`, `properties`, `created_at` |
 
 ---
@@ -663,7 +663,7 @@ EXPO_ACCESS_TOKEN     # pour Expo Push Notifications
 GET    /api/v1/score?peak_id=&date=&hour=
 GET    /api/v1/peaks/search?q=
 GET    /api/v1/peaks/{slug}
-POST   /api/v1/validations
+POST   /api/v1/validations                  # story 6.1 — implémenté, sans photo ni notification push (Epic 5 bloqué, pas de compte Apple Dev)
 GET    /api/v1/user/subscription
 POST   /api/v1/user/subscription/verify     # StoreKit 2 receipt
 POST   /api/v1/user/push-token
