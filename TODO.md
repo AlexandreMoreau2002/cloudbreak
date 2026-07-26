@@ -1,12 +1,22 @@
 # TODO — Cloudbreak
 
 > Notes de chantier. Mis à jour au fil des sessions.
+> Dernière mise à jour : 2026-07-26.
 
 ---
 
 ## En cours
 
 _Rien en cours._
+
+---
+
+## Cadrage produit — proposition de valeur
+
+- Cloudbreak doit tenir trois promesses :
+  - **Décision** : savoir s'il faut se déplacer.
+  - **Compréhension** : expliquer pourquoi le score est bon ou mauvais — **promesse encore insuffisamment remplie aujourd'hui** ; les raisons du verdict et les indicateurs déterminants doivent être rendus plus clairs.
+  - **Confiance** : montrer l'incertitude et apprendre des observations terrain.
 
 ---
 
@@ -28,12 +38,14 @@ _Rien en cours._
 
 ## Dette technique
 
+- [ ] **Message de lancement sur la maturité du score** — avant la sortie, afficher une communication claire indiquant que Cloudbreak est une nouvelle application, que les prédictions sont encore en amélioration et que les retours terrain servent à calibrer le score. Ne pas présenter l'app comme une météo fiable ni comme une garantie ; relier le message au parcours de validation terrain et ajouter une mention de prudence pour les décisions de sécurité.
+
 - [ ] **CLAUDE.md** — seuils du score incorrects dans la doc
   - `cloud_cover_low` bloquant : `< 45%` dans le code (pas `< 20%` comme écrit)
   - Verdict `"high"` : conditions strictes (score ≥ 70 + inversion + cloud_base ≥ 150m sous sommet + cloud_cover ≥ 55%)
   - Système de caps (`_apply_score_caps`) non documenté
 - [ ] **Supabase "Confirm email"** — désactivé en dev, à réactiver avant release 1.0.0
-- [ ] **Deep link partage** — URL placeholder `reminder_modify_before_mep@cloudbreak.com/sommet/{slug}` → vrai domaine + config Universal Links iOS
+- [ ] **Deep link partage** — route cible `https://merdenua.ge/sommet/{slug}` à remplacer/configurer avec le vrai domaine + Universal Links iOS
 - [ ] **MountainBackground (login)** — visuellement insuffisant, rework avant release 1.0.0
 - [ ] **CGU/Privacy `cloudbreak-ops`** — contenu substantiel déjà rédigé (pas du placeholder générique), mais à valider/compléter avant soumission store :
   - `messages/fr.json` : `cgu.updated` / `privacy.updated` sont littéralement `"à définir avant publication"` → mettre la vraie date
@@ -86,7 +98,7 @@ _Rien en cours._
 
 ## Notes vrac
 
-- Analytics / PostHog : taxonomie complète (~31 events) définie et câblée en stub DEBUG-only (story 1.7) — toujours pas de compte PostHog ni SDK réel, prévu story 1.5. Voir `docs/analytics-posthog.md`.
+- Analytics / PostHog : taxonomie complète (~31 events) définie et câblée en stub DEBUG-only (story 1.7) — toujours pas de compte PostHog ni SDK réel. Voir `docs/analytics-posthog.md`.
 - Compte de test Premium : `pro@cloudbreak.app` → token dans `.vscode/settings.json`
 - Reset quota Redis : `docker exec cloudbreak-redis redis-cli FLUSHDB`
 - Subscription Premium en DB requise pour bypass quota : `make seed-test`

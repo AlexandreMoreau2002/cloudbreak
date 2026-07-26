@@ -1,7 +1,7 @@
 # INDEX — Cloudbreak Documentation
 
 > Carte de toute la documentation du projet. Mise à jour à chaque fin de session ou bloc de travail majeur.
-> Dernière mise à jour : 2026-05-17
+> Dernière mise à jour : 2026-07-26
 
 ---
 
@@ -14,6 +14,7 @@
 | [`PROGRESS.md`](PROGRESS.md) | Historique d'avancement global du projet |
 | [`AGENTS.md`](AGENTS.md) | Référence des agents BMAD disponibles et leurs rôles |
 | [`README.md`](README.md) | Présentation publique du projet |
+| [Page Notion Cloudbreak](https://app.notion.com/p/325964bda18580358585ff14ef1f76c6) | Suivi parallèle produit/projet (dernière mise à jour connue : 2026-07-24) — à synchroniser séparément avec l'état du repo |
 
 ---
 
@@ -24,6 +25,10 @@
 | [`docs/business-legal.md`](docs/business-legal.md) | StoreKit 2 (flux paiement, commission Apple 15/30%), structure juridique (particulier → micro-entreprise), gestion des remboursements Apple, prérequis pour lancer l'app |
 | [`docs/lexique-technique.md`](docs/lexique-technique.md) | Glossaire des termes météo et techniques utilisés dans le projet (inversion, cloud base, Skew-T, etc.) |
 | [`docs/sources-et-outils.md`](docs/sources-et-outils.md) | Sources de données météo (Open-Meteo, Météo-France AROME), outils et APIs utilisés |
+| [`docs/product-ideas.md`](docs/product-ideas.md) | Carnet d'idées produit, acquisition, données et opérations — pistes non encore validées |
+| [`docs/marketing.md`](docs/marketing.md) | Document maître opérationnel — acquisition des premiers utilisateurs, contenus, canaux, scripts, métriques et suivi hebdomadaire |
+| [`docs/marketing-positioning-2026-07-26.md`](docs/marketing-positioning-2026-07-26.md) | Analyse du positionnement, des audiences, des canaux, de la preuve terrain et du plan d'acquisition sur 90 jours |
+| [`docs/product-roadmap-2026-07-26.md`](docs/product-roadmap-2026-07-26.md) | Roadmap produit priorisée au 26 juillet 2026 — fiabilité, lancement App Store et croissance post-lancement |
 
 ---
 
@@ -99,6 +104,13 @@
 |---|---|
 | [`infra/docs/security.md`](infra/docs/security.md) | Sécurité infra — Dokploy, Traefik, ports exposés, secrets |
 | [`infra/readme.md`](infra/readme.md) | Procédure Dokploy — installation VPS OVH, configuration Traefik, déploiement |
+
+## `/ops` — Service web légal
+
+| Fichier | Contenu |
+|---|---|
+| [`ops/README.md`](ops/README.md) | Service web cloudbreak-ops et commandes de développement |
+| [`ops/docs/story-1-legal-pages.md`](ops/docs/story-1-legal-pages.md) | Story 4.5 — pages légales et prérequis de publication |
 
 ---
 

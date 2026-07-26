@@ -1,0 +1,9 @@
+[mcp_servers.code-review-graph]
+command = "code-review-graph"
+args = ["serve"]
+
+[mcp_servers.code-review-graph.env]
+CRG_RECURSE_SUBMODULES = "1"
+
+[mcp_servers.notion]
+url = "https://mcp.notion.com/mcp"

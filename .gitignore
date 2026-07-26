@@ -21,3 +21,6 @@ TODO.md
 
 # Plans et specs internes superpowers — jamais versionnés
 docs/superpowers/
+
+# Config Codex CLI locale — stubs BMAD auto-générés, bruit non versionné
+.agents/

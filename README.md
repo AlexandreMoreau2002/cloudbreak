@@ -2,7 +2,7 @@
 
 Repo racine du projet Cloudbreak — application mobile iOS qui prédit la probabilité d'observer une mer de nuage depuis un sommet donné, à une date et heure précises.
 
-Ce repo ne contient pas de code applicatif. Il référence les trois sous-projets via des git submodules et centralise la documentation de planification.
+Ce repo ne contient pas de code applicatif. Il référence les quatre sous-projets via des git submodules et centralise la documentation de planification.
 
 ## Sous-projets
 
@@ -11,6 +11,7 @@ Ce repo ne contient pas de code applicatif. Il référence les trois sous-projet
 | [cloudbreak-mobile](https://github.com/AlexandreMoreau2002/cloudbreak-mobile) | App iOS — Expo SDK 55 / React Native |
 | [cloudbreak-backend](https://github.com/AlexandreMoreau2002/cloudbreak-backend) | API — FastAPI / Python 3.12 |
 | [cloudbreak-infra](https://github.com/AlexandreMoreau2002/cloudbreak-infra) | Infra — Docker Compose / Caddy |
+| `ops/` | Service web — pages légales et support produit |
 
 ## Installation
 
@@ -53,3 +54,4 @@ Les artifacts de planification (PRD, architecture, epics, sprint status) sont da
 - `mobile/` — submodule cloudbreak-mobile
 - `backend/` — submodule cloudbreak-backend
 - `infra/` — submodule cloudbreak-infra
+- `ops/` — service web cloudbreak-ops (pages légales)

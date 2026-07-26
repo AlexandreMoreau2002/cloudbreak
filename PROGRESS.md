@@ -1,6 +1,6 @@
 # Cloudbreak — Avancement des stories
 
-> Source de vérité : `sprint-status.yaml` pour le détail. Ce fichier = vue rapide.
+> Vue rapide au 2026-07-26. `TODO.md` est le carnet de bord opérationnel ; `sprint-status.yaml` contient le détail des stories.
 > ✅ mergé sur develop · ⏸ backlog (dépendance) · 🔲 à faire
 
 ---
@@ -11,7 +11,8 @@
 - 🔲 1.2 Setup backend FastAPI squelette complet
 - 🔲 1.3 Setup mobile Expo squelette + design system
 - 🔲 1.4 CI/CD GitHub Actions backend + mobile
-- 🔲 1.5 Monitoring BetterStack + PostHog initial
+- 🔲 1.5 Monitoring BetterStack + PostHog réel
+- ✅ 1.7 Taxonomie & instrumentation events PostHog (stub)
 
 ---
 
@@ -19,7 +20,7 @@
 
 - ✅ 2.1 Inscription et connexion (Supabase Auth)
 - ⏸ 2.2 Préférences notifications *(dépend Epic 5)*
-- ⏸ 2.3 Permission géolocalisation opt-in *(dépend Epic 5)*
+- ✅ 2.3 Permission géolocalisation opt-in sans blocage
 - ✅ 2.4 Suppression compte + données RGPD ⚠️ *bloquant App Store*
 
 ---
@@ -53,15 +54,16 @@
 
 ## Epic 6 — Validation Terrain & Data Flywheel
 
-- 🔲 6.1 Validation terrain (confirmation/infirmation)
+- ✅ 6.1 Validation terrain (confirmation/infirmation)
 - 🔲 6.2 Photo optionnelle + calcul taux de précision
 
 ---
 
 ## Epic 7 — Onboarding & Mode Offline
 
-- 🔲 7.1 Parcours onboarding narratif (3 slides)
-- 🔲 7.2 Mode offline léger (cache TTL 2-3h + bandeau)
+- ✅ 7.1 Parcours onboarding narratif (3 slides)
+- ✅ 7.2 Mode offline léger (cache TTL 2-3h + bandeau)
+- ✅ 7.3 Système unifié des états UI
 
 ---
 
@@ -71,7 +73,6 @@
 - 🔲 Refonte visuelle FavoritesGrid — score du jour visible sur chaque carte, couleur, massif
 - 🔲 Persistance `selectedPeak` en AsyncStorage — survie au kill complet de l'app
 - 🔲 Sign in with Apple — V2, seulement si on ajoute un autre provider social
-- 🔲 Onboarding narratif (Story 7.1) — post-MVP
 
 ---
 

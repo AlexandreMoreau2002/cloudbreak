@@ -1,6 +1,6 @@
 # Cloudbreak Delivery Plan
 
-Date: 2026-03-24
+Date: 2026-07-26
 
 ## Story 3.5
 
@@ -23,9 +23,9 @@ Validation:
 - `cd mobile && npm run validate`
 - `cd backend && source .venv/bin/activate && make validate`
 
-## Story 3.6
+## Story 3.6 (différée)
 
-Status: next
+Status: deferred — bloquée par le domaine et la configuration Apple Universal Links
 
 Goal:
 - Show a useful contextual message when sea-of-cloud conditions are absent.
