@@ -7,9 +7,6 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/AlexandreMoreau2002/cloudbreak-backend
-[submodule "infra"]
-	path = infra
-	url = https://github.com/AlexandreMoreau2002/cloudbreak-infra
 [submodule "ops"]
 	path = ops
 	url = https://github.com/AlexandreMoreau2002/cloudbreak-ops
