@@ -123,11 +123,11 @@ Framework Apple natif pour les achats In-App sur iOS. Gère les abonnements, les
 **PostHog**
 Outil d'analytics open source. Enregistre les événements utilisateurs (score consulté, conversion paywall…).
 
-**Caddy**
-Reverse proxy avec gestion automatique des certificats HTTPS (Let's Encrypt). Devant le backend FastAPI en production.
+**Dokploy**
+PaaS self-hosted avec UI web, déploie les containers Docker et intègre Traefik comme reverse proxy (HTTPS Let's Encrypt automatique). Remplace l'ancien plan Docker Compose + Caddy manuel devant le backend FastAPI en production.
 
 **VPS — Virtual Private Server**
-Serveur dédié virtuel. On est chez OVH, Ubuntu 24.04. Tout tourne en Docker Compose.
+Serveur dédié virtuel. On est chez OVH, Ubuntu 24.04. La prod est orchestrée par Dokploy (Docker en arrière-plan).
 
 **CI/CD — Continuous Integration / Continuous Deployment**
 Pipeline automatique qui lance les tests à chaque push (CI) et peut déployer automatiquement (CD). On utilise GitHub Actions.

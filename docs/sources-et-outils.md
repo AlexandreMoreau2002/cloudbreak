@@ -111,9 +111,9 @@ Open-Meteo (source)
 
 ### OVH VPS
 - **Site** : https://www.ovhcloud.com
-- **Usage** : hébergement prod — Ubuntu 24.04, Docker Compose
+- **Usage** : hébergement prod — Ubuntu 24.04, géré via Dokploy
 
-### Caddy 2
-- **Site** : https://caddyserver.com
-- **Ce que c'est** : reverse proxy avec HTTPS Let's Encrypt automatique
-- **Usage** : terminaison TLS, routing vers le backend FastAPI
+### Dokploy
+- **Site** : https://dokploy.com
+- **Ce que c'est** : PaaS self-hosted (UI web, déploiement Docker, Traefik intégré)
+- **Usage** : orchestration des containers prod, HTTPS Let's Encrypt automatique via Traefik, webhook GitHub → redeploy auto sur push

@@ -1,7 +1,7 @@
 # TODO — Cloudbreak
 
 > Notes de chantier. Mis à jour au fil des sessions.
-> Dernière mise à jour : 2026-07-26.
+> Dernière mise à jour : 2026-07-31.
 
 ---
 
@@ -20,19 +20,19 @@ _Rien en cours._
 
 ---
 
-## Prochaines stories faisables (pure dev, sans Apple Dev ni VPS)
+## Prochaines stories faisables (pure dev, sans Apple Dev)
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
 | **6.2** | Photo optionnelle validation terrain + calcul taux de précision par zone | 🟡 Moyen — backend (storage à choisir, probablement Supabase Storage) + mobile | `backlog` |
+| **Epic 1** | Infra, CI/CD, monitoring — VPS OVH acquis (2026-07-31) → déblocage : setup Dokploy, déploiement backend prod, monitoring | 🟡 Moyen-Gros — voir `infra/README.md` pour la procédure Dokploy | `ready to dev` |
 
 ## Backlog stories (bloquées)
 
 - [ ] **Story 4.3** — StoreKit 2 paiement réel — 🔴 bloqué par compte Apple Dev (99$/an)
 - [ ] **Epic 5** — Notifications push — 🔴 bloqué par compte Apple Dev (certificats APNs)
 - [ ] **Story 2.2** — Préférences notifications — 🔴 bloqué par Epic 5
-- [ ] **Epic 1** — Infra, CI/CD, monitoring — 🔴 bloqué par VPS
-- [ ] **Story 3.6** — Deep link partage — 🔴 bloqué par domaine + Apple Universal Links config
+- [ ] **Story 3.6** — Deep link partage — 🔴 bloqué par domaine + Apple Universal Links config (le VPS ne débloque pas le nom de domaine — à vérifier si un domaine a été pris avec le serveur OVH)
 
 ---
 

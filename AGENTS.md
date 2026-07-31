@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This root repository coordinates three Git submodules and shared planning docs. `mobile/` contains the Expo/React Native app, with screens in `src/app/`, reusable UI in `src/components/`, hooks in `src/hooks/`, and API clients in `src/services/`. `backend/` contains the FastAPI service, with HTTP routes in `app/api/v1/endpoints/`, pure domain logic in `app/domain/`, integrations in `app/services/`, and tests in `tests/`. `infra/` holds local and production Docker Compose files plus `Caddyfile`. Planning and architecture artifacts live in `_bmad-output/`; long-form product and technical docs live in `docs/`, `mobile/docs/`, and `backend/docs/`.
+This root repository coordinates Git submodules and shared planning docs. `mobile/` contains the Expo/React Native app, with screens in `src/app/`, reusable UI in `src/components/`, hooks in `src/hooks/`, and API clients in `src/services/`. `backend/` contains the FastAPI service, with HTTP routes in `app/api/v1/endpoints/`, pure domain logic in `app/domain/`, integrations in `app/services/`, and tests in `tests/`. Production infra runs on Dokploy (self-hosted PaaS) with integrated Traefik on an OVH VPS — there is no dedicated `infra` submodule anymore; local dev still uses `backend`'s `docker-compose.dev.yml` for Postgres and Redis. Planning and architecture artifacts live in `_bmad-output/`; long-form product and technical docs live in `docs/`, `mobile/docs/`, and `backend/docs/`.
 
 ## Build, Test, and Development Commands
 
@@ -29,4 +29,4 @@ Mobile tests use Jest with `jest-expo` and `@testing-library/react-native`; keep
 
 ## Commit & Pull Request Guidelines
 
-Recent history uses Conventional Commit prefixes such as `docs:`, `chore:`, and scoped forms like `docs(algo):`. Keep messages imperative and focused, for example `feat: add peak favorites endpoint`. For submodule work, commit inside the submodule first, then update the root submodule reference with a `chore:` commit. PRs should state the affected area (`mobile`, `backend`, `infra`, or root docs), summarize behavior changes, link the related issue or story, and include screenshots for UI changes.
+Recent history uses Conventional Commit prefixes such as `docs:`, `chore:`, and scoped forms like `docs(algo):`. Keep messages imperative and focused, for example `feat: add peak favorites endpoint`. For submodule work, commit inside the submodule first, then update the root submodule reference with a `chore:` commit. PRs should state the affected area (`mobile`, `backend`, or root docs), summarize behavior changes, link the related issue or story, and include screenshots for UI changes.
