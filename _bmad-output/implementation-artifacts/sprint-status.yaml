@@ -46,6 +46,8 @@ development_status:
   # FRs: FR35, FR36, FR37
   # ─────────────────────────────────────────────────────────────
   epic-1: in-progress
+  # VPS OVH acquis le 2026-07-31 — infra prod = Dokploy (plus de Docker Compose + Caddy manuel),
+  # nom de story historique conservé tel quel. Débloquée, prête à démarrer.
   1-1-setup-infra-vps-docker-compose-production: backlog
   1-2-setup-backend-fastapi-squelette-complet: backlog
   1-3-setup-mobile-expo-squelette-design-system: backlog

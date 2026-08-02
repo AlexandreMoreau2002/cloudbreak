@@ -25,7 +25,7 @@ _Rien en cours._
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
 | **6.2** | Photo optionnelle validation terrain + calcul taux de précision par zone | 🟡 Moyen — backend (storage à choisir, probablement Supabase Storage) + mobile | `backlog` |
-| **Epic 1** | Infra, CI/CD, monitoring — VPS OVH acquis (2026-07-31) → déblocage : setup Dokploy, déploiement backend prod, monitoring | 🟡 Moyen-Gros — voir `infra/README.md` pour la procédure Dokploy | `ready to dev` |
+| **Epic 1** | Infra, CI/CD, monitoring — VPS OVH acquis (2026-07-31) → déblocage : setup Dokploy, déploiement backend prod, monitoring | 🟡 Moyen-Gros — voir `CLAUDE.md` section "Infra prod" (plus de submodule `infra`, doc dédiée à créer si besoin) | `ready to dev` |
 
 ## Backlog stories (bloquées)
 
