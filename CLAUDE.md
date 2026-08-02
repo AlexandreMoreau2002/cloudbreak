@@ -28,7 +28,7 @@ Stack retenue :
 - **Analytics** : PostHog
 - **Paiement** : StoreKit 2 (iOS In-App Purchase — pas Stripe)
 - **API météo** : Open-Meteo (provider principal, gratuit sans clé) / Météo-France (provider secondaire FR, résolution AROME 1.3km) — interface abstraite swappable
-- **Infra prod** : Dokploy (self-hosted PaaS) sur VPS OVH Ubuntu 24.04 — Traefik intégré (HTTPS Let's Encrypt auto), UI web, webhook GitHub → redeploy auto. Remplace Docker Compose + Caddy + deploy.sh manuel.
+- **Infra prod** : Dokploy (self-hosted PaaS) sur VPS OVH Ubuntu 24.04 (`51.178.37.35`, serveur partagé avec d'autres projets perso, accès local via `ssh vps-ovh-projets`) — Traefik intégré (HTTPS Let's Encrypt auto), UI web, webhook GitHub → redeploy auto. Remplace Docker Compose + Caddy + deploy.sh manuel. **Environnement dev déployé et CI/CD vérifié bout en bout (2026-08-02)** : backend sur `cloudbreak-dev-api.51.178.37.35.nip.io` (suit `develop`), ops sur `cloudbreak-dev-ops.51.178.37.35.nip.io` (suit `develop`) — les deux ont un vrai webhook GitHub `push` configuré vers `http://51.178.37.35:3000/api/deploy/{refreshToken}` (testé et fonctionnel). URLs `nip.io` temporaires en attendant un nom de domaine réservé. Détail complet de la config dans `TODO.md` section "Infra Dokploy".
 
 ---
 
