@@ -96,17 +96,17 @@ L'ordre est critique : 80% des visiteurs ne scrollent pas au-delà du 2e screens
 
 ---
 
-## Landing Page — cloudbreak.fr
+## Landing Page — cloudbreak-app.com
 
 ### Pourquoi
 
 1. **SEO Google** — quelqu'un qui tape "prévision mer de nuage application" sur Google ne trouve rien aujourd'hui. Keyword quasi vierge. Une landing page peut ranker en position 1-3 en quelques semaines.
-2. **Deep links** — destination des prédictions partagées ("Alex a prédit 87% sur le Colombier" → `cloudbreak.fr/sommet/colombier` → bouton télécharger). Sans landing page, ces liens ne fonctionnent pas hors iOS.
+2. **Deep links** — destination des prédictions partagées ("Alex a prédit 87% sur le Colombier" → `cloudbreak-app.com/sommet/colombier` → bouton télécharger). Sans landing page, ces liens ne fonctionnent pas hors iOS.
 3. **Crédibilité** — avoir un vrai site renforce la confiance des journalistes et des partenaires CAF.
 
-### Domaine à réserver
+### Domaine
 
-`cloudbreak.fr` — vérifier dispo sur OVH (~10€/an). Alternatives : `appcloudbreak.fr`, `cloudbreakapp.fr`.
+`cloudbreak-app.com` — **acheté le 2026-08-09** (OVH). C'est LE domaine du projet, tout est dessus (`api.`, `ops.`, `dev-*`, landing). Les anciennes hypothèses `cloudbreak.fr` / `merdenua.ge` sont abandonnées.
 
 ### Stack recommandée
 
@@ -185,7 +185,7 @@ Chaque article = trafic organique permanent. L'article "10 meilleurs sommets" es
 - [ ] Titre, sous-titre et keywords validés
 - [ ] Description rédigée et relue
 - [ ] 5 screenshots créés (format 6.9" + 5.5" optionnel)
-- [ ] Domaine cloudbreak.fr réservé
+- [x] Domaine cloudbreak-app.com réservé (2026-08-09)
 - [ ] Landing page en ligne (même minimaliste)
 - [ ] Lien App Store mis à jour dans la landing page
 - [ ] Privacy policy en ligne (obligatoire Apple) — peut être une page simple sur le site

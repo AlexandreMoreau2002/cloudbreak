@@ -5,7 +5,7 @@
 ### 🌐 Infrastructure & Domaine
 - [ ] **VPS OVH réservé** — Ubuntu 24.04, minimum 4GB RAM (FastAPI + PostgreSQL + Redis + Traefik + Dokploy)
 - [ ] **Dokploy installé** — `curl -sSL https://dokploy.com/install.sh | sh` — remplace Caddy + Docker Compose manuel
-- [ ] **Domaine principale** — ex: `cloudbreak.fr` ou `merdenua.ge`
+- [x] **Domaine principal** — `cloudbreak-app.com` (acheté le 2026-08-09)
 - [ ] **DNS configuré** — pointage vers VPS
 - [ ] **Certificat SSL/TLS** — Let's Encrypt via Traefik (géré automatiquement par Dokploy)
 - [ ] **App backend configurée dans Dokploy** — docker-compose.yml importé, env vars saisies dans l'UI, auto-deploy sur push `main`

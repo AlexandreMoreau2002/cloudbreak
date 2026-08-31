@@ -661,7 +661,7 @@ EXPO_ACCESS_TOKEN     # pour Expo Push Notifications
 
 ## ⚠️ Avant Release 1.0.0
 
-- **Deep link partage (story 3.6)** : l'URL de share est actuellement un placeholder `reminder_modify_before_mep@cloudbreak.com/sommet/{slug}` → à remplacer par le vrai domaine + config Universal Links iOS (`.well-known/apple-app-site-association`) quand le domaine sera réservé
+- **Deep link partage (story 3.6)** : l'URL de share pointe sur `https://cloudbreak-app.com/sommet/{slug}` (domaine acheté le 2026-08-09, corrigé dans `mobile/src/app/(tabs)/index.tsx` le 2026-08-31). Reste à faire : config Universal Links iOS (`.well-known/apple-app-site-association` servi par la landing page) + `associatedDomains` dans l'app — bloqué par le compte Apple Dev
 - **Supabase "Confirm email"** : actuellement désactivé en dev → à réactiver avant release
 - **MountainBackground (login)** : visuellement insuffisant → rework visuel avant release
 - **PostHog non branché (story 1.7)** : la taxonomie d'events est définie et câblée mais `analytics.py`/`analytics.ts` restent des stubs qui loggent en DEBUG uniquement, aucune donnée ne part réellement vers PostHog → le vrai branchement SDK est prévu story 1.5 (backend `posthog` + `POSTHOG_API_KEY`), pas encore priorisée. Avant ce branchement, corriger aussi `useAuthForm.ts` qui envoie `error.message` brut Supabase comme `error_code` (à mapper vers un enum stable)

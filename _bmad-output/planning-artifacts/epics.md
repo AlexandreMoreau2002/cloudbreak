@@ -855,7 +855,7 @@ So that the app remains useful year-round and I can share discoveries.
 
 **Given** l'écran de prévision d'un sommet
 **When** l'utilisateur appuie sur l'icône partage
-**Then** le deep link `https://merdenua.ge/sommet/{slug}` est copié dans le presse-papiers ou partagé via le sheet iOS natif
+**Then** le deep link `https://cloudbreak-app.com/sommet/{slug}` est copié dans le presse-papiers ou partagé via le sheet iOS natif
 
 **Given** un utilisateur qui reçoit un deep link
 **When** il l'ouvre sur iOS

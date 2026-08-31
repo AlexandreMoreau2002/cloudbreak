@@ -258,7 +258,7 @@ Croiser l'altitude de la couche nuageuse avec les horaires astronomiques pour ca
 - **Distribution :** App Store uniquement au lancement, Expo EAS Build
 - **Framework :** Expo / React Native — codebase unique pour l'extension Android V2
 - **Abonnements :** StoreKit 2 (iOS In-App Purchase)
-- **Deep links :** format `cloudbreak.app/sommet/[slug]` pour partage de prévisions (iOS Universal Links)
+- **Deep links :** format `cloudbreak-app.com/sommet/[slug]` pour partage de prévisions (iOS Universal Links)
 
 ### Permissions Device
 

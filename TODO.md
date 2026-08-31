@@ -41,12 +41,16 @@ Détail complet : `docs/infra-serveur.md` section 4bis.
 - [x] **Notion** — page "🖥️ Serveur OVH" mise à jour (Cloudbreak : domaine + env renommé ; Snoroc :
   env renommé)
 - [x] Vérifié en ligne : `dev-api.cloudbreak-app.com/health` → 200, `dev-ops.cloudbreak-app.com/fr/privacy` → 200
-- [ ] **DÉCISION À TRANCHER** : `aso-landing-page.md` / `pre-release-checklist.md` (V2) référencent
-  encore `cloudbreak.fr` comme domaine de la landing page — décider si la landing V2 passe aussi sur
-  `cloudbreak-app.com` (probable) puis nettoyer ces docs. Les artifacts de story déjà mergées
-  (`4-4-conformite-*.md`) gardent `cloudbreak.fr` comme trace historique, on n'y touche pas.
+- [x] **Domaine confirmé par l'utilisateur (2026-08-31) : `cloudbreak-app.com` est LE domaine, tout
+  est dessus** (`api.`, `ops.`, `dev-*`, landing, deep links). Docs alignées : `aso-landing-page.md`,
+  `pre-release-checklist.md`, `prd.md`, `epics.md` (story 3.6), `INDEX.md`, `CLAUDE.md`,
+  `ops/docs/story-1-legal-pages.md`, `mobile/docs/story-4-4-*.md`. Les artifacts de stories déjà
+  mergées (`implementation-artifacts/4-3-*`, `4-4-*`) gardent leurs anciennes URLs comme trace
+  historique — on n'y touche pas. Bundle id iOS `com.cloudbreak.app` conservé (identifiant valide,
+  pas une URL, pas besoin de matcher le domaine).
 
-→ **Migration domaine : close côté code et infra.** Ne reste que la décision V2 ci-dessus.
+→ **Migration domaine : CLOSE.** Code + infra + docs alignés. Seule config restante = Universal
+  Links iOS (story 3.6), bloquée compte Apple Dev.
 
 **Chantier auth — décisions prises le 2026-08-08, brainstorming `superpowers:brainstorming` lancé (design pas encore validé) :**
 
@@ -83,7 +87,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 - [ ] **Story 4.3** — StoreKit 2 paiement réel — 🔴 bloqué par compte Apple Dev (99$/an)
 - [ ] **Epic 5** — Notifications push — 🔴 bloqué par compte Apple Dev (certificats APNs)
 - [ ] **Story 2.2** — Préférences notifications — 🔴 bloqué par Epic 5
-- [ ] **Story 3.6** — Deep link partage — 🔴 bloqué par domaine + Apple Universal Links config (le VPS ne débloque pas le nom de domaine — à vérifier si un domaine a été pris avec le serveur OVH)
+- [ ] **Story 3.6** — Deep link partage — URL déjà sur `cloudbreak-app.com` ; reste 🔴 bloqué par la config Apple Universal Links (`associatedDomains` + `apple-app-site-association`), donc compte Apple Dev
 
 ## Dropé (décision explicite utilisateur)
 
@@ -104,7 +108,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
   - Verdict `"high"` : conditions strictes (score ≥ 70 + inversion + cloud_base ≥ 150m sous sommet + cloud_cover ≥ 55%)
   - Système de caps (`_apply_score_caps`) non documenté
 - [ ] **Supabase "Confirm email"** — désactivé en dev, à réactiver avant release 1.0.0
-- [ ] **Deep link partage** — route cible `https://merdenua.ge/sommet/{slug}` à remplacer/configurer avec le vrai domaine + Universal Links iOS
+- [ ] **Deep link partage** — URL corrigée sur `https://cloudbreak-app.com/sommet/{slug}` (2026-08-31). Reste : Universal Links iOS (`.well-known/apple-app-site-association` + `associatedDomains`) — bloqué compte Apple Dev
 - [ ] **MountainBackground (login)** — visuellement insuffisant, rework avant release 1.0.0
 - [ ] **CGU/Privacy `cloudbreak-ops`** — contenu substantiel déjà rédigé (pas du placeholder générique), mais à valider/compléter avant soumission store :
   - `messages/fr.json` : `cgu.updated` / `privacy.updated` sont littéralement `"à définir avant publication"` → mettre la vraie date

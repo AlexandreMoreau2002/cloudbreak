@@ -123,7 +123,7 @@
 | [`epics.md`](_bmad-output/planning-artifacts/epics.md) | **Epics 1-9 avec toutes les stories** et leurs ACs Given/When/Then. Epics 1-7 = MVP, Epics 8-9 = V2 (growth + landing page) |
 | [`ux-design-specification.md`](_bmad-output/planning-artifacts/ux-design-specification.md) | Spec UX complète — écrans, flows, composants, DA (palette, typographie Josefin Sans) |
 | [`go-to-market.md`](_bmad-output/planning-artifacts/go-to-market.md) | Stratégie marketing — positionnement, canaux d'acquisition (ASO, Camptocamp, TikTok, CAF, presse), plan de lancement 3 phases, spec gamification complète (badges + niveaux), modèle économique, Apple Editorial Team |
-| [`aso-landing-page.md`](_bmad-output/planning-artifacts/aso-landing-page.md) | Copy App Store prêt à coller (titre, sous-titre, keywords, description complète), brief 5 screenshots, spec landing page cloudbreak.fr, SEO Google |
+| [`aso-landing-page.md`](_bmad-output/planning-artifacts/aso-landing-page.md) | Copy App Store prêt à coller (titre, sous-titre, keywords, description complète), brief 5 screenshots, spec landing page cloudbreak-app.com, SEO Google |
 | [`pre-release-checklist.md`](_bmad-output/planning-artifacts/pre-release-checklist.md) | Checklist avant release 1.0.0 — App Store, Supabase, domaine, Universal Links |
 | [`prd-validation-report.md`](_bmad-output/planning-artifacts/prd-validation-report.md) | Rapport de validation du PRD |
 | [`implementation-readiness-report-2026-03-17.md`](_bmad-output/planning-artifacts/implementation-readiness-report-2026-03-17.md) | Rapport de readiness à l'implémentation (mars 2026) |
