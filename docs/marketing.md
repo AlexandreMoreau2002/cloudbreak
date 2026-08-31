@@ -2,7 +2,7 @@
 
 > Document maître pour obtenir les premiers utilisateurs, apprendre avec eux et construire les premières preuves produit.
 >
-> Dernière mise à jour : 2026-07-26
+> Dernière mise à jour : 2026-08-31
 >
 > Ce document est opérationnel. Les décisions stratégiques détaillées restent dans les documents sources référencés en fin de page.
 
@@ -309,7 +309,32 @@ Nombre de sessions de prédiction qui aboutissent à une observation terrain doc
 - désabonnements ;
 - valeur d’un utilisateur payant.
 
-## 11. Suivi hebdomadaire
+## 11. Suivi de diffusion — sondage premiers users
+
+Sondage anonyme (Tally, 2 questions + 2 questions ouvertes) + email optionnel avec consentement séparé, pour comprendre comment les gens estiment les chances de mer de nuage et constituer une première liste de contacts intéressés (pas encore une vraie mailing list — étape avant ça).
+
+Lien : https://tally.so/r/gD8Eel
+
+| Canal | Statut | Date | Lien du post | Notes |
+|---|---|---|---|---|
+| Camptocamp (Multiactivité) | Posté — en attente validation modérateur | 2026-08-22 | [Sujet créé](https://forum.camptocamp.org) | Compte tout juste créé, bloqué automatiquement par l'anti-spam Discourse (nouveau compte + lien externe au premier post) — comportement normal, débloqué sous 1-2 jours en général |
+| Reddit r/randonnee | Posté — laissé tourner, pas de relance | 2026-08-29 | — | 5 commentaires, **0 réponse au sondage**. Voir analyse ci-dessous — canal probablement mal ciblé (audience généraliste, pas le segment prioritaire) |
+| Facebook (groupes montagne) | À faire | — | — | — |
+| Reddit r/Alpes | À faire | — | — | Compte à chauffer avant de poster un lien (commenter 2-3 fois sans lien d'abord, sinon filtre anti-spam / karma minimum) |
+| Instagram / communautés photo (r/argentique, r/photographie, groupes FB photo paysage) | À faire | — | — | Prioriser ce segment : photographe = cible n°1 déjà définie plus haut, pas encore testée |
+| Section CAF | À faire | — | — | Phase 2 du plan, pas prioritaire tout de suite |
+
+### Analyse — post Reddit r/randonnee (2026-08-29)
+
+5 commentaires, 0 réponse au sondage. Deux enseignements, pas une invalidation produit :
+
+1. **Format inadapté à Reddit** : les répondants montrent leur expertise directement dans le fil plutôt que de cliquer un lien externe. Comportement classique, pas un signe de désintérêt pour le sujet.
+2. **Contenu qualitatif exploitable** : les réponses citent Meteoblue (altitude nuages + webcams), sites aéronautiques (base/sommet des couches), et une lecture empirique (régime anticyclonique stable, inversion thermique, air froid sec) — exactement ce que l'algo Cloudbreak consolide automatiquement. Ça valide que le besoin de synthèse existe chez les gens qui font ça à la main.
+3. **Objection notable** (à ne pas ignorer, mais à ne pas généraliser) : un commentaire rejette le principe même — *"la magie du bivouac c'est la surprise, pas besoin d'un téléphone pour ça"*. Confirme que le randonneur généraliste/puriste n'est pas le bon segment (déjà 3e priorité dans ce doc) — le test réel reste à faire sur le photographe paysage, qui a une vraie contrainte de planification (lumière, horaire précis) et un rapport différent à la prévisibilité.
+
+**Décision** : ne pas relancer ce fil, recentrer les prochains canaux sur le segment photo avant de tirer une conclusion sur le marché.
+
+## 12. Suivi hebdomadaire
 
 À compléter chaque semaine :
 
@@ -337,7 +362,59 @@ Ce qui n’a pas fonctionné :
 Décision pour la semaine suivante :
 ```
 
-## 12. Sources et documents liés
+## 13. Méthodes de lancement SaaS sans audience — synthèse
+
+> Source : vidéo YouTube [B06b1CxLXr4](https://www.youtube.com/watch?v=B06b1CxLXr4) (+ notes retravaillées via aistudio.google.com).
+> Principe directeur : au démarrage, privilégier **l'humain et les réseaux existants** (One-to-One + partenariats) plutôt que la technique ou la publicité.
+
+### 13.1 Aller là où est la cible (ex. Teachizy)
+
+- Ne pas attendre les clients : aller là où ils se regroupent déjà.
+- **Sondage comme lead magnet** : créer un sondage type « Quel serait votre outil idéal pour [problème] ? » avant même que le produit soit fini.
+- Canaux : groupes Facebook thématiques (ici : groupes de formateurs).
+- Astuce non-intrusive : se présenter comme quelqu'un qui demande de l'aide / un avis, jamais de pub directe.
+- Capture : email facultatif en fin de sondage pour « envoyer les résultats ».
+- Résultat cité : 80 emails qualifiés → première newsletter + annonce de sortie.
+- **Application Cloudbreak** : c'est exactement la démarche du sondage Tally (section 11). Élargir aux groupes FB photo paysage.
+
+### 13.2 Framework One-to-One vs One-to-Many
+
+Au début, privilégier le **One-to-One** : gratuit, et on apprend énormément sur les besoins réels.
+
+| One-to-One (1:1) | One-to-Many (1:N) |
+|---|---|
+| Démarchage direct (email, SMS, LinkedIn) | Création de contenu (YouTube, blog) |
+| Parler à son entourage proche / pro | Publicité payante (Ads) |
+| Partenariats directs | Affiliation |
+
+### 13.3 Plateformes d'offres à vie (LTD / Lifetime Deal) (ex. LienVisuel)
+
+- Générer du cash rapidement au lancement sans budget marketing.
+- Méthode : proposer une offre à vie sur une plateforme spécialisée (paiement unique, accès permanent).
+- Outil cité : **Videdingue.com** (plateforme française de bons plans entrepreneurs).
+- Résultat cité : ~8 000 € de CA dès le démarrage.
+- **Application Cloudbreak** : à évaluer avec prudence — un LTD sur une app freemium à faible coût marginal peut cannibaliser le Premium récurrent. Éventuellement un lot limité « early supporter ».
+
+### 13.4 SEO parasite et partenariats d'articles
+
+- Plutôt que remonter sur Google en partant de zéro, utiliser les pages déjà en première position.
+- Méthode : identifier les mots-clés de la cible (ex. « meilleur réducteur de lien »), repérer les blogs avec des articles « Top 10 » / comparatifs.
+- Action : contacter le propriétaire du site pour être ajouté à la liste.
+- Outil/site cité : **Digitiz.fr**.
+- Négociation : lien d'affiliation (commission sur les ventes) **ou** montant fixe pour l'insertion.
+- **Application Cloudbreak** : viser les articles « meilleure app météo montagne », « prévoir une mer de nuage », comparatifs d'apps rando/photo.
+
+### 13.5 Pistes complémentaires (tendances actuelles)
+
+1. **Build in Public** (X / LinkedIn) : partager screenshots, galères de code, premiers revenus → connexion avec d'autres entrepreneurs = premiers early adopters. Recoupe le format « Construire Cloudbreak » (section 7).
+2. **Product Hunt** : passage quasi obligé pour un lancement mondial ; préparer la journée en contactant des hunters. ⚠️ déjà classé « à repousser avant preuve produit » en section 8 — ne pas anticiper.
+3. **Cold outreach automatisé** : Apollo.io (trouver les emails de la cible) + Lemlist / Instantly (séquences personnalisées).
+4. **Répondre aux problèmes sur Reddit / Quora** : GummySearch pour surveiller les mots-clés liés au problème résolu, répondre en proposant l'outil sans être spammy. Cf. retour d'expérience Reddit section 11.
+5. **Annuaires de SaaS** : AlternativeTo, Capterra, G2 — capter les recherches « alternative à [gros logiciel] ».
+
+---
+
+## 14. Sources et documents liés
 
 - [`_bmad-output/planning-artifacts/go-to-market.md`](../_bmad-output/planning-artifacts/go-to-market.md) — stratégie marketing initiale.
 - [`_bmad-output/planning-artifacts/aso-landing-page.md`](../_bmad-output/planning-artifacts/aso-landing-page.md) — ASO, landing page et SEO.
@@ -346,3 +423,4 @@ Décision pour la semaine suivante :
 - [`docs/product-roadmap-2026-07-26.md`](product-roadmap-2026-07-26.md) — priorités produit conditionnant le lancement.
 - [`TODO.md`](../TODO.md) — blocages et état réel d’exécution.
 - [Page Notion Cloudbreak](https://app.notion.com/p/325964bda18580358585ff14ef1f76c6) — source parallèle produit/projet.
+- [Vidéo YouTube B06b1CxLXr4](https://www.youtube.com/watch?v=B06b1CxLXr4) — méthodes de lancement SaaS sans audience (synthèse section 13).
