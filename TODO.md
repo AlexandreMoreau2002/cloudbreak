@@ -1,13 +1,65 @@
-# TODO — Cloudbreak
+# TODO — Cloudbreak (produit / chantier dev)
 
-> Notes de chantier. Mis à jour au fil des sessions.
-> Dernière mise à jour : 2026-07-31.
+> Notes de chantier **produit et technique**. Mis à jour au fil des sessions.
+> Le suivi **marketing / acquisition** vit dans [`docs/marketing.md`](docs/marketing.md) (plan + canaux + méthodes).
+> Côté Notion : page 🏠 TODO → sections `Cloudbreak — Produit` et `Cloudbreak — Marketing`.
+> Dernière mise à jour : 2026-08-31.
 
 ---
 
 ## En cours
 
-_Rien en cours._
+**Migration domaine `cloudbreak-app.com` — terminée le 2026-08-09 :**
+
+Domaine acheté par l'utilisateur, remplace les URLs `nip.io` temporaires (et l'ancienne hypothèse
+`cloudbreak.fr` jamais achetée). Schéma de sous-domaine calqué sur **Snoroc** : `dev-api.<domaine>` /
+`dev-ops.<domaine>` pour le dev, `api.<domaine>` / `ops.<domaine>` réservés à une future prod.
+Détail complet : `docs/infra-serveur.md` section 4bis.
+
+| | Prod (futur) | Dev (actuel) |
+|---|---|---|
+| Backend | `api.cloudbreak-app.com` | `dev-api.cloudbreak-app.com` |
+| Ops | `ops.cloudbreak-app.com` | `dev-ops.cloudbreak-app.com` |
+
+- [x] Repo mis à jour ET **commité le 2026-08-31** :
+  - mobile `develop` `719d649` — fallbacks `fetchService.ts` / `legalUrls.ts` / `.env.example` + tests (736 verts, tsc + lint OK)
+  - ops `develop` `39d2caf` — `README.md`
+  - backend `develop` `b62d6cd` — commit infra Dokploy (poussé)
+  - racine — `CLAUDE.md`, `AGENTS.md`, `docs/infra-serveur.md`, `docs/versions.md`, planning docs, refs submodules
+- [x] **DNS** — 2 enregistrements A créés chez OVH (`dev-api`, `dev-ops` → `51.178.37.35`), fait par l'utilisateur
+- [x] **Dokploy — domaines** — `dev-api`/`dev-ops.cloudbreak-app.com` ajoutés (HTTPS Let's Encrypt),
+  anciens domaines `nip.io` retirés, fait par l'utilisateur
+- [x] **Fix port backend** — domaine Backend créé avec le port par défaut Dokploy (3000) au lieu du
+  port réel du container FastAPI (8000) → 502 corrigé en base + fichier Traefik généré (via SSH,
+  demande explicite de l'utilisateur). Point de vigilance noté dans `docs/infra-serveur.md` pour tout
+  futur domaine sur ce projet.
+- [x] **Renommer l'environnement Dokploy** `production` → `dev` sur le projet `cloudbreak` — l'UI
+  Dokploy ne propose pas de renommage (juste "Create Environment"), fait directement en base via SSH
+  (demande explicite de l'utilisateur)
+- [x] **Snoroc — même correction** : environnement `development` → `dev` (demande explicite de
+  l'utilisateur, pour homogénéiser le nommage entre projets)
+- [x] **Notion** — page "🖥️ Serveur OVH" mise à jour (Cloudbreak : domaine + env renommé ; Snoroc :
+  env renommé)
+- [x] Vérifié en ligne : `dev-api.cloudbreak-app.com/health` → 200, `dev-ops.cloudbreak-app.com/fr/privacy` → 200
+- [ ] **DÉCISION À TRANCHER** : `aso-landing-page.md` / `pre-release-checklist.md` (V2) référencent
+  encore `cloudbreak.fr` comme domaine de la landing page — décider si la landing V2 passe aussi sur
+  `cloudbreak-app.com` (probable) puis nettoyer ces docs. Les artifacts de story déjà mergées
+  (`4-4-conformite-*.md`) gardent `cloudbreak.fr` comme trace historique, on n'y touche pas.
+
+→ **Migration domaine : close côté code et infra.** Ne reste que la décision V2 ci-dessus.
+
+**Chantier auth — décisions prises le 2026-08-08, brainstorming `superpowers:brainstorming` lancé (design pas encore validé) :**
+
+Suivi détaillé dans `epics.md` Epic 2 (stories 2.5, 2.6, 2.7) et `sprint-status.yaml`. Ne pas redemander l'arbitrage produit à une future session — déjà tranché avec l'utilisateur :
+
+- [ ] **Story 2.5 — Mur différé** : onboarding → recherche/score gratuit consultable sans compte → compte demandé seulement pour sauver un favori / dépasser le 1er check / activer une alerte. Remplace le mur actuel (compte obligatoire juste après l'onboarding). Impact : `AuthGuard` (`mobile/src/app/_layout.tsx`), logique quota freemium (actuellement liée à un `user_id` authentifié — à vérifier comment un check anonyme s'articule avec le quota Redis 1/jour)
+- [ ] **Story 2.6 — Sign in with Apple**, décidé pour avant sortie MVP (pas une obligation Apple ici — pas de login social tiers existant — mais choix produit pour réduire la friction). `expo-apple-authentication` + Supabase provider Apple OAuth. Guard `Platform.OS === 'ios'` dès le départ (Android prévu V2)
+- [ ] **Story 2.7 — Mot de passe oublié** (actuellement inexistant, vrai trou pas un post-MVP) — Supabase reset password email. **Avant d'arbitrer SMTP custom vs email Supabase générique : l'utilisateur doit tester son propre serveur mail** (capacité d'envoi à valider de son côté)
+- [ ] Migrer le stockage JWT `AsyncStorage` → `expo-secure-store` — sorti du brainstorming auth, traité comme correctif ciblé indépendant (dette sécurité déjà connue, voir Dette technique)
+
+Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpowers:writing-plans` puis `superpowers:subagent-driven-development`, avec `cloudbreak-security` en review vu que ça touche JWT/Supabase/data.
+
+**Monitoring post-MVP** (Epic 1, story 1.8) : PostHog réel + Sentry, pas de Grafana — voir section "Post-MVP" plus bas.
 
 ---
 
@@ -24,8 +76,7 @@ _Rien en cours._
 
 | Story | Contenu | Complexité | Status |
 |---|---|---|---|
-| **6.2** | Photo optionnelle validation terrain + calcul taux de précision par zone | 🟡 Moyen — backend (storage à choisir, probablement Supabase Storage) + mobile | `backlog` |
-| **Epic 1** | Infra, CI/CD, monitoring — VPS OVH acquis (2026-07-31), **Dokploy déjà en place avec auto-deploy backend + ops en environnement dev** (voir Notes vrac). Reste : CI/CD complet mobile, monitoring, passage en environnement prod avec vrai domaine | 🟡 Moyen — partiellement fait, voir `CLAUDE.md` section "Infra prod" | `en partie fait` |
+| **Epic 1** | Infra, CI/CD, monitoring — VPS OVH acquis (2026-07-31), **Dokploy déjà en place avec auto-deploy backend + ops en environnement dev** (voir Notes vrac). Reste : CI/CD complet mobile, passage en environnement prod avec vrai domaine. Monitoring avancé (PostHog réel, Sentry) volontairement **exclu du MVP** — voir section "Post-MVP" ci-dessous | 🟡 Moyen — partiellement fait, voir `CLAUDE.md` section "Infra prod" | `en partie fait` |
 
 ## Backlog stories (bloquées)
 
@@ -33,6 +84,14 @@ _Rien en cours._
 - [ ] **Epic 5** — Notifications push — 🔴 bloqué par compte Apple Dev (certificats APNs)
 - [ ] **Story 2.2** — Préférences notifications — 🔴 bloqué par Epic 5
 - [ ] **Story 3.6** — Deep link partage — 🔴 bloqué par domaine + Apple Universal Links config (le VPS ne débloque pas le nom de domaine — à vérifier si un domaine a été pris avec le serveur OVH)
+
+## Dropé (décision explicite utilisateur)
+
+- **Story 6.2** — Photo optionnelle validation terrain + calcul taux de précision par zone — dropée le 2026-08-08, pas de priorité définie pour une reprise future.
+
+## Post-MVP (décidé le 2026-08-08, ne pas commencer avant sortie MVP)
+
+- **Monitoring & tracking utilisateur complet** : PostHog branché pour de vrai (funnels, rétention, session replay, décisions business — déjà scaffoldé en stub story 1.7, déjà noté V2 dans `prd.md`) + **Sentry** (error/crash tracking, nouveau — ajouté à `prd.md` section V2). Pas de Grafana : le VPS partagé (2 vCPU/3.7 Go RAM, déjà eu un incident de charge) ne doit pas porter une stack métriques self-hosted en plus de BetterStack. Voir `_bmad-output/planning-artifacts/prd.md` section V2.
 
 ---
 
@@ -107,6 +166,8 @@ _Rien en cours._
 
 ### Infra Dokploy — état au 2026-08-02 (VPS OVH acquis le 2026-07-31)
 
+> **Référence à jour de l'infra serveur : `docs/infra-serveur.md`** (accès, apps déployées, CI/CD, points de vigilance). Cette section est le journal détaillé des sessions de config — utile pour le contexte historique, mais pas la source à consulter en premier.
+
 VPS OVH (`51.178.37.35`, host SSH configuré en local sous `vps-ovh-projets`, **serveur partagé avec d'autres projets perso** — snoroc, quest, etc., pas dédié à Cloudbreak). Dokploy installé et fonctionnel (Traefik intégré, HTTPS via nip.io pour l'instant).
 
 **Deux services Cloudbreak déployés en environnement dev, CI/CD auto-deploy opérationnel de bout en bout (vérifié) :**
@@ -124,6 +185,6 @@ VPS OVH (`51.178.37.35`, host SSH configuré en local sous `vps-ovh-projets`, **
 5. Accès au serveur : `ssh vps-ovh-projets` (config dans `~/.ssh/config` en local), Dokploy accessible sur le port 3000 en interne, Postgres interne de Dokploy accessible via `docker exec` sur le conteneur `dokploy-postgres`. **Le token GitHub utilisé pour accéder au repo `cloudbreak-ops` est stocké en clair dans la config Dokploy (`customGitUrl`)** — normal pour son fonctionnement (accès repo privé), mais à savoir si jamais la DB Dokploy doit être exportée/partagée.
 
 **Reste à faire :**
-- [ ] URLs `nip.io` sont temporaires — à remplacer par un vrai domaine (`cloudbreak.fr` ou équivalent) une fois réservé, partout (mobile, docs, config Dokploy).
-- [ ] Écrire une doc technique dédiée de la procédure Dokploy (setup fait manuellement hors du workflow de stories habituel, pas de story Epic 1 formellement close) si on veut la reproduire pour un environnement prod séparé.
+- [x] URLs `nip.io` remplacées par `cloudbreak-app.com` (DNS + Dokploy + code des 3 submodules, commité le 2026-08-31 — voir section "En cours").
+- [x] Écrire une doc technique dédiée de la procédure Dokploy — fait le 2026-08-08, voir `docs/infra-serveur.md`.
 - [ ] Monitoring (Better Stack / PostHog infra) toujours pas branché — reste dans le scope Epic 1.

@@ -52,8 +52,9 @@ development_status:
   1-2-setup-backend-fastapi-squelette-complet: backlog
   1-3-setup-mobile-expo-squelette-design-system: backlog
   1-4-cicd-github-actions-backend-mobile: backlog
-  1-5-monitoring-betterstack-posthog-initial: backlog
+  1-5-monitoring-betterstack-posthog-initial: backlog   # rescopée 2026-08-08 : BetterStack + logs uniquement, PostHog réel déplacé en 1.8
   1-7-taxonomie-instrumentation-posthog: done
+  1-8-monitoring-avance-posthog-sentry: backlog   # post-MVP, décidé 2026-08-08 — voir prd.md V2 + epics.md
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -65,6 +66,9 @@ development_status:
   2-2-gestion-preferences-notifications: backlog
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
+  2-5-mur-signup-differe-acces-invite: backlog   # brainstorming en cours 2026-08-08, design pas encore validé
+  2-6-sign-in-with-apple: backlog   # brainstorming en cours 2026-08-08, design pas encore validé
+  2-7-mot-de-passe-oublie: backlog   # brainstorming en cours 2026-08-08, design pas encore validé
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -137,7 +141,7 @@ development_status:
   # ─────────────────────────────────────────────────────────────
   # EPIC 9: Landing Page & Présence Web (V2 — pré-lancement)
   # Refs: aso-landing-page.md, go-to-market.md
-  # Dépend de : domaine cloudbreak.fr réservé
+  # Dépend de : domaine réservé (fait le 2026-08-09, cloudbreak-app.com) — reste à créer l'env Dokploy prod
   # ─────────────────────────────────────────────────────────────
   epic-9: backlog
   9-1-landing-page-cloudbreak-fr: backlog            # HTML/CSS statique sur Dokploy, deep links, SEO

@@ -109,10 +109,10 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 | Validation terrain GPS + notif | Data flywheel — faible coût dev |
 | Freemium + StoreKit 2 | Monétisation = raison d'être du MVP |
 | Auth Supabase | Identité user = base de tout |
-| Analytics PostHog (events business) | Stats conversion + funnel = décisions |
+| Analytics PostHog — taxonomie + stub (story 1.7) | Instrumentation prête, zéro perte des tout premiers users |
 | Alertes ops BetterStack free | Dodo tranquille — non négociable |
 
-**Monitoring MVP :** BetterStack free (alertes downtime → SMS/email Alex) + PostHog (conversions, churns, checks) + logs FastAPI (erreurs 5xx). Dashboard avancé → post-lancement.
+**Monitoring MVP :** BetterStack free (alertes downtime → SMS/email Alex) + logs FastAPI (erreurs 5xx) + PostHog en stub DEBUG-only (taxonomie câblée, pas de SDK réel). **Branchement PostHog réel + Sentry (error/crash tracking) = post-MVP**, décidé le 2026-08-08 — voir section V2 "Sentry (error/crash tracking)" et `TODO.md`.
 
 **Risque ressources :** si le temps manque, premier cut sur les alertes régionales (garder alertes favoris) et sur la confirmation terrain (garder la notif, supprimer la confirmation). Verdict + freemium + StoreKit sont intouchables.
 
@@ -134,7 +134,8 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - **Contribution utilisateur de spots** : l'user soumet coordonnées GPS + nom depuis l'app → LLM (Claude Haiku) normalise (slug, capitalisation, déduplication probable) → altitude via Open-Meteo Elevation → insertion en DB avec modération légère
 - **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
 - **Refonte visuelle FavoritesGrid** : la grille de favoris sur l'écran d'accueil (état vide et avec sommet) est fonctionnelle mais minimaliste — remplacer par un design plus riche (score du jour visible sur chaque carte, score coloré, massif affiché, style cohérent avec la ScoreCard) aligné sur la proposition Claude Design
-- **Intégration PostHog mobile** derrière `src/services/analytics.ts` (stub posé en story 7.1)
+- **Intégration PostHog mobile** derrière `src/services/analytics.ts` (stub posé en story 7.1) — priorité post-MVP n°1 pour comprendre l'usage réel et prendre des décisions produit (funnels, rétention, session replay)
+- **Sentry (error/crash tracking)** : décidé le 2026-08-08 — capter les crashs mobile et exceptions backend en prod, complémentaire de PostHog (comportement) et BetterStack (uptime). Pas de Grafana envisagé : éviter une stack métriques self-hosted supplémentaire sur le VPS partagé (ressources limitées, déjà eu un incident de charge — voir `docs/infra-serveur.md`).
 - **Message de clarté sur le quota freemium** (1 sommet gratuit/jour) : prévenir l'utilisateur qu'il doit bien choisir son sommet du jour, pour limiter la frustration ressentie sur la limite — voir aussi si le modèle freemium lui-même (1 check/jour) mérite d'être revu à la lumière des retours des premiers utilisateurs
 
 ### Vision (Phase 3)
@@ -306,6 +307,8 @@ Pas d'accès galerie photo — l'utilisateur prend sa photo avec l'appareil nati
 - FR11 : L'utilisateur peut partager une prévision via un deep link
 
 ### Compte Utilisateur & Authentification
+
+> **Chantier en cours (brainstorming lancé le 2026-08-08, design pas encore validé)** — décisions déjà actées avec l'utilisateur : (1) le mur de création de compte passe de "obligatoire juste après l'onboarding" à "différé après un premier score gratuit consultable" ; (2) ajout de Sign in with Apple en plus d'email/mot de passe (choix produit friction, pas une obligation Guideline 4.8 puisqu'il n'y a pas d'autre login social) ; (3) ajout d'un flow "mot de passe oublié" (inexistant aujourd'hui) — envoi d'email à câbler, l'utilisateur doit tester son serveur mail avant de trancher SMTP custom vs email Supabase générique. Voir `epics.md` Story 2.5/2.6/2.7 et `TODO.md` section "En cours" pour le détail.
 
 - FR12 : L'utilisateur peut créer un compte et s'authentifier
 - FR13 : L'utilisateur peut supprimer ses données personnelles (droit à l'effacement RGPD)

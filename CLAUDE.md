@@ -13,6 +13,17 @@ Le fichier `TODO.md` à la racine du repo est le **carnet de bord du dev** :
 **Consulter `TODO.md` en début de session** pour reprendre là où on s'est arrêté.
 **Mettre à jour `TODO.md`** après chaque story complétée ou chantier clos.
 
+## État des versions — docs/versions.md
+
+Le fichier `docs/versions.md` est la **référence unique et à jour** des versions déployées/en cours
+de chaque service (backend, mobile, ops) : dernier commit par submodule, versions des dépendances
+clés (FastAPI, Expo/React Native, Next.js), état des migrations DB, environnements existants.
+
+**Mettre à jour `docs/versions.md`** dans les mêmes cas que `docs/infra-serveur.md` (étape 5. DOC du
+workflow de story, et étape "SUBMODULE" de la clôture de story) : à chaque ref de submodule mise à
+jour sur `develop`, changement de version de dépendance majeure, nouvelle migration Alembic, ou
+nouvel environnement serveur créé.
+
 ---
 
 ## Projet
@@ -28,7 +39,7 @@ Stack retenue :
 - **Analytics** : PostHog
 - **Paiement** : StoreKit 2 (iOS In-App Purchase — pas Stripe)
 - **API météo** : Open-Meteo (provider principal, gratuit sans clé) / Météo-France (provider secondaire FR, résolution AROME 1.3km) — interface abstraite swappable
-- **Infra prod** : Dokploy (self-hosted PaaS) sur VPS OVH Ubuntu 24.04 (`51.178.37.35`, serveur partagé avec d'autres projets perso, accès local via `ssh vps-ovh-projets`) — Traefik intégré (HTTPS Let's Encrypt auto), UI web, webhook GitHub → redeploy auto. Remplace Docker Compose + Caddy + deploy.sh manuel. **Environnement dev déployé et CI/CD vérifié bout en bout (2026-08-02)** : backend sur `cloudbreak-dev-api.51.178.37.35.nip.io` (suit `develop`), ops sur `cloudbreak-dev-ops.51.178.37.35.nip.io` (suit `develop`) — les deux ont un vrai webhook GitHub `push` configuré vers `http://51.178.37.35:3000/api/deploy/{refreshToken}` (testé et fonctionnel). URLs `nip.io` temporaires en attendant un nom de domaine réservé. Détail complet de la config dans `TODO.md` section "Infra Dokploy".
+- **Infra prod** : Dokploy (self-hosted PaaS) sur VPS OVH Ubuntu 24.04 (`51.178.37.35`, serveur partagé avec d'autres projets perso, accès local via `ssh vps-ovh-projets`) — Traefik intégré (HTTPS Let's Encrypt auto), UI web, webhook GitHub → redeploy auto. Remplace Docker Compose + Caddy + deploy.sh manuel. **Environnement dev déployé et CI/CD vérifié bout en bout (2026-08-02)** : backend sur `dev-api.cloudbreak-app.com` (suit `develop`), ops sur `dev-ops.cloudbreak-app.com` (suit `develop`) — les deux ont un vrai webhook GitHub `push` configuré vers `http://51.178.37.35:3000/api/deploy/{refreshToken}` (testé et fonctionnel). **Domaine `cloudbreak-app.com` acheté le 2026-08-09**, remplace les anciennes URLs `nip.io` — bascule en cours, voir `docs/infra-serveur.md` section 4bis pour l'état DNS/Dokploy. **Doc de référence à jour : `docs/infra-serveur.md`** (accès, apps déployées, CI/CD, points de vigilance). `cloudbreak-ops` utilise depuis le 2026-08-08 une deploy key SSH dédiée (plus de token perso à scope large). Historique pas-à-pas des sessions de config dans `TODO.md` section "Infra Dokploy".
 
 ---
 
@@ -245,7 +256,7 @@ Une fois la CI verte sur la PR, ne pas s'arrêter au merge : la story n'est vrai
 3. STATUS    — sprint-status.yaml : passer la story en "done" (ou "review" si des points restent hors scope, avec commentaire)
 4. TODO.md   — déplacer l'entrée de "En cours"/"Dette technique" vers le tableau "Mergé sur develop ✅" (story, PR, date)
 5. DOC       — vérifier que les docs obligatoires sont à jour (docs/story-*.md, product-audit.md, security.md, README, CLAUDE.md racine si la story en change le contenu)
-6. SUBMODULE — dans le repo racine : `git add <submodule>` + commit `chore: update <submodule> ref — story X mergée sur develop`, push
+6. SUBMODULE — dans le repo racine : `git add <submodule>` + commit `chore: update <submodule> ref — story X mergée sur develop`, push. Mettre à jour aussi `docs/versions.md` (commit + date du submodule, et versions de dépendances si elles ont changé) dans le même commit ou un commit séparé juste après.
 7. LOCAL ENV — remettre l'environnement local sur develop dans le(s) submodule(s) concerné(s) :
    git checkout develop && git pull
    git branch -d feature/nom-story         # supprimer la branche locale (déjà mergée)

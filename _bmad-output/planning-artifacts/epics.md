@@ -362,11 +362,13 @@ So that regressions are detected in < 5 minutes and production is always deploya
 
 ---
 
-### Story 1.5: Monitoring BetterStack & PostHog Initial
+### Story 1.5: Monitoring BetterStack (Uptime) & Logs Structurés
 
 As an administrator (Alex),
-I want uptime monitoring with < 2 min alerts and PostHog ready for business events,
-So that I can sleep without worrying and track key product metrics from launch.
+I want uptime monitoring with < 2 min alerts and structured error logs,
+So that I can sleep without worrying about the backend going down silently.
+
+> **Rescopée le 2026-08-08** — le branchement PostHog réel (SDK + `POSTHOG_API_KEY`) sort de cette story et part en post-MVP avec Sentry, voir Story 1.8. Cette story ne couvre plus que BetterStack + logs FastAPI.
 
 **Acceptance Criteria:**
 
@@ -378,17 +380,36 @@ So that I can sleep without worrying and track key product metrics from launch.
 **When** 2 checks consécutifs échouent
 **Then** Alex reçoit une alerte SMS et/ou email en < 2 minutes
 
-**Given** PostHog configuré dans le backend
-**When** on importe `posthog` dans `app/main.py`
-**Then** la connexion est établie avec la clé `POSTHOG_API_KEY` depuis les variables d'environnement
-**And** un event `backend_started` est tracké au démarrage
-
 **Given** les logs FastAPI
 **When** une erreur 5xx se produit
 **Then** elle est loggée en JSON structuré avec `{"level": "error", "path": "...", "status": 500, "error": "..."}`
 **And** aucun `print()` ni stack trace brut n'apparaît en production
 
 ---
+
+### Story 1.8: Monitoring avancé — PostHog réel & Sentry ⏸ post-MVP
+
+> **Scope post-MVP** — décidé le 2026-08-08. Au lancement, BetterStack (uptime) + PostHog en stub DEBUG-only (story 1.7) + logs FastAPI suffisent. Cette story devient prioritaire juste après la sortie MVP, pour comprendre l'usage réel (funnels, rétention) et capter les crashs en prod.
+
+As an administrator (Alex),
+I want real PostHog analytics (funnels, retention, session replay) and Sentry error/crash tracking,
+So that I can make product decisions from real usage data and catch bugs before users report them.
+
+**Stack :** PostHog SDK réel (mobile + backend, derrière les stubs `analytics.ts`/`analytics.py` déjà câblés en story 1.7) + Sentry (mobile React Native + backend FastAPI). Pas de Grafana — éviter une stack métriques self-hosted supplémentaire sur le VPS partagé (2 vCPU/3.7 Go RAM, déjà eu un incident de charge, voir `docs/infra-serveur.md`).
+
+**Acceptance Criteria (à affiner au moment de la story) :**
+
+**Given** le SDK PostHog réel installé mobile + backend
+**When** un event déjà défini dans la taxonomie (story 1.7) se produit
+**Then** il part réellement vers PostHog (plus de stub DEBUG-only)
+
+**Given** Sentry configuré mobile + backend
+**When** une exception non gérée se produit
+**Then** elle est reportée à Sentry avec contexte (user_id anonymisé, stack trace, breadcrumbs)
+
+**Given** le dashboard PostHog
+**When** Alex consulte les funnels
+**Then** il voit le parcours onboarding → premier score → signup → conversion Premium avec taux de drop-off par étape
 
 ---
 
@@ -459,7 +480,7 @@ So that l'app soit instrumentée dès le MVP, sans attendre le branchement du vr
 
 ---
 
-✅ **Epic 1 — 6 stories MVP + 1 story post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
+✅ **Epic 1 — 6 stories MVP + 2 stories post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
 
 ---
 
@@ -586,8 +607,70 @@ So that I exercise my right to erasure under GDPR.
 
 ---
 
-✅ **Epic 2 spécification complète — 4 stories rédigées (couverture FR12, FR13, FR14, FR15)**
-> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store)
+### Story 2.5: Mur de signup différé (accès invité au premier score) 🔵 brainstorming en cours
+
+> **Design pas encore validé** — brainstorming lancé le 2026-08-08, en attente de la spec écrite (`docs/superpowers/specs/`). ACs ci-dessous à considérer comme provisoires, à réviser une fois le design approuvé.
+
+As a new user,
+I want to search a peak and see a free score before being asked to create an account,
+So that I see Cloudbreak's value before committing to sign up.
+
+**Contexte / impact à trancher pendant le design :** aujourd'hui `GET /api/v1/score` est protégé à 100% par JWT (`check_quota` → `get_current_user`), aucun accès anonyme n'existe. Options à explorer : Supabase anonymous auth (JWT anonyme upgradé à la vraie création de compte) vs quota anonyme parallèle (device-id). `AuthGuard` (`mobile/src/app/_layout.tsx`) doit aussi changer : aujourd'hui il redirige systématiquement vers login si `!session`.
+
+**Acceptance Criteria (provisoires) :**
+
+**Given** un nouvel utilisateur qui termine l'onboarding sans compte
+**When** il recherche un sommet et consulte un score
+**Then** le score s'affiche sans exiger de compte
+
+**Given** un utilisateur invité qui a consulté son score gratuit du jour
+**When** il tente un 2e check, ou veut ajouter un favori, ou activer une alerte
+**Then** l'écran de création de compte s'affiche avec un message contextuel expliquant pourquoi
+
+---
+
+### Story 2.6: Sign in with Apple 🔵 brainstorming en cours
+
+> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription.
+
+As a new user,
+I want to sign up or log in with my Apple ID in one tap,
+So that I don't have to type an email and password.
+
+**Acceptance Criteria (provisoires) :**
+
+**Given** l'écran de création de compte
+**When** l'utilisateur appuie sur "Sign in with Apple"
+**Then** `expo-apple-authentication` déclenche le flow natif iOS, et Supabase crée/authentifie via le provider OAuth Apple
+
+**Given** l'app buildée pour Android (V2, pas encore construite mais codebase partagée)
+**When** l'écran de login se rend
+**Then** le bouton Apple est masqué via un guard `Platform.OS === 'ios'` explicite
+
+---
+
+### Story 2.7: Mot de passe oublié 🔵 brainstorming en cours
+
+> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Flow actuellement inexistant. Décision SMTP custom brandé vs email Supabase générique en attente — l'utilisateur doit tester son propre serveur mail avant arbitrage.
+
+As a user who forgot their password,
+I want to request a password reset email and set a new password,
+So that I'm not permanently locked out of my account.
+
+**Acceptance Criteria (provisoires) :**
+
+**Given** l'écran de connexion
+**When** l'utilisateur appuie sur "Mot de passe oublié ?" et saisit son email
+**Then** un email de réinitialisation est envoyé via Supabase Auth
+
+**Given** l'email de réinitialisation reçu
+**When** l'utilisateur suit le lien et saisit un nouveau mot de passe (min 8 caractères)
+**Then** le mot de passe est mis à jour et l'utilisateur peut se reconnecter avec le nouveau
+
+---
+
+✅ **Epic 2 — 7 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 3 en brainstorming)**
+> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · 2.5/2.6/2.7 🔵 brainstorming en cours (2026-08-08)
 
 ---
 
@@ -1232,7 +1315,7 @@ So that my followers discover Cloudbreak naturally through my content.
 
 **Given** le partage complété
 **When** quelqu'un clique le lien éventuel
-**Then** il est redirigé vers la landing page cloudbreak.fr/sommet/{slug}
+**Then** il est redirigé vers la landing page cloudbreak-app.com/sommet/{slug}
 
 ---
 
@@ -1346,11 +1429,11 @@ So that I can share my mountain year and feel connected to the Cloudbreak commun
 
 **Objectif :** Créer une présence web qui génère du trafic organique Google, sert de destination aux deep links partagés, et renforce la crédibilité auprès de la presse et des partenaires.
 
-**Dépendances :** domaine cloudbreak.fr réservé, Dokploy configuré (déjà en place)
+**Dépendances :** domaine réservé (fait le 2026-08-09, `cloudbreak-app.com`), Dokploy configuré (déjà en place) — reste à créer l'environnement Dokploy prod dédié
 
 ---
 
-### Story 9.1: Landing Page cloudbreak.fr
+### Story 9.1: Landing Page cloudbreak-app.com
 
 As a potential user who discovers Cloudbreak via a shared link or Google,
 I want a clear and compelling landing page,
@@ -1358,7 +1441,7 @@ So that I understand the app immediately and download it.
 
 **Acceptance Criteria:**
 
-**Given** un visiteur arrive sur cloudbreak.fr
+**Given** un visiteur arrive sur cloudbreak-app.com
 **When** la page se charge
 **Then** le temps de chargement est < 2s et la page est indexable par Google (pas de JS-only rendering)
 
@@ -1370,7 +1453,7 @@ So that I understand the app immediately and download it.
 **When** il parcourt la page
 **Then** il voit dans l'ordre : comment ça marche (3 étapes) → pour qui (4 profils) → pourquoi Cloudbreak → télécharger
 
-**Given** une prédiction partagée via deep link (ex: cloudbreak.fr/sommet/colombier)
+**Given** une prédiction partagée via deep link (ex: cloudbreak-app.com/sommet/colombier)
 **When** un non-utilisateur iOS clique le lien
 **Then** il voit la page du sommet avec le score prédit + CTA "Télécharger pour voir ta prévision"
 
@@ -1378,7 +1461,7 @@ So that I understand the app immediately and download it.
 **When** Google l'indexe
 **Then** les balises SEO sont correctes : `<title>`, meta description, H1, schema.org `SoftwareApplication`, images avec `alt` descriptifs
 
-**Stack :** HTML/CSS statique déployé comme service Dokploy, Traefik HTTPS automatique sur cloudbreak.fr
+**Stack :** HTML/CSS statique déployé comme service Dokploy, Traefik HTTPS automatique sur cloudbreak-app.com
 
 ---
 
