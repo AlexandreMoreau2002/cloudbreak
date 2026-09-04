@@ -609,15 +609,66 @@ So that I exercise my right to erasure under GDPR.
 
 ### Story 2.5: Mur de signup différé (accès invité au premier score) 🔵 brainstorming en cours
 
-> **Design pas encore validé** — brainstorming lancé le 2026-08-08, en attente de la spec écrite (`docs/superpowers/specs/`). ACs ci-dessous à considérer comme provisoires, à réviser une fois le design approuvé.
+> **Design pas encore validé** — brainstorming lancé le 2026-08-08, recadré le 2026-09-04. En attente de la spec écrite (`docs/superpowers/specs/`). ACs ci-dessous à considérer comme provisoires, à réviser une fois le design approuvé.
+> **Écran partagé avec 2.6 et 2.8** — le mur signup (2.5), le bouton Sign in with Apple (2.6) et le mini-sondage post-création de compte (2.8) sont conçus comme **un seul écran unifié** "Connexion & Création de compte" pour éviter des prompts de design contradictoires. Une seule spec couvre les trois stories ; l'implémentation reste 3 stories séparées.
 
 As a new user,
 I want to search a peak and see a free score before being asked to create an account,
 So that I see Cloudbreak's value before committing to sign up.
 
-**Contexte / impact à trancher pendant le design :** aujourd'hui `GET /api/v1/score` est protégé à 100% par JWT (`check_quota` → `get_current_user`), aucun accès anonyme n'existe. Options à explorer : Supabase anonymous auth (JWT anonyme upgradé à la vraie création de compte) vs quota anonyme parallèle (device-id). `AuthGuard` (`mobile/src/app/_layout.tsx`) doit aussi changer : aujourd'hui il redirige systématiquement vers login si `!session`.
+**Décision technique actée (2026-09-04) : Supabase Anonymous Auth**, pas de device-id maison.
+Une session anonyme (`supabase.auth.signInAnonymously()`) est créée en silence dès la fin de l'onboarding. L'invité a donc un vrai `user_id` dès la première seconde → `get_current_user` et la clé quota `quota:{user_id}:{date}` fonctionnent **sans modification**. À la création de compte, `updateUser` **élève** la session anonyme en compte permanent en conservant le même `user_id` → tout ce qui a été fait en invité reste rattaché, **aucun code de fusion à écrire**. Écarté : le device-id, qui imposait un chemin non-authentifié parallèle, du code de fusion, et cassait le funnel de conversion analytics. La sécurité n'a pas tranché (les deux sont réinitialisables) ; l'anti-abus est une couche séparée : rate-limit IP sur `/score`, captcha Supabase activable si abus constaté, purge des anonymes inactifs > 30 j.
 
-**Acceptance Criteria (provisoires) :**
+**Cycle de vie des sessions — les 5 branches actées :**
+
+```
+Onboarding (5 écrans, story 7.1, inchangé)
+      └─► signInAnonymously()  ── session anonyme, silencieuse
+            │
+            ▼
+   1re ouverture sur cet appareil ?  (flag AsyncStorage `hasSeenAccountPrompt`)
+      │                                    │
+     OUI                                  NON
+      ▼                                    ▼
+ [1] PLEIN ÉCRAN création de compte    [2] Home directement, mode invité
+     invitation, PAS un blocage            aucun mur tant qu'aucun déclencheur
+     ├─ Créer un compte    → [A]
+     ├─ J'ai déjà un compte → [B]
+     └─ Explorer d'abord   → Home invité
+                                    │
+                        [4] DÉCLENCHEUR atteint en invité :
+                            • 2e sommet différent le même jour (429 QUOTA_EXCEEDED)
+                            • tap « Ajouter aux favoris »
+                            • activer une alerte (post-MVP)
+                                    ▼
+                            SHEET contextuel (dismissible)
+                            └─ referme → continue en invité, sans pénalité
+                                    │
+              ┌─────────────────────┴─────────────────────┐
+              ▼                                           ▼
+ [A] CRÉE un compte (Apple ou e-mail)      [B] SE CONNECTE à un compte existant
+     updateUser → MÊME user_id conservé        user_id différent — DEUX identités
+     → historique invité rattaché auto.        → session anonyme ABANDONNÉE
+     → quota du jour reste consommé              (aucune fusion — décision actée)
+       (sinon créer un compte = check gratuit   → PAS de mini-sondage
+        supplémentaire, exploitable en boucle)
+     → MINI-SONDAGE (story 2.8)
+              └─────────────────────┬─────────────────────┘
+                                    ▼
+                    RETOUR À L'ACTION INITIALE
+                    (le favori se pose / le 2e score s'affiche)
+
+ [3] Lancement suivant avec compte réel → Home directement, login jamais imposé
+ [5] Déconnexion (Profil) → recrée une session anonyme, PAS de retour au login
+```
+
+**Distinction à ne jamais perdre :** un invité qui dépasse son quota voit le **mur signup** ; un utilisateur **avec compte** qui dépasse son quota voit le **Paywall** (story 4.2). Seul le cas « quota dépassé en invité » propose en lien tertiaire une passerelle vers le Paywall.
+
+**Impact code :** `AuthGuard` (`mobile/src/app/_layout.tsx`) ne protège plus l'entrée de l'app (il y a toujours une session) mais seulement l'onboarding et le 1er lancement ; le gating des fonctions réservées se fait **au point d'usage** via le claim `is_anonymous` du JWT Supabase (nouvelle dépendance backend à côté de `get_current_user`). `backend/app/services/quota.py` : **aucune modification**. `GET /peaks/search` et `/peaks/{slug}` sont déjà publics.
+
+**Blocage découvert le 2026-09-04, à lever dans cette story :** le signup autonome n'a jamais fonctionné bout en bout (l'utilisateur crée ses comptes à la main dans Supabase). Le code mobile est pourtant câblé depuis la story 2.1. Cause probable : aucun provisioning backend — **pas de modèle `user.py`** dans `backend/app/models/`, pas de trigger `auth.users → public.users`. À trancher au plan : trigger Postgres vs get-or-create backend. Attention, avec l'anonymous auth une ligne `auth.users` existe **dès le 1er lancement**, pas au signup.
+
+**Acceptance Criteria :**
 
 **Given** un nouvel utilisateur qui termine l'onboarding sans compte
 **When** il recherche un sommet et consulte un score
@@ -625,13 +676,29 @@ So that I see Cloudbreak's value before committing to sign up.
 
 **Given** un utilisateur invité qui a consulté son score gratuit du jour
 **When** il tente un 2e check, ou veut ajouter un favori, ou activer une alerte
-**Then** l'écran de création de compte s'affiche avec un message contextuel expliquant pourquoi
+**Then** un sheet contextuel s'affiche avec un message expliquant pourquoi, et il peut le refermer pour continuer en invité
+
+**Given** un utilisateur invité qui crée un compte depuis un mur contextuel
+**When** la création réussit
+**Then** son `user_id` est conservé, son quota du jour reste consommé, et l'action qu'il tentait s'exécute automatiquement
+
+**Given** un utilisateur invité qui se connecte à un compte existant depuis un mur
+**When** la connexion réussit
+**Then** la session anonyme est abandonnée sans fusion, et il repart sur l'historique de son compte
+
+**Given** un utilisateur qui se déconnecte depuis le Profil
+**When** la déconnexion aboutit
+**Then** une session anonyme est recréée et il revient sur la Home en mode invité, sans écran de connexion imposé
+
+**Given** un utilisateur avec un compte permanent qui dépasse son quota
+**When** il demande un 2e score
+**Then** c'est le Paywall qui s'affiche, pas le mur signup
 
 ---
 
 ### Story 2.6: Sign in with Apple 🔵 brainstorming en cours
 
-> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription.
+> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription. **Écran partagé avec 2.5 et 2.8** — voir note dans Story 2.5.
 
 As a new user,
 I want to sign up or log in with my Apple ID in one tap,
@@ -669,8 +736,34 @@ So that I'm not permanently locked out of my account.
 
 ---
 
-✅ **Epic 2 — 7 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 3 en brainstorming)**
-> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · 2.5/2.6/2.7 🔵 brainstorming en cours (2026-08-08)
+### Story 2.8: Mini-sondage post-création de compte 🔵 brainstorming en cours
+
+> **Design pas encore validé** — nouvelle idée soulevée le 2026-09-04 pendant le brainstorming de 2.5, traitée dans le même design pass que 2.5/2.6 (écran unifié "Connexion & Création de compte"). Contenu des questions et destination de la donnée (colonnes `users` backend — table à créer, aucun modèle `user.py` n'existe aujourd'hui) encore à trancher.
+
+As a solo dev (Alex),
+I want to ask 2-3 quick optional questions right after a guest creates an account,
+So that I get lightweight acquisition/persona data on my user pool without relying on PostHog being wired yet.
+
+**Contexte / impact à trancher pendant le design :**
+- Se déclenche uniquement à la **création** d'un compte (email ou Apple), jamais à une reconnexion
+- Chaque question individuellement skippable, jamais bloquant l'entrée dans l'app
+- Contenu exact des 2-3 questions à définir (piste : canal d'acquisition, profil pratique — voir `docs/superpowers/specs/`)
+- Stockage : nouvelles colonnes sur `users` (backend) — dépend de la résolution du provisioning utilisateur découvert pendant le brainstorming 2.5 (pas de modèle `user.py`, pas de trigger `auth.users → public.users` identifié)
+
+**Acceptance Criteria (provisoires) :**
+
+**Given** un invité qui vient de créer un compte (email ou Apple)
+**When** le compte est créé avec succès
+**Then** un écran de mini-sondage skippable s'affiche avant le retour à l'action initiale
+
+**Given** un utilisateur qui se reconnecte à un compte existant
+**When** la connexion réussit
+**Then** le mini-sondage ne s'affiche pas (déjà répondu ou déjà skip)
+
+---
+
+✅ **Epic 2 — 8 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 4 en brainstorming)**
+> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · 2.5/2.6/2.7/2.8 🔵 brainstorming en cours (2.5/2.6/2.7 lancé 2026-08-08, 2.8 ajoutée 2026-09-04) — **2.5/2.6/2.8 conçues comme un seul écran, specs et implémentation restent séparées**
 
 ---
 
