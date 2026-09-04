@@ -2,6 +2,7 @@
 
 > Notes de chantier **produit et technique**. Mis à jour au fil des sessions.
 > Le suivi **marketing / acquisition** vit dans [`docs/marketing.md`](docs/marketing.md) (plan + canaux + méthodes).
+> La vue d'ensemble **environnements** (serveur, Supabase, Apple/EAS, observabilité, ce qui manque) vit dans [`docs/environnements.md`](docs/environnements.md).
 > Côté Notion : page 🏠 TODO → sections `Cloudbreak — Produit` et `Cloudbreak — Marketing`.
 > Dernière mise à jour : 2026-08-31.
 
