@@ -683,6 +683,91 @@ flowchart TD
 
 ---
 
+### Journey 5 — Session & compte : de l'invité au compte (stories 2.5 / 2.6 / 2.8)
+
+Parcours structurant : il conditionne l'entrée dans l'app et le moment où le compte est demandé.
+Remplace le mur de connexion obligatoire post-onboarding. Décisions actées le 2026-09-04 —
+détail technique dans `epics.md` Story 2.5.
+
+```mermaid
+flowchart TD
+    A([Ouverture de l'app]) --> B{Onboarding déjà fait ?}
+    B -->|Non| C[Onboarding narratif\n5 écrans - story 7.1]
+    C --> D[Session invité créée en silence\naucune action de l'utilisateur]
+    B -->|Oui| E{Session existante ?}
+    E -->|Compte réel| F[Home - mode connecté]
+    E -->|Session invité| G[Home - mode invité]
+    E -->|Aucune| D
+
+    D --> H{1re ouverture\nsur cet appareil ?}
+    H -->|Oui| I[PLEIN ÉCRAN - Créer un compte\nINVITATION, pas un blocage]
+    H -->|Non| G
+    I -->|Créer un compte| K
+    I -->|J'ai déjà un compte| L
+    I -->|Explorer d'abord| G
+
+    G --> M[Recherche sommet LIBRE\n1er score du jour GRATUIT]
+    M --> N{Point de friction ?}
+    N -->|Non| M
+    N -->|2e sommet du jour| O
+    N -->|Ajouter un favori| O
+    N -->|Activer une alerte| O
+
+    O[SHEET contextuel\nmessage adapté au déclencheur] -->|Referme| G
+    O -->|Créer un compte| K
+    O -->|Se connecter| L
+    O -->|Passer Premium\nsi quota dépassé uniquement| Q[Paywall - voir Journey 2]
+
+    K[Création de compte\nApple ou e-mail] --> R{Succès ?}
+    R -->|Non - erreur| K
+    R -->|Oui| S[Session invité ÉLEVÉE en compte\nmême identité conservée\nhistorique invité rattaché\nquota du jour reste consommé]
+    S --> T[MINI-SONDAGE - 2 questions\nskippable, jamais bloquant]
+    T --> U
+
+    L[Connexion à un compte existant\nApple ou e-mail] --> V{Succès ?}
+    V -->|Non - erreur| L
+    V -->|Oui| W[Session invité ABANDONNÉE\nretour sur l'historique du compte\nPAS de mini-sondage]
+    W --> U
+
+    U([RETOUR À L'ACTION INITIALE\nle favori se pose / le score s'affiche])
+
+    F --> X{Quota dépassé ?}
+    X -->|Oui| Q
+    F --> Y[Profil - Se déconnecter]
+    Y --> Z[Nouvelle session invité recréée\nPAS de retour à l'écran de connexion]
+    Z --> G
+```
+
+**Les 5 situations d'entrée, en une lecture :**
+
+| # | Situation | Ce que voit l'utilisateur |
+|---|---|---|
+| 1 | 1re ouverture sur l'appareil | Onboarding → écran plein « Créer un compte », qu'il peut passer |
+| 2 | Ouvertures suivantes, pas de compte | Home directement, en invité — aucun mur |
+| 3 | Ouvertures suivantes, compte réel | Home directement — l'écran de connexion n'est jamais imposé |
+| 4 | Point de friction atteint en invité | Sheet contextuel expliquant pourquoi, qu'il peut refermer |
+| 5 | Déconnexion depuis le Profil | Retour en mode invité, pas d'écran de connexion |
+
+**Les deux sorties du mur, à ne pas confondre :**
+
+| | Il CRÉE un compte | Il SE CONNECTE à un compte existant |
+|---|---|---|
+| Identité | conservée — c'est la même personne | changée — deux comptes distincts |
+| Historique invité | rattaché automatiquement | abandonné (décision actée) |
+| Quota du jour | reste consommé | celui du compte retrouvé |
+| Mini-sondage | oui | non |
+
+**Règle à ne jamais perdre :** un **invité** qui dépasse son quota voit le **mur signup** ; un
+utilisateur **avec compte** qui dépasse son quota voit le **Paywall** (Journey 2). La seule
+passerelle entre les deux est un lien tertiaire dans le sheet, présent uniquement sur le
+déclencheur « quota dépassé ».
+
+> ⚠️ **Journeys 2 et 3 à réviser** — elles décrivent l'ancien modèle. Journey 3 fait finir
+> l'onboarding sur un compte obligatoire et parle de « 3 slides » (il y en a 5 depuis la story
+> 7.1) ; Journey 2 ne distingue pas invité et utilisateur avec compte face au quota.
+
+---
+
 ### Journey Patterns
 
 **Navigation patterns :**
