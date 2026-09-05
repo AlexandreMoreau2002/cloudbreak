@@ -66,10 +66,10 @@ development_status:
   2-2-gestion-preferences-notifications: backlog
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
-  2-5-mur-signup-differe-acces-invite: backlog   # brainstorming en cours 2026-08-08, recadré 2026-09-04 — écran unifié avec 2-6/2-8
-  2-6-sign-in-with-apple: backlog   # brainstorming en cours 2026-08-08 — écran unifié avec 2-5/2-8
-  2-7-mot-de-passe-oublie: backlog   # brainstorming en cours 2026-08-08, design pas encore validé — hors périmètre du design 2-5/2-6/2-8
-  2-8-mini-sondage-post-creation-compte: backlog   # nouvelle idée 2026-09-04, brainstorming fusionné avec 2-5/2-6
+  2-5-mur-signup-differe-acces-invite: backlog   # design validé 2026-09-05 (handoff Claude Design) — livrée avec 2-6/2-8 en un seul lot
+  2-6-sign-in-with-apple: backlog   # design validé 2026-09-05 — même lot que 2-5/2-8
+  2-7-mot-de-passe-oublie: backlog   # brainstorming en cours 2026-08-08, design pas encore validé — hors du lot 2-5/2-6/2-8
+  2-8-mini-sondage-post-creation-compte: backlog   # design validé 2026-09-05 — même lot que 2-5/2-6
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
