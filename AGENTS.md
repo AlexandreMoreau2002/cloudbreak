@@ -1,5 +1,41 @@
 # Repository Guidelines
 
+## ⚠️ Source de vérité : CLAUDE.md
+
+**`CLAUDE.md` (racine) fait autorité pour le workflow, les process et les conventions.**
+Chaque submodule a aussi son `CLAUDE.md` (`mobile/CLAUDE.md`, `backend/CLAUDE.md`) — le lire
+avant de toucher au code de ce submodule. Le présent fichier n'est qu'un résumé ; en cas de
+divergence, `CLAUDE.md` gagne.
+
+### Non-négociables (détail dans CLAUDE.md)
+
+1. **Workflow obligatoire pour toute tâche de dev** : `superpowers:brainstorming` →
+   `superpowers:writing-plans` → exécution. **Jamais coder sans plan écrit.** Si un handoff de
+   design ou une spec existe déjà, on démarre à `writing-plans` — on ne saute pas l'étape.
+2. **Exécution par sous-agents** : `superpowers:subagent-driven-development`. L'orchestrateur
+   découpe le plan et **délègue les tâches indépendantes à des sous-agents** — il ne code pas
+   tout lui-même dans le thread principal.
+3. **Git flow** : une story = une branche `feature/<nom>` partant de `develop`. **Jamais de
+   commit direct sur `develop` ou `main`.** Travail dans un submodule = commit dans le submodule
+   d'abord, puis bump de la ref dans le repo racine (`chore:`). Merge en **squash**.
+4. **Début de story** : créer la sous-page Notion checklist de test (sous "Cloudbreak - mer de
+   nuage", `page_id: 325964bd-a185-8035-8585-ff14ef1f76c6`).
+5. **Livrables de fin de lot** : `docs/story-{epic}-{num}-{slug}.md` dans le submodule concerné,
+   guide de test manuel (cas limites inclus), fichier `http/{domaine}.http` pour tout nouvel
+   endpoint, mise à jour `docs/product-audit.md` / `docs/security.md` / `README` si impactés,
+   PR vers `develop` avec `make validate` (backend) / `npm run validate` (mobile) verts.
+6. **Agents de review avant clôture** : `stairs-import-fixer` (règle d'escalier des imports),
+   `cloudbreak-dev-reviewer` (patterns + ACs + doc), et `cloudbreak-security` si la story touche
+   auth / data / API / secrets.
+7. **TDD** : test qui échoue → implémentation minimale → refactor. Pas de `feat` suivi
+   immédiatement d'un `fix` du même code.
+8. **code-review-graph MCP en premier** pour explorer la codebase (avant Grep/Glob/Read).
+9. **Suivi** : lire `TODO.md` en début de session, le mettre à jour en fin de chantier ;
+   refléter l'état des stories dans `_bmad-output/implementation-artifacts/sprint-status.yaml`.
+10. Pas de trace d'agent dans les messages de commit (`Co-Authored-By` interdit, tous repos).
+
+---
+
 ## Project Structure & Module Organization
 
 This root repository coordinates Git submodules and shared planning docs. `mobile/` contains the Expo/React Native app, with screens in `src/app/`, reusable UI in `src/components/`, hooks in `src/hooks/`, and API clients in `src/services/`. `backend/` contains the FastAPI service, with HTTP routes in `app/api/v1/endpoints/`, pure domain logic in `app/domain/`, integrations in `app/services/`, and tests in `tests/`. Production infra runs on Dokploy (self-hosted PaaS) with integrated Traefik on an OVH VPS — there is no dedicated `infra` submodule anymore; local dev still uses `backend`'s `docker-compose.dev.yml` for Postgres and Redis. See `docs/infra-serveur.md` for the up-to-date server/hosting reference (access, deployed apps, CI/CD, caveats — no secrets). Planning and architecture artifacts live in `_bmad-output/`; long-form product and technical docs live in `docs/`, `mobile/docs/`, and `backend/docs/`.
