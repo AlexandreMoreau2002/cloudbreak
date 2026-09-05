@@ -607,10 +607,31 @@ So that I exercise my right to erasure under GDPR.
 
 ---
 
-### Story 2.5: Mur de signup différé (accès invité au premier score) 🔵 brainstorming en cours
+### Story 2.5: Mur de signup différé (accès invité au premier score) 🟢 design validé
 
-> **Design pas encore validé** — brainstorming lancé le 2026-08-08, recadré le 2026-09-04. En attente de la spec écrite (`docs/superpowers/specs/`). ACs ci-dessous à considérer comme provisoires, à réviser une fois le design approuvé.
-> **Écran partagé avec 2.6 et 2.8** — le mur signup (2.5), le bouton Sign in with Apple (2.6) et le mini-sondage post-création de compte (2.8) sont conçus comme **un seul écran unifié** "Connexion & Création de compte" pour éviter des prompts de design contradictoires. Une seule spec couvre les trois stories ; l'implémentation reste 3 stories séparées.
+> **Design figé le 2026-09-05** — handoff Claude Design haute fidélité reçu :
+> `/Users/alex/Downloads/design_handoff_parcours_compte/` (README.md détaillé + prototype JSX/HTML,
+> voir `Workflow session.html` pour les 14 étapes rejouables). Remplace la spec de travail
+> précédente (supprimée, elle était mal cadrée). **Implémentation : 2.5 + 2.6 + 2.8 livrées
+> ensemble en un seul lot** (un seul écran, une seule PR), sur décision explicite de l'utilisateur
+> le 2026-09-05.
+>
+> **Deux écarts par rapport aux échanges précédents, tranchés par le design, à ne pas re-discuter :**
+> - **Copy générique, pas de message par déclencheur.** Un seul écran, une seule copy ("Pour
+>   cette fonctionnalité, il te faut un compte"), quel que soit le geste d'origine — décision
+>   assumée du design, pas un oubli.
+> - **Écran de vérification par code à 6 chiffres après une création par e-mail** (`CBAuthVerify`,
+>   saisi dans l'app, jamais un lien). Réactive une forme de confirmation e-mail — **décision
+>   explicite de l'utilisateur le 2026-09-05**, qui remplace le "Confirm email reste désactivé"
+>   acté à la story 2.1 (`mobile/docs/story-2-1-auth-supabase.md`, à mettre à jour). Le handoff
+>   utilise l'OTP natif Supabase (`verifyOtp`, template e-mail à 6 chiffres), pas le lien magique.
+>   **À faire dans cette story : remettre "Confirm email" ON sur le projet Supabase** (dashboard,
+>   Authentication → Providers → Email) et personnaliser le template pour qu'il envoie le code
+>   `{{ .Token }}` plutôt que le lien par défaut.
+>
+> Parcours fonctionnel complet (simple) : `_bmad-output/planning-artifacts/userflow-session.md`.
+> Le schéma technique des 5 branches de session (Anonymous Auth, upgrade au signup, abandon au
+> signin) reste valable tel quel, voir plus bas dans cette story.
 
 As a new user,
 I want to search a peak and see a free score before being asked to create an account,
@@ -676,15 +697,23 @@ Onboarding (5 écrans, story 7.1, inchangé)
 
 **Given** un utilisateur invité qui a consulté son score gratuit du jour
 **When** il tente un 2e check, ou veut ajouter un favori, ou activer une alerte
-**Then** un sheet contextuel s'affiche avec un message expliquant pourquoi, et il peut le refermer pour continuer en invité
+**Then** la page compte (`CBAuthPage`, écran plein, copy générique identique quel que soit le déclencheur) s'affiche, et le chevron retour la referme en gardant l'utilisateur invité
 
-**Given** un utilisateur invité qui crée un compte depuis un mur contextuel
-**When** la création réussit
-**Then** son `user_id` est conservé, son quota du jour reste consommé, et l'action qu'il tentait s'exécute automatiquement
+**Given** un utilisateur invité qui crée un compte par e-mail depuis la page compte
+**When** il valide le formulaire
+**Then** il passe par l'écran de code à 6 chiffres (`CBAuthVerify`) avant que le compte ne soit considéré créé
 
-**Given** un utilisateur invité qui se connecte à un compte existant depuis un mur
+**Given** un utilisateur invité qui crée un compte via Apple depuis la page compte
+**When** Supabase confirme l'authentification
+**Then** il saute directement l'écran de code (adresse déjà vérifiée par Apple) et va au mini-sondage
+
+**Given** un utilisateur invité qui crée un compte (e-mail vérifié ou Apple)
+**When** la création aboutit
+**Then** son `user_id` est conservé (session anonyme upgradée), son quota du jour reste consommé, il passe par le mini-sondage puis l'action qu'il tentait s'exécute automatiquement
+
+**Given** un utilisateur invité qui se connecte à un compte existant depuis la page compte
 **When** la connexion réussit
-**Then** la session anonyme est abandonnée sans fusion, et il repart sur l'historique de son compte
+**Then** la session anonyme est abandonnée sans fusion, aucun code ni sondage ne s'affiche, et il repart sur l'historique de son compte
 
 **Given** un utilisateur qui se déconnecte depuis le Profil
 **When** la déconnexion aboutit
@@ -696,9 +725,9 @@ Onboarding (5 écrans, story 7.1, inchangé)
 
 ---
 
-### Story 2.6: Sign in with Apple 🔵 brainstorming en cours
+### Story 2.6: Sign in with Apple 🟢 design validé
 
-> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription. **Écran partagé avec 2.5 et 2.8** — voir note dans Story 2.5.
+> **Design figé le 2026-09-05** avec 2.5 (même handoff, même écran). Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription. **Livrée dans le même lot que 2.5 et 2.8.**
 
 As a new user,
 I want to sign up or log in with my Apple ID in one tap,
@@ -736,9 +765,11 @@ So that I'm not permanently locked out of my account.
 
 ---
 
-### Story 2.8: Mini-sondage post-création de compte 🔵 brainstorming en cours
+### Story 2.8: Mini-sondage post-création de compte 🟢 design validé
 
-> **Design pas encore validé** — nouvelle idée soulevée le 2026-09-04 pendant le brainstorming de 2.5, traitée dans le même design pass que 2.5/2.6 (écran unifié "Connexion & Création de compte"). Contenu des questions et destination de la donnée (colonnes `users` backend — table à créer, aucun modèle `user.py` n'existe aujourd'hui) encore à trancher.
+> **Design figé le 2026-09-05** avec 2.5/2.6 (même handoff : `CBAuthSurvey`). Idée soulevée le
+> 2026-09-04 pendant le brainstorming de 2.5. **Livrée dans le même lot que 2.5 et 2.6.**
+> Destination de la donnée (colonnes `users` backend) dépend toujours du provisioning (§2.5).
 
 As a solo dev (Alex),
 I want to ask 2-3 quick optional questions right after a guest creates an account,
@@ -762,8 +793,8 @@ So that I get lightweight acquisition/persona data on my user pool without relyi
 
 ---
 
-✅ **Epic 2 — 8 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 4 en brainstorming)**
-> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · 2.5/2.6/2.7/2.8 🔵 brainstorming en cours (2.5/2.6/2.7 lancé 2026-08-08, 2.8 ajoutée 2026-09-04) — **2.5/2.6/2.8 conçues comme un seul écran, specs et implémentation restent séparées**
+✅ **Epic 2 — 8 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 4 en brainstorming/design)**
+> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · **2.5/2.6/2.8 🟢 design validé le 2026-09-05, livrées ensemble en un seul lot/PR** (décision explicite utilisateur) · 2.7 🔵 brainstorming en cours, hors de ce lot
 
 ---
 
