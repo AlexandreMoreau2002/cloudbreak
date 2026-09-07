@@ -196,3 +196,5 @@ VPS OVH (`51.178.37.35`, host SSH configuré en local sous `vps-ovh-projets`, **
 - [x] URLs `nip.io` remplacées par `cloudbreak-app.com` (DNS + Dokploy + code des 3 submodules, commité le 2026-08-31 — voir section "En cours").
 - [x] Écrire une doc technique dédiée de la procédure Dokploy — fait le 2026-08-08, voir `docs/infra-serveur.md`.
 - [ ] Monitoring (Better Stack / PostHog infra) toujours pas branché — reste dans le scope Epic 1.
+- [x] Favicon de dev-ops.cloudbreak-app.com — favicon Cloudbreak mobile converti en ICO multi-tailles,
+  commit `ops` `2c07a2b` sur `develop` (2026-09-07) ; auto-déploiement Dokploy déclenché par push.
