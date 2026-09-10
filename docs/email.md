@@ -189,6 +189,14 @@ each environment, configure **Authentication > Rate Limits > Password reset requ
 30 seconds (or at most 30 seconds); otherwise the UI will allow a retry that Supabase still
 rejects. Reproduce this setting explicitly when the production project is created.
 
+Before diagnosing the app, check the project-wide Supabase Auth mail rate limit (typically
+only a few messages per hour). Recent signup tests can exhaust it and make a recovery request
+appear successful without a new delivery. Test with a **confirmed** recipient account, then use
+**Authentication > Logs** and filter the recovery event / recipient to distinguish a dashboard
+configuration or limit from a mobile failure. The OTP-only flow does not need `redirectTo`:
+it requires `{{ .Token }}` in the Reset Password template; a link-only `{{ .ConfirmationURL }}`
+template cannot supply the six-digit code expected by the app.
+
 For recovery, Supabase renders the metadata of the recipient account. The app performs the
 locale synchronization as best effort, but a signed-out/guest session cannot overwrite the
 target account's metadata. Consequently, the stored account locale is used when available;
