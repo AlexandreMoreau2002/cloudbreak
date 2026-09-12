@@ -1,0 +1,16 @@
+### Support e-mail de production — aucun endpoint HTTP
+#
+# Ce fichier est volontairement informatif : le flux de support est une configuration
+# DNS / ImprovMX / Gmail / Brevo et n'expose aucun endpoint REST Cloudbreak.
+#
+# Adresse publique : contact@cloudbreak-app.com
+# Réception : OVH MX -> ImprovMX -> Gmail opérateur
+# Réponse   : Gmail « Cloudbreak Support <contact@cloudbreak-app.com> » -> Brevo SMTP
+#
+# Ne pas placer ici de mot de passe, clé SMTP, token, URL de validation ou autre secret.
+# Tests manuels : ../docs/email-support/guide-test.md
+# Runbook : ../docs/email-support/fonctionnement.md
+
+### Aucun appel à effectuer
+# La vérification se fait avec un e-mail réel depuis une adresse contrôlée,
+# puis dans les tableaux de bord des fournisseurs.

@@ -6,7 +6,7 @@
 > CI/CD) ; `docs/versions.md` détaille les versions de dépendances par submodule. Ce fichier
 > répond à "qu'est-ce qu'on a comme environnement, et qu'est-ce qu'il manque pour releaser ?".
 >
-> Dernière mise à jour : 2026-09-04.
+> Dernière mise à jour : 2026-09-12.
 
 ## Vue d'ensemble — statut par catégorie
 
@@ -25,7 +25,8 @@
 | Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, SDK jamais branché |
 | Error tracking (Sentry) | ❌ | ❌ | post-MVP décidé |
 | Uptime (BetterStack) | ❌ | ❌ | compte pas créé |
-| Email transactionnel | ❌ | ❌ | ni redirection, ni SMTP applicatif |
+| Support par e-mail | — | ✅ opérationnel | `contact@cloudbreak-app.com` : réception ImprovMX → Gmail, réponses Gmail → Brevo |
+| Email transactionnel applicatif | 🟡 Supabase Auth + Brevo | ❌ séparé du support | reset/password et autres e-mails applicatifs : décision d’intégration distincte |
 
 ---
 
@@ -121,14 +122,41 @@ charge) ne doit pas porter une stack métriques self-hosted en plus.
 
 ## 7. Email
 
-**Rien n'est en place.** Deux besoins distincts :
+### Support en production
 
-1. **Boîte support** — `support@cloudbreak-app.com` doit exister quelque part. Piste notée :
-   redirection gratuite vers Gmail (pas de vraie boîte à héberger). Adresse actuelle dans le code
-   (`support@cloudbreak.app`) n'est qu'un **placeholder de fallback**, jamais définitive.
-2. **Email transactionnel applicatif** (reset password, story 2.7) — nécessite un SMTP_HOST
-   (pistes notées : Resend, Brevo) OU l'email générique Supabase Auth. **Bloqué sur toi** : tester
-   ton propre serveur mail avant de trancher entre les deux options.
+L’adresse publique de support est **`contact@cloudbreak-app.com`**. La réception et l’envoi sont
+deux flux indépendants, configurés et testés manuellement le **2026-09-12** :
+
+```text
+Réception : personne → DNS OVH / MX → ImprovMX → boîte Gmail de l’opérateur
+Réponse   : Gmail « Cloudbreak Support <contact@cloudbreak-app.com> » → SMTP Brevo → personne
+```
+
+- **OVH** héberge uniquement la zone DNS. Les MX de la racine sont `10 mx1.improvmx.com` et
+  `20 mx2.improvmx.com`.
+- **ImprovMX** reçoit et transfère uniquement `contact@cloudbreak-app.com` vers la boîte Gmail
+  de l’opérateur. Il n’envoie pas les réponses.
+- **Gmail** est la boîte de travail et l’interface de réponse de l’opérateur.
+- **Brevo** a authentifié `cloudbreak-app.com` et transporte les réponses SMTP envoyées depuis
+  Gmail sous l’identité Cloudbreak Support.
+
+`contact@dev.cloudbreak-app.com` n’est **pas** une adresse publique et ne doit jamais être
+communiquée comme contact. Le runbook opérateur et sa procédure de diagnostic sont dans
+[`docs/email-support/fonctionnement.md`](email-support/fonctionnement.md).
+
+### Configuration du build mobile de production
+
+Avant tout build EAS de production, l’opérateur doit configurer
+`EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com` dans l’environnement EAS de production.
+Le fallback sûr dans le code source garde cette même adresse si la variable est oubliée ; cela ne
+remplace pas la configuration du dashboard EAS. Cette action est volontairement hors dépôt.
+
+### E-mail transactionnel applicatif
+
+Le support ci-dessus n’est pas un serveur d’e-mails transactionnels applicatifs. Les e-mails
+Supabase Auth (confirmation, récupération de mot de passe) suivent leur configuration SMTP dédiée ;
+toute intégration backend future devra être décidée, documentée et configurée séparément, sans
+réutiliser les secrets du flux de support.
 
 ## 8. Secrets — où ils vivent
 
@@ -155,7 +183,8 @@ charge) ne doit pas porter une stack métriques self-hosted en plus.
 - [ ] **Licence Apple Developer (99 $/an)** — LE blocage central, débloque bundle id définitif,
   App Store Connect, TestFlight, push, StoreKit réel, Universal Links, Sign in with Apple réel
 - [ ] **Tester le serveur mail perso** → trancher SMTP custom vs Supabase générique (story 2.7)
-- [ ] **Choisir l'adresse support définitive** (`support@cloudbreak-app.com` vraisemblablement)
+- [x] **Adresse support choisie et vérifiée** : `contact@cloudbreak-app.com` (réception et
+  réponse manuelle vérifiées le 2026-09-12)
 - [ ] **Créer un vrai environnement Dokploy `production`** — quand une vraie prod est décidée
   (pas de date, dépend du lancement)
 
