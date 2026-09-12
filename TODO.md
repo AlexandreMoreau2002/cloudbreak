@@ -10,6 +10,21 @@
 
 ## En cours
 
+**Lot auth 2.5+2.6+2.7+2.8 + durcissement sécurité — PR ouvertes, en attente de review Alexandre (2026-09-12) :**
+
+Implémenté et testé (CI verte, reviews `cloudbreak-dev-reviewer`/`cloudbreak-security` passées côté
+process, mais **pas encore mergé** — Alexandre veut relire avant) :
+- backend [PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/18)
+- mobile [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/25)
+
+Contenu : parcours compte différé (2.5), Sign in with Apple (2.6), mot de passe oublié (2.7),
+mini-sondage (2.8), + durcissement post-review (JWT issuer/audience, retry provisioning
+verify/account, timeout HTTP réel, garde env Supabase). Tout regroupé dans ces deux PR
+(un premier essai avait mergé en 2 PR séparées par repo sans validation d'Alexandre — reverti
+proprement sur `develop`, reconsolidé ici). Reste ouvert séparément (pas dans ce lot) : quota
+invité contournable (anti-abus, chantier plus lourd), `Secure email change=OFF` (config
+Supabase Dashboard, Alexandre s'en charge).
+
 **Migration domaine `cloudbreak-app.com` — terminée le 2026-08-09 :**
 
 Domaine acheté par l'utilisateur, remplace les URLs `nip.io` temporaires (et l'ancienne hypothèse
