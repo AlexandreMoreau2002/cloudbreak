@@ -62,14 +62,16 @@ development_status:
   # FRs: FR12, FR13, FR14, FR15
   # ─────────────────────────────────────────────────────────────
   epic-2: in-progress
+  # 2026-09-12 : lot 2.5+2.6+2.7+2.8 mergé sur develop (backend PR #18, mobile PR #25) + durcissement
+  # sécurité/robustesse post-review. Recette manuelle complète encore à faire avant de clore l'epic.
   2-1-inscription-connexion-utilisateur-supabase-auth: done
   2-2-gestion-preferences-notifications: backlog
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
-  2-5-mur-signup-differe-acces-invite: backlog   # design validé 2026-09-05 (handoff Claude Design) — livrée avec 2-6/2-8 en un seul lot
-  2-6-sign-in-with-apple: backlog   # design validé 2026-09-05 — même lot que 2-5/2-8
-  2-7-mot-de-passe-oublie: backlog   # brainstorming en cours 2026-08-08, design pas encore validé — hors du lot 2-5/2-6/2-8
-  2-8-mini-sondage-post-creation-compte: backlog   # design validé 2026-09-05 — même lot que 2-5/2-6
+  2-5-mur-signup-differe-acces-invite: done   # mergée develop 2026-09-12 — backend PR #18, mobile PR #25
+  2-6-sign-in-with-apple: done   # mergée develop 2026-09-12 — même lot que 2-5/2-7/2-8 ; provider/build natif Apple non revalidés en prod
+  2-7-mot-de-passe-oublie: done   # mergée develop 2026-09-12 — même lot ; template Dashboard Supabase à valider en réel
+  2-8-mini-sondage-post-creation-compte: done   # mergée develop 2026-09-12 — même lot que 2-5/2-6/2-7 ; persistance réelle non validée manuellement
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

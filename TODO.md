@@ -10,21 +10,6 @@
 
 ## En cours
 
-**Lot auth 2.5+2.6+2.7+2.8 + durcissement sécurité — PR ouvertes, en attente de review Alexandre (2026-09-12) :**
-
-Implémenté et testé (CI verte, reviews `cloudbreak-dev-reviewer`/`cloudbreak-security` passées côté
-process, mais **pas encore mergé** — Alexandre veut relire avant) :
-- backend [PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/18)
-- mobile [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/25)
-
-Contenu : parcours compte différé (2.5), Sign in with Apple (2.6), mot de passe oublié (2.7),
-mini-sondage (2.8), + durcissement post-review (JWT issuer/audience, retry provisioning
-verify/account, timeout HTTP réel, garde env Supabase). Tout regroupé dans ces deux PR
-(un premier essai avait mergé en 2 PR séparées par repo sans validation d'Alexandre — reverti
-proprement sur `develop`, reconsolidé ici). Reste ouvert séparément (pas dans ce lot) : quota
-invité contournable (anti-abus, chantier plus lourd), `Secure email change=OFF` (config
-Supabase Dashboard, Alexandre s'en charge).
-
 **Migration domaine `cloudbreak-app.com` — terminée le 2026-08-09 :**
 
 Domaine acheté par l'utilisateur, remplace les URLs `nip.io` temporaires (et l'ancienne hypothèse
@@ -137,6 +122,8 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 - [ ] **Paywall — badge "Essai gratuit 7 jours"** — réintégré dans `PaywallHeader.tsx`/`PaywallCTA.tsx` (story 4.4) sans mécanisme StoreKit 2 réel pour l'honorer → risque de rejet Apple. Avant soumission : soit câbler un vrai essai via StoreKit 2 (story 4.3), soit retirer à nouveau le badge/CTA
 - [ ] **Boutons DEV du Profil non i18n** (`mobile/src/app/(tabs)/profile.tsx`) — `DEV · CloudLayerViz Sandbox` / `DEV · Reset sommet sélectionné` / `DEV · Rejouer l'onboarding` sont des strings hardcodées (`__DEV__`-only, jamais vues en prod, mais violent la règle projet). Un fix existait sur une branche abandonnée à la demande de l'utilisateur — à refaire si on veut le corriger.
 - [ ] **JWT Supabase stocké en clair dans AsyncStorage** (découvert lors de l'audit sécurité story 7.2) — `mobile/src/services/supabaseClient.ts:10` utilise `AsyncStorage` comme backend de session au lieu d'`expo-secure-store`. `docs/security.md` disait à tort que c'était déjà via SecureStore (corrigé). À migrer avant release 1.0.0.
+- [ ] **P0 Quota invité contournable** — recréer une session anonyme Supabase donne un nouvel UUID et reset la clé Redis `quota:{user_id}:{date}` (`backend/app/services/quota.py`). Nécessite une politique anti-abus (rate-limit + signal d'installation, puis App Attest/DeviceCheck — bloqué par le compte Apple Dev). Chantier séparé, plus lourd, pas traité dans le lot auth 2.5-2.8.
+- [ ] **P0 `Secure email change = OFF` contournable hors UI mobile** — config Supabase Dashboard, à vérifier/durcir par Alexandre directement (pas du code).
 
 ---
 
@@ -144,6 +131,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
+| Lot auth 2.5+2.6+2.7+2.8 (parcours compte différé, Sign in with Apple, mot de passe oublié, mini-sondage) + durcissement sécurité/robustesse post-merge (JWT issuer/audience, retry provisioning verify/account, timeout HTTP réel, garde env Supabase) | backend [PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/18), mobile [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/25) | 2026-09-12 |
 | Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |
 | Fix — Bugs test manuel iPhone : favoris offline, onboarding, skeleton | mobile commit `34b42d0` (direct sur develop) | 2026-07-24 |
 | Story 2.3 — Permission géolocalisation opt-in sans blocage | [mobile PR #21](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/21) | 2026-07-22 |
