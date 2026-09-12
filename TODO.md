@@ -29,20 +29,23 @@ Réception support (Cloudflare Email Routing) abandonnée au profit d'ImprovMX �
 gère `contact.cloudbreak@gmail.com` en relais de `contact@cloudbreak-app.com` de son côté,
 zéro code impliqué.
 
-**Durcissement sécurité/robustesse post-merge auth — mergé sur develop le 2026-09-12**
-(backend PR #17, mobile PR #24, squash). Couvre : JWT issuer/audience, retry provisioning
-distinct sur verify.tsx/account.tsx (login+Apple), timeout HTTP réel (AbortController),
-garde env Supabase. Reviews `cloudbreak-dev-reviewer`+`cloudbreak-security` passées des
-deux côtés (SECURE). Détail : `backend/docs/fix-durcissement-jwt-issuer-audience.md`,
-`mobile/docs/story-hardening-securite-post-merge.md`.
-
-**Reste ouvert — chantier séparé, plus lourd :**
+**Chantier suivant — durcissement sécurité/robustesse post-merge (2026-09-12) :**
+- [ ] **P0 — JWT sans vérif `issuer`/`audience`** (`backend/app/core/security.py:20`,
+  `verify_aud: False`) : activer `verify_aud` + comparer `iss` à `SUPABASE_URL`.
 - [ ] **P0 — quota invité contournable** (`backend/app/services/quota.py:59`, clé Redis
   `quota:{user_id}:{date}`) : recréer une session anonyme = nouvel UUID = quota reset.
   Anti-abus backend/edge (rate-limit + signal d'installation d'abord, App Attest/DeviceCheck
   en V1.1 si besoin, après compte Apple Dev).
 - [ ] **Secure email change = OFF contournable hors UI mobile** : à vérifier côté config
   Supabase Dashboard — Alexandre s'en charge si un réglage doit changer.
+- [ ] Durcissement `verify.tsx` : OTP valide + échec set password affiché comme "code
+  incorrect" (faux diagnostic) ; `retryProvisioning()` avale l'erreur silencieusement ;
+  pas de reprise après échec provisioning sur login/Apple ; redirection propre si
+  `/verify` ouvert sans email/password en mémoire.
+- [ ] Timeout HTTP qui n'abort pas vraiment (`mobile/src/services/fetchService.ts:58-67`,
+  `Promise.race` sans `AbortController`) : le `fetch()` continue en arrière-plan.
+- [ ] Garde env Supabase par profil de build (`mobile/src/services/supabaseClient.ts:5-6`,
+  `as string` sans check) : échouer explicitement si URL/clé absentes.
 
 **Lot auth 2.5/2.6/2.8 — Claude a repris la finition (2026-09-06)** (Codex inutilisable, limite
 atteinte en 3 min). Branche `feature/parcours-compte-2-5-2-6-2-8` (backend PR #16, mobile PR #23).
@@ -190,7 +193,6 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
-| Durcissement sécurité/robustesse post-merge auth — JWT iss/aud, retry provisioning, timeout HTTP, garde env | backend [PR #17](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/17), mobile [PR #24](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/24) | 2026-09-12 |
 | Stories 2.5+2.6+2.7+2.8 — parcours compte différé, Apple, mot de passe oublié, sondage | backend [PR #16](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/16), mobile [PR #23](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/23) | 2026-09-12 |
 | Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |
 | Fix — Bugs test manuel iPhone : favoris offline, onboarding, skeleton | mobile commit `34b42d0` (direct sur develop) | 2026-07-24 |
