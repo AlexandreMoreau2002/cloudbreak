@@ -1,15 +1,15 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-09-12 (merge lot auth 2.5+2.6+2.7+2.8 — backend PR #16, mobile PR #23).
+> Dernière mise à jour : 2026-09-12 (merge durcissement sécurité post-merge auth — backend PR #17, mobile PR #24).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
 
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
-| Backend | `backend/` | `develop` | `5f5ce9c` (2026-09-12) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `8e1affe` (2026-09-12) | ❌ non hébergé serveur — build local/simulateur uniquement | Expo `~55.0.27`, React Native `0.83.6`, React `19.2.0`, TypeScript `~5.9.2` |
+| Backend | `backend/` | `develop` | `e8b572d` (2026-09-12) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
+| Mobile | `mobile/` | `develop` | `66fec02` (2026-09-12) | ❌ non hébergé serveur — build local/simulateur uniquement | Expo `~55.0.27`, React Native `0.83.6`, React `19.2.0`, TypeScript `~5.9.2` |
 | Ops | `ops/` | `develop` | `c60e1a9` (2026-09-07) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
