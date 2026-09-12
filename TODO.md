@@ -4,69 +4,11 @@
 > Le suivi **marketing / acquisition** vit dans [`docs/marketing.md`](docs/marketing.md) (plan + canaux + méthodes).
 > La vue d'ensemble **environnements** (serveur, Supabase, Apple/EAS, observabilité, ce qui manque) vit dans [`docs/environnements.md`](docs/environnements.md).
 > Côté Notion : page 🏠 TODO → sections `Cloudbreak — Produit` et `Cloudbreak — Marketing`.
-> Dernière mise à jour : 2026-09-07.
+> Dernière mise à jour : 2026-08-31.
 
 ---
 
 ## En cours
-
-**Retour quota → compte — 2026-09-08 :** boucle reproduite dans l'effet Home :
-`quotaExceeded` reste vrai et les changements de callbacks lors de la navigation relancent
-`requireAccount`. Correctif appliqué : consommation unique par épisode, protection du focus
-et retour vers l'onglet existant avec `dismissTo`. 897 tests / 108 suites passent, lint vert.
-Simulateur : sortie du mur quota puis réouverture explicite et deuxième retour Home vérifiés.
-Review fonctionnelle/sécurité sans défaut restant sur ce delta ; imports corrigés après review.
-Les retours Profil/Favoris sont couverts automatiquement ; à retester manuellement.
-TypeScript reste bloqué par 6 erreurs de routes préexistantes (`account`, `survey`, pushes
-`AccountGateContext`) : les déclarations Expo générées ne contiennent pas les routes applicatives.
-Le bandeau DEBUG `Network request failed` reste observé et à diagnostiquer séparément.
-Plan : `docs/superpowers/plans/2026-09-08-quota-account-loop.md` ; aucun changement du cache ou quota serveur.
-
-**Lot auth 2.5/2.6/2.7/2.8 — mergé sur develop le 2026-09-12** (backend PR #16, mobile
-PR #23, squash). Reset mot de passe (story 2.7) livré dans la foulée. Audit FR/EN des
-messages d'erreur auth/e-mail livré en doc : `mobile/docs/audit-erreurs-auth-email-fr-en.md`.
-Réception support (Cloudflare Email Routing) abandonnée au profit d'ImprovMX — Alexandre
-gère `contact.cloudbreak@gmail.com` en relais de `contact@cloudbreak-app.com` de son côté,
-zéro code impliqué.
-
-**Chantier suivant — durcissement sécurité/robustesse post-merge (2026-09-12) :**
-- [ ] **P0 — JWT sans vérif `issuer`/`audience`** (`backend/app/core/security.py:20`,
-  `verify_aud: False`) : activer `verify_aud` + comparer `iss` à `SUPABASE_URL`.
-- [ ] **P0 — quota invité contournable** (`backend/app/services/quota.py:59`, clé Redis
-  `quota:{user_id}:{date}`) : recréer une session anonyme = nouvel UUID = quota reset.
-  Anti-abus backend/edge (rate-limit + signal d'installation d'abord, App Attest/DeviceCheck
-  en V1.1 si besoin, après compte Apple Dev).
-- [ ] **Secure email change = OFF contournable hors UI mobile** : à vérifier côté config
-  Supabase Dashboard — Alexandre s'en charge si un réglage doit changer.
-- [ ] Durcissement `verify.tsx` : OTP valide + échec set password affiché comme "code
-  incorrect" (faux diagnostic) ; `retryProvisioning()` avale l'erreur silencieusement ;
-  pas de reprise après échec provisioning sur login/Apple ; redirection propre si
-  `/verify` ouvert sans email/password en mémoire.
-- [ ] Timeout HTTP qui n'abort pas vraiment (`mobile/src/services/fetchService.ts:58-67`,
-  `Promise.race` sans `AbortController`) : le `fetch()` continue en arrière-plan.
-- [ ] Garde env Supabase par profil de build (`mobile/src/services/supabaseClient.ts:5-6`,
-  `as string` sans check) : échouer explicitement si URL/clé absentes.
-
-**Lot auth 2.5/2.6/2.8 — Claude a repris la finition (2026-09-06)** (Codex inutilisable, limite
-atteinte en 3 min). Branche `feature/parcours-compte-2-5-2-6-2-8` (backend PR #16, mobile PR #23).
-Fait cette session :
-- WIP Codex adopté et commité (recherche invitée sans token, onboarding étape sommet ErrorState+Réessayer).
-- Bug « Se déconnecter » : `signOutToAnonymous` clôt d'abord la session courante (plus de blocage sur l'ancien compte).
-- Écrans `/account` `/verify` `/survey` : padding/gouttières handoff (SafeAreaView → View + insets), champs e-mail/mdp identiques, JSX décompressé. `AccountForm` décompressé.
-- **RGPD** : nouveau `PATCH /api/v1/user/preferences` (backend, non terminal) + `GET /me` expose `newsletter_opt_in` + toggle Profil → Compte → Newsletter (`useNewsletterConsent`).
-- **Parcours création e-mail réactivé** (2026-09-06) : `beginEmailUpgrade`/`completeEmailUpgrade`/`resendEmailUpgrade` rebranchés sur Supabase (`updateUser({email})` → `verifyOtp({type:'email_change'})` → `updateUser({password})` → provisioning). Seule inconnue : si l'instance refuse `email_change`, basculer sur `signup` (1 ligne). Guide de test réécrit : `mobile/docs/story-2-5-manual-test-guide.md`.
-- **JWT → Keychain** : `secureSessionStorage` (expo-secure-store, fragmenté, migration auto depuis AsyncStorage) — dette story 2-1 close. Plugin `expo-secure-store` dans `app.config.ts` → **rebuild natif requis**.
-- Validate vert : backend 248 tests / 100 % cov, mobile 843 tests + tsc + lint + build:check. PR #16 et #23 mises à jour.
-- Restant utilisateur : préflight Supabase (Confirm email OTP `{{ .Token }}`, provider Apple, Anonymous ON — Anonymous déjà activé), rebuild natif + test E2E manuel, page Notion checklist, puis clôture (merge squash + refs submodules + `docs/versions.md`).
-
-**Dépannage lancement iOS — 2026-09-05 :** le lot auth est présent sur la branche mobile
-`feature/parcours-compte-2-5-2-6-2-8`. Le simulateur utilisait un ancien binaire sans
-`ExpoCrypto` / `ExpoAppleAuthentication` : pods réinstallés, prébuild iOS sans nettoyage
-pour synchroniser la capability Apple, reconstruction native. L'onboarding s'affiche à
-nouveau sans écran rouge ; 48 tests AuthContext passent. Les erreurs d'exports des routes
-et de LanguageProvider provenaient de l'import natif qui échouait, sans correctif métier
-nécessaire. Procédure ajoutée au README mobile et à la doc story 2.6. Le parcours complet
-invité → compte et le login Apple réel restent à valider ; aucune story clôturée ici.
 
 **Migration domaine `cloudbreak-app.com` — terminée le 2026-08-09 :**
 
@@ -121,7 +63,7 @@ Suivi détaillé dans `epics.md` Epic 2 (stories 2.5, 2.6, 2.7, 2.8) et `sprint-
   - [ ] **Story 2.8 — Mini-sondage post-création de compte** (nouvelle idée soulevée le 2026-09-04) : 2-3 questions optionnelles/skippables, affichées uniquement à la création d'un compte (email ou Apple), jamais à une reconnexion. Contenu des questions encore à définir avec l'utilisateur. Dépend de la résolution du provisioning utilisateur backend (voir point ci-dessous)
 - [ ] **Découverte pendant le brainstorming 2.5** : le backend n'a **aucun modèle `user.py`** ni trigger `auth.users → public.users` identifié — le signup autonome (`supabase.auth.signUp`, câblé côté mobile depuis la story 2.1) n'a jamais été testé bout en bout par l'utilisateur, qui crée les comptes à la main dans Supabase. À couvrir dans la spec 2.5/2.6/2.8 : provisioning de l'utilisateur côté backend au signup.
 - [ ] **Story 2.7 — Mot de passe oublié** (actuellement inexistant, vrai trou pas un post-MVP) — Supabase reset password email. **Hors périmètre du design 2.5/2.6/2.8** : juste réserver un lien "mot de passe oublié" dans le layout, sans concevoir le flow derrière. **Avant d'arbitrer SMTP custom vs email Supabase générique : l'utilisateur doit tester son propre serveur mail** (capacité d'envoi à valider de son côté)
-- [x] Migrer le stockage JWT `AsyncStorage` → `expo-secure-store` — fait le 2026-09-06 dans le lot auth (`secureSessionStorage`, fragmenté + migration auto). Rebuild natif requis.
+- [ ] Migrer le stockage JWT `AsyncStorage` → `expo-secure-store` — sorti du brainstorming auth, traité comme correctif ciblé indépendant (dette sécurité déjà connue, voir Dette technique)
 
 Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpowers:writing-plans` puis `superpowers:subagent-driven-development`, avec `cloudbreak-security` en review vu que ça touche JWT/Supabase/data.
 
@@ -169,23 +111,17 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
   - `cloud_cover_low` bloquant : `< 45%` dans le code (pas `< 20%` comme écrit)
   - Verdict `"high"` : conditions strictes (score ≥ 70 + inversion + cloud_base ≥ 150m sous sommet + cloud_cover ≥ 55%)
   - Système de caps (`_apply_score_caps`) non documenté
-- [ ] **Supabase "Confirm email"** — actif dans le projet hébergé de développement ; avant la
-  release 1.0.0, maintenir et revérifier ce réglage ainsi que la configuration SMTP Brevo et les
-  templates Auth personnalisés. La configuration de production reste à créer séparément ;
-  ajouter les secrets backend dans Dokploy seulement quand les e-mails émis par le backend
-  existent, puis redéployer ce backend. Aucun Supabase local n'existe encore (CLI installé,
-  sans config ni conteneurs).
+- [ ] **Supabase "Confirm email"** — désactivé en dev, à réactiver avant release 1.0.0
 - [ ] **Deep link partage** — URL corrigée sur `https://cloudbreak-app.com/sommet/{slug}` (2026-08-31). Reste : Universal Links iOS (`.well-known/apple-app-site-association` + `associatedDomains`) — bloqué compte Apple Dev
 - [ ] **MountainBackground (login)** — visuellement insuffisant, rework avant release 1.0.0
 - [ ] **CGU/Privacy `cloudbreak-ops`** — contenu substantiel déjà rédigé (pas du placeholder générique), mais à valider/compléter avant soumission store :
   - `messages/fr.json` : `cgu.updated` / `privacy.updated` sont littéralement `"à définir avant publication"` → mettre la vraie date
   - Identité légale incomplète : `src/content/cgu.ts` section 1 dit juste "développeur individuel", pas de raison sociale / SIRET / adresse — à ajouter si le statut juridique l'exige (auto-entrepreneur, société...)
   - **Adresse email support pas encore choisie** — `mobile/src/constants/legalUrls.ts` lit `EXPO_PUBLIC_SUPPORT_EMAIL` (fallback `support@cloudbreak.app`, un placeholder). Une fois la vraie adresse décidée : définir la variable en prod (secrets EAS) + vérifier que c'est une boîte mail active et surveillée avant la review Apple
-  - [ ] Avant de publier l'adresse de support : configurer Cloudflare DNS/Email Routing, une boîte de destination vérifiée, `contact@cloudbreak-app.com` et un domaine d'envoi de production.
   - Une fois à jour : mettre à jour `mobile/src/constants/legalUrls.ts` avec les URLs définitives (`ops.cloudbreak.fr`) + App Store Connect (voir `ops/docs/story-1-legal-pages.md`)
 - [ ] **Paywall — badge "Essai gratuit 7 jours"** — réintégré dans `PaywallHeader.tsx`/`PaywallCTA.tsx` (story 4.4) sans mécanisme StoreKit 2 réel pour l'honorer → risque de rejet Apple. Avant soumission : soit câbler un vrai essai via StoreKit 2 (story 4.3), soit retirer à nouveau le badge/CTA
 - [ ] **Boutons DEV du Profil non i18n** (`mobile/src/app/(tabs)/profile.tsx`) — `DEV · CloudLayerViz Sandbox` / `DEV · Reset sommet sélectionné` / `DEV · Rejouer l'onboarding` sont des strings hardcodées (`__DEV__`-only, jamais vues en prod, mais violent la règle projet). Un fix existait sur une branche abandonnée à la demande de l'utilisateur — à refaire si on veut le corriger.
-- [x] ~~JWT Supabase stocké en clair dans AsyncStorage~~ — **résolu 2026-09-06** (lot auth) : `supabaseClient.ts` utilise `secureSessionStorage` (expo-secure-store / Keychain iOS, fragmenté, migration transparente depuis AsyncStorage + purge du token en clair).
+- [ ] **JWT Supabase stocké en clair dans AsyncStorage** (découvert lors de l'audit sécurité story 7.2) — `mobile/src/services/supabaseClient.ts:10` utilise `AsyncStorage` comme backend de session au lieu d'`expo-secure-store`. `docs/security.md` disait à tort que c'était déjà via SecureStore (corrigé). À migrer avant release 1.0.0.
 
 ---
 
@@ -193,7 +129,6 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
-| Stories 2.5+2.6+2.7+2.8 — parcours compte différé, Apple, mot de passe oublié, sondage | backend [PR #16](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/16), mobile [PR #23](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/23) | 2026-09-12 |
 | Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |
 | Fix — Bugs test manuel iPhone : favoris offline, onboarding, skeleton | mobile commit `34b42d0` (direct sur develop) | 2026-07-24 |
 | Story 2.3 — Permission géolocalisation opt-in sans blocage | [mobile PR #21](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/21) | 2026-07-22 |
