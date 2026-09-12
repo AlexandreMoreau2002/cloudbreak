@@ -1,6 +1,8 @@
 # Guide de test manuel — support e-mail de production
 
-> Dernière exécution réussie : 2026-09-12. Ce guide ne nécessite ni ne révèle aucun secret.
+> Réception entrante et réponse Gmail via Brevo vérifiées le 2026-09-12. Le scénario de variable
+> EAS et de build de production n’a pas été exécuté : il reste une action opérateur. Ce guide ne
+> nécessite ni ne révèle aucun secret.
 
 ## But
 
