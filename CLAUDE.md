@@ -675,10 +675,14 @@ GET    /api/v1/score?peak_id=&date=&hour=
 GET    /api/v1/peaks/search?q=
 GET    /api/v1/peaks/{slug}
 POST   /api/v1/validations                  # story 6.1 — implémenté, sans photo ni notification push (Epic 5 bloqué, pas de compte Apple Dev)
+GET    /api/v1/user/me                      # profil + état sondage + newsletter_opt_in ; is_anonymous/provisioned
+POST   /api/v1/user/provision               # get-or-create idempotent du profil (compte permanent requis)
+PATCH  /api/v1/user/survey                  # mini-sondage post-création — terminal + idempotent (compte permanent requis)
 GET    /api/v1/user/subscription
 POST   /api/v1/user/subscription/verify     # StoreKit 2 receipt
 POST   /api/v1/user/push-token
 PATCH  /api/v1/user/notifications
+PATCH  /api/v1/user/preferences             # RGPD — retrait/ré-octroi consentement newsletter (non terminal, compte permanent requis)
 POST   /api/v1/user/favorites
 DELETE /api/v1/user
 GET    /health
