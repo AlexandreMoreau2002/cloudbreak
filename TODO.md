@@ -90,7 +90,6 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 - [ ] **Story 4.3** — StoreKit 2 paiement réel — 🔴 bloqué par compte Apple Dev (99$/an)
 - [ ] **Epic 5** — Notifications push — 🔴 bloqué par compte Apple Dev (certificats APNs)
-- [ ] **Story 2.2** — Préférences notifications — 🔴 bloqué par Epic 5
 - [ ] **Story 3.6** — Deep link partage — URL déjà sur `cloudbreak-app.com` ; reste 🔴 bloqué par la config Apple Universal Links (`associatedDomains` + `apple-app-site-association`), donc compte Apple Dev
 
 ## Dropé (décision explicite utilisateur)
