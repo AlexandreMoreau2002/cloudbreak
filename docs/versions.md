@@ -1,15 +1,15 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-09-14 (mobile : gate des outils dev/logs debug derrière EXPO_PUBLIC_DEBUG / EXPO_PUBLIC_DEV_TOOLS).
+> Dernière mise à jour : 2026-09-16 (story 2.2 — préférences de notifications + réalignement Profil, backend+mobile).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
 
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
-| Backend | `backend/` | `develop` | `5a9948c` (2026-09-12) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `f1db309` (2026-09-14) | ❌ non hébergé serveur — build local/simulateur uniquement | Expo `~55.0.27`, React Native `0.83.6`, React `19.2.0`, TypeScript `~5.9.2` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` ajoutés — Sign in with Apple + Keychain) |
+| Backend | `backend/` | `develop` | `aaeaa55` (2026-09-16) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
+| Mobile | `mobile/` | `develop` | `b4b78b1` (2026-09-16) | ❌ non hébergé serveur — build local/simulateur uniquement | Expo `~55.0.27`, React Native `0.83.6`, React `19.2.0`, TypeScript `~5.9.2` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
 | Ops | `ops/` | `develop` | `c60e1a9` (2026-09-07) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
@@ -23,8 +23,10 @@
 ## 2. Base de données
 
 - PostgreSQL 16 (instance Dokploy dédiée au backend, environnement dev)
-- Migrations Alembic : **7 fichiers** dans `backend/alembic/versions/` (init peaks, idx peaks name,
-  terrain_validations, user_favorites, region sur peaks — voir le dossier pour le détail complet)
+- Migrations Alembic : **9 fichiers** dans `backend/alembic/versions/` (init peaks, idx peaks name,
+  terrain_validations, user_favorites, region sur peaks, predictions, users, + 2 ajoutées story 2.2 :
+  fusion des deux têtes divergentes détectée pendant l'implémentation, puis colonnes
+  `notif_favorites`/`notif_regional`/`notif_terrain` sur `users` — voir le dossier pour le détail complet)
 - Redis 7 (cache météo TTL 10min + quota freemium) — instance Dokploy dédiée au backend
 
 ## 3. Environnements

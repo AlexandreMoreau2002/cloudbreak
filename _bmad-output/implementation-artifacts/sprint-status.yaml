@@ -65,7 +65,7 @@ development_status:
   # 2026-09-12 : lot 2.5+2.6+2.7+2.8 mergé sur develop (backend PR #18, mobile PR #25) + durcissement
   # sécurité/robustesse post-review. Recette manuelle complète encore à faire avant de clore l'epic.
   2-1-inscription-connexion-utilisateur-supabase-auth: done
-  2-2-gestion-preferences-notifications: backlog
+  2-2-gestion-preferences-notifications: done   # mergée develop 2026-09-16 — backend PR #19, mobile PR #27
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
   2-5-mur-signup-differe-acces-invite: done   # mergée develop 2026-09-12 — backend PR #18, mobile PR #25

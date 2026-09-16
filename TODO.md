@@ -132,6 +132,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
+| Story 2.2 — Préférences de notifications (3 toggles indépendants) + réalignement du Profil sur la maquette du 15/09 (sections, `SettingsRow` `tone`/`disabled`/`chevron`, footer version) | backend [PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/19), mobile [PR #27](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/27) | 2026-09-16 |
 | Lot auth 2.5+2.6+2.7+2.8 (parcours compte différé, Sign in with Apple, mot de passe oublié, mini-sondage) + durcissement sécurité/robustesse post-merge (JWT issuer/audience, retry provisioning verify/account, timeout HTTP réel, garde env Supabase) | backend [PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/18), mobile [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/25) | 2026-09-12 |
 | Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |
 | Fix — Bugs test manuel iPhone : favoris offline, onboarding, skeleton | mobile commit `34b42d0` (direct sur develop) | 2026-07-24 |
