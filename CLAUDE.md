@@ -32,7 +32,7 @@ Application mobile **Cloudbreak** — estimation de la probabilité de mer de nu
 
 Stack retenue :
 - **Mobile** : React Native / Expo SDK 55
-- **Backend** : FastAPI 0.135 (Python 3.12)
+- **Backend** : FastAPI 0.115 (Python 3.12)
 - **Base de données** : PostgreSQL 16
 - **Cache** : Redis 7 (cache météo TTL 10min + quota freemium) — **ne pas confondre** avec le cache offline mobile (AsyncStorage, TTL 3h, `mobile/src/hooks/useWeekData.ts`) : deux couches distinctes, détail dans `docs/sources-et-outils.md`
 - **Auth** : Supabase (JWT validé localement côté backend)

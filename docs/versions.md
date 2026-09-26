@@ -10,15 +10,14 @@
 |---|---|---|---|---|---|
 | Backend | `backend/` | `develop` | `aaeaa55` (2026-09-16) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
 | Mobile | `mobile/` | `develop` | `b4b78b1` (2026-09-16) | ❌ non hébergé serveur — build local/simulateur uniquement | Expo `~55.0.27`, React Native `0.83.6`, React `19.2.0`, TypeScript `~5.9.2` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
-| Ops | `ops/` | `develop` | `c60e1a9` (2026-09-07) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
+| Ops | `ops/` | `develop` | `2bbf128` (2026-09-13) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
 > DNS + domaines Dokploy configurés, `dev-api`/`dev-ops` vérifiés en ligne (200), code des 3 submodules
 > commité le 2026-08-31 — voir `docs/infra-serveur.md` section 4bis et `TODO.md` section "En cours".
 
-> ⚠️ **Écart connu** : `CLAUDE.md` (racine) mentionne "FastAPI 0.135" dans la section Stack — le
-> `requirements.txt` réel du backend est actuellement en `0.115.0`. À corriger dans `CLAUDE.md` ou à
-> upgrade réellement, l'un des deux est faux.
+> ✅ **Écart résolu (2026-09-26)** : `CLAUDE.md` (racine) indiquait « FastAPI 0.135 » alors que le
+> `requirements.txt` est en `0.115.0` — doc alignée sur le code (pas d'upgrade FastAPI prévu).
 
 ## 2. Base de données
 
