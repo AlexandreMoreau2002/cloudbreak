@@ -19,7 +19,7 @@
 | Auth (Supabase) | ✅ en place | 🟡 même projet que dev | pas de split dev/prod, à décider |
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
 | Build mobile (EAS) | ❌ pas configuré | ❌ pas configuré | aucun `eas.json`, aucun projet EAS |
-| Apple Developer Program | ❌ pas souscrit | ❌ pas souscrit | 99 $/an — **bloque tout le reste iOS** |
+| Apple Developer Program | 🟡 acheté (2026-09-26), en attente de validation Apple | 🟡 idem | 99 $/an — **bloque tout le reste iOS tant que non validé** |
 | App Store Connect | ❌ | ❌ | dépend d'Apple Dev |
 | TestFlight | ❌ | ❌ | dépend d'Apple Dev + EAS |
 | Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, SDK jamais branché |
@@ -97,7 +97,7 @@
 - **EAS (Expo Application Services)** : **aucun `eas.json`**, aucun `extra.eas.projectId` dans
   `app.json` → le projet n'est pas relié à un compte Expo/EAS. Nécessaire pour builder un IPA
   sans Xcode local à chaque fois et pour soumettre à TestFlight.
-- **Compte Apple Developer Program** : **pas souscrit** (99 $/an). Bloque :
+- **Compte Apple Developer Program** : **acheté le 2026-09-26, en attente de validation par Apple** (99 $/an). Bloque tant que non validé :
   - App Store Connect (création de l'app, bundle id définitif, métadonnées)
   - Certificats de signature + provisioning profiles
   - TestFlight (distribution bêta)
@@ -180,7 +180,7 @@ réutiliser les secrets du flux de support.
   de garder un seul projet au lancement)
 
 ### Bloqué sur une décision/action de l'utilisateur
-- [ ] **Licence Apple Developer (99 $/an)** — LE blocage central, débloque bundle id définitif,
+- [ ] **Licence Apple Developer (99 $/an)** — acheté 2026-09-26, **en attente de validation Apple** ; LE blocage central, débloque bundle id définitif,
   App Store Connect, TestFlight, push, StoreKit réel, Universal Links, Sign in with Apple réel
 - [ ] **Tester le serveur mail perso** → trancher SMTP custom vs Supabase générique (story 2.7)
 - [x] **Adresse support choisie et vérifiée** : `contact@cloudbreak-app.com` (réception et

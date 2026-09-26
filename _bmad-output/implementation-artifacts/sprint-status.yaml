@@ -61,9 +61,9 @@ development_status:
   # EPIC 2: Authentification & Compte Utilisateur
   # FRs: FR12, FR13, FR14, FR15
   # ─────────────────────────────────────────────────────────────
-  epic-2: in-progress
-  # 2026-09-12 : lot 2.5+2.6+2.7+2.8 mergé sur develop (backend PR #18, mobile PR #25) + durcissement
-  # sécurité/robustesse post-review. Recette manuelle complète encore à faire avant de clore l'epic.
+  epic-2: done
+  # 2026-09-26 : epic validé par Alexandre. Lot 2.5-2.8 (backend #18, mobile #25) + 2.2 (backend #19,
+  # mobile #27) mergés sur develop. Restent hors epic : quota invité (anti-abus), Secure email change (Dashboard).
   2-1-inscription-connexion-utilisateur-supabase-auth: done
   2-2-gestion-preferences-notifications: done   # mergée develop 2026-09-16 — backend PR #19, mobile PR #27
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
