@@ -19,9 +19,9 @@
 | Auth (Supabase) | ✅ en place | 🟡 même projet que dev | pas de split dev/prod, à décider |
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
 | Build mobile (EAS) | ❌ pas configuré | ❌ pas configuré | aucun `eas.json`, aucun projet EAS |
-| Apple Developer Program | 🟡 acheté (2026-09-26), en attente de validation Apple | 🟡 idem | 99 $/an — **bloque tout le reste iOS tant que non validé** |
-| App Store Connect | ❌ | ❌ | dépend d'Apple Dev |
-| TestFlight | ❌ | ❌ | dépend d'Apple Dev + EAS |
+| Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
+| App Store Connect | ❌ pas encore créée | ❌ | app à créer, bundle id à figer d'abord |
+| TestFlight | ❌ | ❌ | dépend d'EAS |
 | Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, SDK jamais branché |
 | Error tracking (Sentry) | ❌ | ❌ | post-MVP décidé |
 | Uptime (BetterStack) | ❌ | ❌ | compte pas créé |
@@ -73,6 +73,9 @@
 - JWT ECC P-256, validé **localement** côté backend via JWKS (`backend/app/core/security.py` +
   `dependencies.py`) — pas d'appel réseau à Supabase à chaque requête.
 - **"Confirm email" désactivé en dev** → dette technique, à réactiver avant release 1.0.0.
+- **"Secure email change"** : passé **ON** le 2026-09-27 (était OFF, contournable hors UI mobile —
+  dette P0 close). Vérifié sans impact sur la conversion invité → compte, voir
+  `mobile/docs/security.md` entrée du 2026-09-27.
 - **Découverte du brainstorming story 2.5 (2026-09-04)** : aucun modèle `user.py` ni trigger
   `auth.users → public.users` côté backend. Le signup autonome (`supabase.auth.signUp`, câblé
   côté mobile depuis la story 2.1) **n'a jamais été testé bout en bout** — l'utilisateur crée les
@@ -86,18 +89,17 @@
 **État : rien n'est configuré, tout est à faire.** C'est le plus gros angle mort actuel.
 
 - **Identité app** (`mobile/app.json`) :
-  - `bundleIdentifier` iOS : `com.alexandremoreau.cloudbreak`
+  - `bundleIdentifier` iOS : `com.alexandremoreau.cloudbreak` — **confirmé définitif le 2026-09-27**
+    (décision explicite d'Alexandre, aucune migration nécessaire, c'est déjà celui du code).
+    `pre-release-checklist.md` mentionnait `com.cloudbreak.app` comme exemple générique — jamais
+    appliqué au code, à corriger dans ce doc.
   - `name`/`slug` : `"mobile"` — **placeholder générique, jamais renommé** ("mobile" apparaîtrait
-    sous l'icône si buildé tel quel). ⚠️ Écart avec le doc `pre-release-checklist.md` qui donnait
-    `com.cloudbreak.app` comme exemple de bundle id — l'exemple n'a jamais été appliqué au code,
-    le bundle id réel est `com.alexandremoreau.cloudbreak`. À trancher : on garde celui-ci ou on
-    le change avant la 1ère soumission (⚠️ **le bundle id n'est quasiment jamais modifiable après
-    la 1ère création dans App Store Connect** — c'est une décision à prendre AVANT ce moment-là).
+    sous l'icône si buildé tel quel), à corriger avant tout build de soumission.
   - Pas d'icône/splash finalisés vérifiés dans ce fichier (à vérifier séparément).
 - **EAS (Expo Application Services)** : **aucun `eas.json`**, aucun `extra.eas.projectId` dans
   `app.json` → le projet n'est pas relié à un compte Expo/EAS. Nécessaire pour builder un IPA
   sans Xcode local à chaque fois et pour soumettre à TestFlight.
-- **Compte Apple Developer Program** : **acheté le 2026-09-26, en attente de validation par Apple** (99 $/an). Bloque tant que non validé :
+- **Compte Apple Developer Program** : **validé par Apple le 2026-09-27** (acheté le 2026-09-26, 99 $/an). Débloque :
   - App Store Connect (création de l'app, bundle id définitif, métadonnées)
   - Certificats de signature + provisioning profiles
   - TestFlight (distribution bêta)
@@ -180,7 +182,7 @@ réutiliser les secrets du flux de support.
   de garder un seul projet au lancement)
 
 ### Bloqué sur une décision/action de l'utilisateur
-- [ ] **Licence Apple Developer (99 $/an)** — acheté 2026-09-26, **en attente de validation Apple** ; LE blocage central, débloque bundle id définitif,
+- [x] **Licence Apple Developer (99 $/an)** — acheté 2026-09-26, **validé par Apple le 2026-09-27** ; débloque bundle id définitif,
   App Store Connect, TestFlight, push, StoreKit réel, Universal Links, Sign in with Apple réel
 - [ ] **Tester le serveur mail perso** → trancher SMTP custom vs Supabase générique (story 2.7)
 - [x] **Adresse support choisie et vérifiée** : `contact@cloudbreak-app.com` (réception et
