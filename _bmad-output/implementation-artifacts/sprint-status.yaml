@@ -92,7 +92,7 @@ development_status:
   # FRs: FR16-FR21
   # ─────────────────────────────────────────────────────────────
   epic-4: in-progress
-  4-1-quota-freemium-backend-1-check-jour: done
+  4-1-quota-freemium-backend-1-check-jour: done  # étage anti-abus invité mergé 2026-09-29 : backend PR #20 + mobile PR #31 ; étage 2 (App Attest) à planifier
   4-2-paywall-mobile-conversion: done
   4-3-abonnements-storekit-2-premium-pro: backlog   # prérequis EAS/Apple prêts depuis 2026-09-28 ; implémentation StoreKit à planifier
   4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) — voir TODO.md pour le risque "essai gratuit" non résolu
