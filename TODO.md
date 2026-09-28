@@ -33,14 +33,17 @@ les attaque (dépendances d'abord) :
    partagé si IP absente) — corrigés par Codex (`10.0.1.0/24` vérifié en SSH par Claude sur le VPS,
    503 propre) et revérifiés OK. **Incident collatéral découvert pendant la vérif** : `dev-api`
    était en 502 (crash-loop, `BREVO_API_KEY` non déclarée dans `Settings` → `ValidationError` au
-   boot) — sans rapport avec cette PR, présent depuis l'ajout de cette variable côté Dokploy le
-   2026-09-12, resté dormant tant que le conteneur n'avait pas redémarré. Corrigé par hotfix
-   backend [#21](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/21) (`extra:
-   "ignore"` sur `Settings`), mergé et redéployé le 2026-09-29 — `dev-api.cloudbreak-app.com/health`
-   revérifié 200 après chaque redeploy. **À vérifier côté Dokploy (pas du code)** : la variable
-   `BREVO_API_KEY` a-t-elle sa place sur le service backend, ou est-ce une erreur de config à
-   nettoyer ? Checklist Notion prévue par le plan Codex non confirmée (accès Notion indisponible
-   pour Claude cette session).
+   boot) — sans rapport avec cette PR. Root cause retrouvée : `BREVO_API_KEY` a été posée sur le
+   service backend Dokploy le 2026-09-06 (`docs/superpowers/plans/2026-09-06-email-delivery-dev.md`,
+   chantier "backend envoie ses propres e-mails via Brevo") mais le code correspondant n'a jamais
+   été écrit (`docs/email.md` confirme : "future integration; it is not used"). Resté dormant tant
+   que le conteneur n'avait pas redémarré. Corrigé par hotfix backend
+   [#21](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/21) (`extra: "ignore"` sur
+   `Settings`), mergé et redéployé le 2026-09-29 — `dev-api.cloudbreak-app.com/health` revérifié
+   200 après chaque redeploy. **Action Dokploy restante (pas du code)** : retirer `BREVO_API_KEY`
+   du service backend si ce chantier "e-mail transactionnel applicatif" n'est pas repris — sinon
+   la garder et l'ajouter à `prd.md` V2. Checklist Notion confirmée existante :
+   [✅ Tests story 4.1 — Quota invité étage 1](https://app.notion.com/p/3e9964bda18581a5ab8ec99dbb2fdae2).
 3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel. Dépend du point 1 (fait).
 4. [ ] **Epic 5 — Notifications push** (5.1 infra → 5.2 alertes favoris/régionales → 5.3 validation
    terrain). Dépend du point 1 (fait).
