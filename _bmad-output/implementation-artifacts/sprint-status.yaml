@@ -69,7 +69,7 @@ development_status:
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
   2-5-mur-signup-differe-acces-invite: done   # mergée develop 2026-09-12 — backend PR #18, mobile PR #25
-  2-6-sign-in-with-apple: done   # mergée develop 2026-09-12 — même lot que 2-5/2-7/2-8 ; provider/build natif Apple non revalidés en prod
+  2-6-sign-in-with-apple: done   # mergée develop 2026-09-12 — provider/build natif Apple reste à revalider ; prérequis EAS/Apple prêts depuis 2026-09-28
   2-7-mot-de-passe-oublie: done   # mergée develop 2026-09-12 — même lot ; template Dashboard Supabase à valider en réel
   2-8-mini-sondage-post-creation-compte: done   # mergée develop 2026-09-12 — même lot que 2-5/2-6/2-7 ; persistance réelle non validée manuellement
   epic-2-retrospective: optional
@@ -84,7 +84,7 @@ development_status:
   3-3-recherche-sommet-favoris: done
   3-4-ecran-principal-scorecard-affichage-verdict: done
   3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: done
-  3-6-message-contextuel-hors-saison-deep-link-partage: deferred  # blocké par domaine + Apple config
+  3-6-message-contextuel-hors-saison-deep-link-partage: backlog  # prérequis EAS/Apple prêts depuis 2026-09-28 ; domaine déjà disponible, story à planifier
   epic-3-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ development_status:
   epic-4: in-progress
   4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
-  4-3-abonnements-storekit-2-premium-pro: backlog
+  4-3-abonnements-storekit-2-premium-pro: backlog   # prérequis EAS/Apple prêts depuis 2026-09-28 ; implémentation StoreKit à planifier
   4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) — voir TODO.md pour le risque "essai gratuit" non résolu
   4-5-service-web-cloudbreak-ops-pages-legales: done   # mergée sur develop (repo cloudbreak-ops, PR #2)
   epic-4-retrospective: optional
@@ -104,7 +104,7 @@ development_status:
   # FRs: FR22-FR25
   # ─────────────────────────────────────────────────────────────
   epic-5: backlog
-  5-1-infrastructure-push-notifications-expo-push: backlog
+  5-1-infrastructure-push-notifications-expo-push: backlog   # prérequis EAS/Apple prêts depuis 2026-09-28 ; infra push à planifier
   5-2-alertes-push-favoris-regionales-premium-pro: backlog
   5-3-notification-gps-validation-terrain: backlog
   epic-5-retrospective: optional
