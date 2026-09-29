@@ -47,7 +47,7 @@ les attaque (dépendances d'abord) :
    `_bmad-output/planning-artifacts/prd.md` section V2 avant de recréer la variable. Checklist
    Notion confirmée existante :
    [✅ Tests story 4.1 — Quota invité étage 1](https://app.notion.com/p/3e9964bda18581a5ab8ec99dbb2fdae2).
-3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel. Dépend du point 1 (fait).
+3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel — **en cours** sur `mobile` et `backend` : `feature/4-3-storekit-2-abonnements`. Checklist Notion `✅ Tests story 4.3 — StoreKit 2 Premium` à créer sous la page Cloudbreak (connecteur Notion indisponible dans cette session ; URL à renseigner avant implémentation). Dépend du point 1 (fait).
 4. [ ] **Epic 5 — Notifications push** (5.1 infra → 5.2 alertes favoris/régionales → 5.3 validation
    terrain). Dépend du point 1 (fait).
 5. [ ] **Story 3.6** — Universal Links iOS (`apple-app-site-association` + `associatedDomains`).
