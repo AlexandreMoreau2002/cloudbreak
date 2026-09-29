@@ -13,7 +13,7 @@ L'application ne traite jamais de carte bancaire. Apple réalise le paiement et 
 - Les deux produits appartiennent au groupe unique d'abonnements `Cloudbreak Premium` et ont le même niveau d'accès, car ils offrent exactement les mêmes fonctionnalités.
 - Les deux produits ont une offre d'introduction Apple `Free Trial`, durée sept jours. Apple ne l'accorde qu'une fois par client dans ce groupe.
 - Le paywall est visible en session anonyme, mais le CTA d'achat impose un compte Supabase permanent avant de présenter la feuille de paiement Apple.
-- La colonne `subscriptions.plan` vaut uniquement `premium` pour un abonnement accordant les droits, jamais `monthly`, `annual` ou `pro`. La périodicité reste une information StoreKit.
+- Tout achat créé par cette story écrit `subscriptions.plan="premium"`, jamais `monthly`, `annual` ou `pro`. La périodicité reste une information StoreKit ; le bypass historique `pro` reste compatible pour les éventuels enregistrements existants.
 - Les prix, devise et texte de renouvellement affichés dans l'app viennent des produits StoreKit chargés, et non des chaînes de prix statiques. Cela évite d'afficher un prix différent de celui configuré pour le storefront Apple de l'utilisateur.
 
 ## Périmètre et hors périmètre
@@ -63,7 +63,7 @@ Le statut `trial` est déduit des informations StoreKit de l'offre d'introductio
 
 ### Quota
 
-Le contrat existant est préservé et resserré : le quota n'est bypassé que si le plan est `premium`, que le statut est `trial` ou `active`, et que `expires_at` est futur. Expiration, révocation ou remboursement rétablissent immédiatement la règle freemium lors du prochain appel score.
+Le contrat existant est préservé et resserré : le quota n'est bypassé que si le plan est `premium` ou le `pro` historique, que le statut est `trial` ou `active`, et que `expires_at` est futur. Tous les nouveaux achats restent `premium`. Expiration, révocation ou remboursement rétablissent immédiatement la règle freemium lors du prochain appel score.
 
 ## Configuration App Store Connect — action utilisateur obligatoire
 
