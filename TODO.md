@@ -40,9 +40,12 @@ les attaque (dépendances d'abord) :
    que le conteneur n'avait pas redémarré. Corrigé par hotfix backend
    [#21](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/21) (`extra: "ignore"` sur
    `Settings`), mergé et redéployé le 2026-09-29 — `dev-api.cloudbreak-app.com/health` revérifié
-   200 après chaque redeploy. **Action Dokploy restante (pas du code)** : retirer `BREVO_API_KEY`
-   du service backend si ce chantier "e-mail transactionnel applicatif" n'est pas repris — sinon
-   la garder et l'ajouter à `prd.md` V2. Checklist Notion confirmée existante :
+   200 après chaque redeploy. **`BREVO_API_KEY` retirée du service backend Dokploy le 2026-09-29**
+   (via l'API Dokploy `application.saveEnvironment`, les 12 autres variables inchangées, redeploy
+   + `/health` revérifié 200 après coup) — chantier "backend envoie ses propres e-mails via Brevo"
+   abandonné/jamais repris, cf. `docs/email.md`. **Si ce chantier est repris un jour** : ajouter à
+   `_bmad-output/planning-artifacts/prd.md` section V2 avant de recréer la variable. Checklist
+   Notion confirmée existante :
    [✅ Tests story 4.1 — Quota invité étage 1](https://app.notion.com/p/3e9964bda18581a5ab8ec99dbb2fdae2).
 3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel. Dépend du point 1 (fait).
 4. [ ] **Epic 5 — Notifications push** (5.1 infra → 5.2 alertes favoris/régionales → 5.3 validation

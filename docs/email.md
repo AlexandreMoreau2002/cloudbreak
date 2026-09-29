@@ -7,6 +7,15 @@ Auth emails follow the active path through the hosted development Supabase proje
 its Brevo SMTP configuration. Backend-originated transactional email is a separate,
 future integration; it is not used for signup confirmations.
 
+**2026-09-29 update:** the `BREVO_API_KEY` that was provisioned on the Dokploy backend service
+during this abandoned integration attempt (see plan
+`docs/superpowers/plans/2026-09-06-email-delivery-dev.md`) caused a crash-loop on `dev-api` once
+the container restarted, because `app/core/config.py` never declared a matching field and
+pydantic-settings rejected the unknown env var. The variable has been removed from the backend
+service and the crash fixed with a defensive `extra: "ignore"` on `Settings` (backend PR #21).
+If backend-originated Brevo email is picked up again, re-provision the key and add the matching
+`Settings` field together, and note it in `_bmad-output/planning-artifacts/prd.md` V2.
+
 Brevo is the outbound provider and OVH remains the registrar and DNS host for now. The
 development sending domain is `dev.cloudbreak-app.com`; production sending and inbound
 support email are deliberately deferred.
