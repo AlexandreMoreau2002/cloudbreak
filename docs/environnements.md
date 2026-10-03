@@ -6,7 +6,7 @@
 > CI/CD) ; `docs/versions.md` détaille les versions de dépendances par submodule. Ce fichier
 > répond à "qu'est-ce qu'on a comme environnement, et qu'est-ce qu'il manque pour releaser ?".
 >
-> Dernière mise à jour : 2026-09-12.
+> Dernière mise à jour : 2026-10-03.
 
 ## Vue d'ensemble — statut par catégorie
 
@@ -18,10 +18,10 @@
 | Cache (Redis) | ✅ en place | ❌ pas créée | idem |
 | Auth (Supabase) | ✅ en place | 🟡 même projet que dev | pas de split dev/prod, à décider |
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
-| Build mobile (EAS) | ❌ pas configuré | ❌ pas configuré | aucun `eas.json`, aucun projet EAS |
+| Build mobile (EAS) | ✅ configuré | 🟡 build de soumission à faire | projet EAS et credentials actifs ; build native requise pour StoreKit |
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
-| App Store Connect | ❌ pas encore créée | ❌ | app à créer, bundle id à figer d'abord |
-| TestFlight | ❌ | ❌ | dépend d'EAS |
+| App Store Connect | ✅ app + abonnements configurés | 🟡 non soumis | première version et abonnements restent à soumettre après tests |
+| TestFlight | ❌ | ❌ | première build à téléverser |
 | Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, SDK jamais branché |
 | Error tracking (Sentry) | ❌ | ❌ | post-MVP décidé |
 | Uptime (BetterStack) | ❌ | ❌ | compte pas créé |
@@ -86,19 +86,20 @@
 
 ## 5. Mobile — build & distribution (Apple)
 
-**État : rien n'est configuré, tout est à faire.** C'est le plus gros angle mort actuel.
+**État : l'identité Apple, EAS et les abonnements Story 4.3 sont configurés ; aucune build n'a
+encore été soumise à App Store Connect.**
 
 - **Identité app** (`mobile/app.json`) :
   - `bundleIdentifier` iOS : `com.alexandremoreau.cloudbreak` — **confirmé définitif le 2026-09-27**
     (décision explicite d'Alexandre, aucune migration nécessaire, c'est déjà celui du code).
     `pre-release-checklist.md` mentionnait `com.cloudbreak.app` comme exemple générique — jamais
     appliqué au code, à corriger dans ce doc.
-  - `name`/`slug` : `"mobile"` — **placeholder générique, jamais renommé** ("mobile" apparaîtrait
-    sous l'icône si buildé tel quel), à corriger avant tout build de soumission.
-  - Pas d'icône/splash finalisés vérifiés dans ce fichier (à vérifier séparément).
-- **EAS (Expo Application Services)** : **aucun `eas.json`**, aucun `extra.eas.projectId` dans
-  `app.json` → le projet n'est pas relié à un compte Expo/EAS. Nécessaire pour builder un IPA
-  sans Xcode local à chaque fois et pour soumettre à TestFlight.
+  - `name`/`slug` : `"Cloudbreak – Mer de nuage"` / `"cloudbreak"`.
+  - Icône : `mobile/assets/images/icon.png` (1024 × 1024), référencée dans `app.json`. Elle sera
+    livrée avec la première build iOS téléversée à App Store Connect.
+- **EAS (Expo Application Services)** : projet relié dans `app.json` (`extra.eas.projectId`) et
+  credentials actifs. Une build native development/preview est requise pour StoreKit : Expo Go ne
+  peut pas charger `react-native-iap`.
 - **Compte Apple Developer Program** : **validé par Apple le 2026-09-27** (acheté le 2026-09-26, 99 $/an). Débloque :
   - App Store Connect (création de l'app, bundle id définitif, métadonnées)
   - Certificats de signature + provisioning profiles
@@ -108,7 +109,12 @@
   - Push notifications (certificats APNs, Epic 5)
   - StoreKit 2 réel (story 4.3)
   - Universal Links (story 3.6)
-- **Rien de tout ça n'a de date cible** — c'est la décision de dépense en attente (voir TODO.md).
+- **App Store Connect / StoreKit** : app créée ; groupe `Cloudbreak Premium`, produits mensuel
+  (4,99 €) et annuel (44,99 €), essais Apple de 7 jours, France et achats individuels configurés
+  le 2026-10-03. Voir
+  [`configuration-app-store-connect.md`](story-4-3-storekit-2-abonnements/configuration-app-store-connect.md).
+  Les produits sont « Finaliser avant soumission » : Sandbox Tester, test sur appareil réel,
+  notification V2 et première soumission restent à faire.
 
 ## 6. Observabilité
 
@@ -173,10 +179,8 @@ réutiliser les secrets du flux de support.
 ## Ce qu'il reste à faire — checklist priorisée
 
 ### Peut se faire maintenant (aucun blocage externe)
-- [ ] Corriger `mobile/app.json` : `name`/`slug` "mobile" → "Cloudbreak" (ou trancher si on
-  attend la décision bundle id d'abord)
-- [ ] Créer un compte Expo/EAS + `eas.json` minimal (profils `development`/`preview`/`production`)
-  — indépendant d'Apple Dev, prépare le terrain
+- [ ] Créer un Sandbox Tester Apple et effectuer le test StoreKit sur appareil réel avec une build
+  native ; ne pas utiliser Expo Go
 - [ ] Créer le compte BetterStack + brancher les alertes (story 1.5)
 - [ ] Décider : split Supabase dev/prod, ou un seul projet pour le MVP (solo dev, probablement OK
   de garder un seul projet au lancement)

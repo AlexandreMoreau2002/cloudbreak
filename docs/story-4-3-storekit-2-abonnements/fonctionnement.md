@@ -74,9 +74,15 @@ déplacer un abonnement.
 
 ## Configuration opérateur (sans secrets)
 
-Dans App Store Connect, créer le groupe **Cloudbreak Premium**, les deux produits ci-dessus, les
-prix France validés (5 € mensuel, 45 € annuel) et une offre d'introduction **Free Trial / 7 jours**
-sur chacun. Configurer un Sandbox Tester et la notification V2 vers l'environnement concerné.
+La configuration App Store Connect réellement enregistrée le 2026-10-03 est décrite dans
+[`configuration-app-store-connect.md`](configuration-app-store-connect.md). Les tarifs Apple
+France effectivement sélectionnés sont **4,99 € / mois** et **44,99 € / an** : ce sont les paliers
+Apple les plus proches, pas les objectifs marketing arrondis de 5 € et 45 €. Les deux produits
+portent une offre d'introduction Apple **d'une semaine gratuite**.
+
+Il reste à créer le Sandbox Tester, déployer/configurer l'environnement backend Apple concerné et
+configurer la notification V2 vers son URL publique. Les produits sont encore à l'état
+« Finaliser avant soumission » : ils ne sont ni publiés ni soumis à Apple.
 
 Le backend reçoit, via les secrets Dokploy, `APPLE_BUNDLE_ID`, `APPLE_ENVIRONMENT`,
 `APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID` et le chemin du fichier de clé privée
@@ -93,4 +99,3 @@ production, l'absence de ces identifiants bloque le démarrage au lieu de valide
 | Vérification | `backend/app/services/apple_store.py`, `backend/app/resources/apple/` | Bibliothèque Apple officielle et ancres de confiance publiques. |
 | Entitlement | `backend/app/services/subscription.py`, `backend/app/models/subscription.py`, migration Alembic | Propriété, idempotence, état courant et lignée Apple. |
 | Quota | `backend/app/core/dependencies.py` | Bypass uniquement pour `premium`/ancien `pro`, `trial`/`active`, non expiré. |
-

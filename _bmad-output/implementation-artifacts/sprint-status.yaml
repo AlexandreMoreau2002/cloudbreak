@@ -94,8 +94,8 @@ development_status:
   epic-4: in-progress
   4-1-quota-freemium-backend-1-check-jour: done  # étage anti-abus invité mergé 2026-09-29 : backend PR #20 + mobile PR #31 ; étage 2 (App Attest) à planifier
   4-2-paywall-mobile-conversion: done
-  4-3-abonnements-storekit-2-premium-pro: review   # PR backend #22 + mobile #32 ouvertes 2026-09-30 ; SECURE POUR LA PR ; rate-limit/WAF Traefik requis avant exposition prod ; checklist Notion URL non confirmée
-  4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) — voir TODO.md pour le risque "essai gratuit" non résolu
+  4-3-abonnements-storekit-2-premium-pro: review   # PR backend #22 + mobile #32 ouvertes 2026-09-30 ; SECURE POUR LA PR ; App Store Connect configuré 2026-10-03 (France, 4,99 €/mois, 44,99 €/an, essai réel 7 jours, App Store individuel) ; Sandbox/build native/notifications V2 restent à tester ; rate-limit/WAF Traefik requis avant exposition prod ; checklist Notion créée sous la page Cloudbreak (URL individuelle indisponible)
+  4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) ; essai gratuit réel désormais câblé/configuré dans la Story 4.3, preuve Sandbox restante
   4-5-service-web-cloudbreak-ops-pages-legales: done   # mergée sur develop (repo cloudbreak-ops, PR #2)
   epic-4-retrospective: optional
 

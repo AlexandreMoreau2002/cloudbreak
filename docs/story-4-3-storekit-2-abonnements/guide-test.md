@@ -3,7 +3,9 @@
 ## Pré-requis
 
 - Une build iOS native development/preview : Expo Go ne charge pas `react-native-iap`.
-- Les produits mensuel et annuel, l'offre gratuite 7 jours et le groupe **Cloudbreak Premium** actifs dans App Store Connect.
+- Le groupe **Cloudbreak Premium**, ses produits mensuel et annuel et leurs offres gratuites de
+  7 jours sont configurés dans App Store Connect. À ce stade, ils sont « Finaliser avant
+  soumission », pas publiés : le premier abonnement devra être soumis avec une version de l'app.
 - Un Sandbox Tester Apple, un compte Cloudbreak permanent de test et un second compte Cloudbreak permanent pour le test de conflit.
 - Le backend dev déployé avec la configuration Apple non secrète correcte, la clé IAP stockée dans Dokploy et l'URL V2 Sandbox configurée.
 - Ne jamais coller un JWS, un token Supabase ou une clé privée dans cette page ou dans Git.
@@ -49,5 +51,6 @@
 - [ ] Notification V2 Sandbox reçue par l'endpoint dev et test notification Apple passée.
 - [ ] Aucun JWS, UUID non masqué, JWT ni secret n'a été sauvegardé.
 
-Statut de preuve Apple réelle : **à consigner dans la checklist Notion après configuration App Store Connect et déploiement dev**. Cette documentation ne remplace pas ce test.
-
+Statut de preuve Apple réelle : la configuration des produits est faite ; les achats Sandbox sur
+appareil réel et les notifications V2 restent à consigner dans la checklist Notion. Cette
+documentation ne remplace pas ce test.

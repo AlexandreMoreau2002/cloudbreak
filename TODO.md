@@ -47,7 +47,7 @@ les attaque (dépendances d'abord) :
    `_bmad-output/planning-artifacts/prd.md` section V2 avant de recréer la variable. Checklist
    Notion confirmée existante :
    [✅ Tests story 4.1 — Quota invité étage 1](https://app.notion.com/p/3e9964bda18581a5ab8ec99dbb2fdae2).
-3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel — **en review** : [PR backend #22](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/22) et [PR mobile #32](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/32). Audit sécurité : SECURE POUR LA PR ; rate-limit/WAF Traefik requis avant exposition prod. Checklist Notion `✅ Tests story 4.3 — StoreKit 2 Premium` toujours à créer sous la page Cloudbreak (URL non confirmée). Dépend du point 1 (fait).
+3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel — **en review** : [PR backend #22](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/22) et [PR mobile #32](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/32). Audit sécurité : SECURE POUR LA PR ; rate-limit/WAF Traefik requis avant exposition prod. App Store Connect configuré le 2026-10-03 : groupe Cloudbreak Premium, mensuel 4,99 €, annuel 44,99 €, essai Apple réel 7 jours, France, App Store individuel. Produits non soumis. Checklist Notion `✅ Tests story 4.3 — StoreKit 2 Premium` créée sous [Cloudbreak – mer de nuage](https://app.notion.com/p/alexgrimpeur/Cloudbreak-mer-de-nuage-325964bda18580358585ff14ef1f76c6) ; URL individuelle non fournie par le connecteur. Reste : Sandbox Tester, build native, notifications V2 et test réel. Dépend du point 1 (fait).
 4. [ ] **Epic 5 — Notifications push** (5.1 infra → 5.2 alertes favoris/régionales → 5.3 validation
    terrain). Dépend du point 1 (fait).
 5. [ ] **Story 3.6** — Universal Links iOS (`apple-app-site-association` + `associatedDomains`).
@@ -162,7 +162,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 ## Backlog stories (bloquées)
 
-- [ ] **Story 4.3** — StoreKit 2 paiement réel — 🟢 débloqué (compte Apple Dev validé le 2026-09-27)
+- [ ] **Story 4.3** — StoreKit 2 paiement réel — en review : configuration App Store Connect effectuée le 2026-10-03 ; tests Sandbox et soumission Apple restent à faire
 - [ ] **Epic 5** — Notifications push — 🟢 débloqué (certificats APNs, compte Apple Dev validé le 2026-09-27)
 - [ ] **Story 3.6** — Deep link partage — URL déjà sur `cloudbreak-app.com` ; Universal Links (`associatedDomains` + `apple-app-site-association`) maintenant faisable, compte Apple Dev validé le 2026-09-27
 
@@ -190,7 +190,7 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
   - [x] **E-mail support production** — `contact@cloudbreak-app.com` publié ; routage entrant et envoi Gmail/Brevo (« send-as ») validés manuellement le 2026-09-12. Procédure : [`docs/email-support/fonctionnement.md`](docs/email-support/fonctionnement.md).
   - [ ] **Action opérateur restante** — définir `EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com` dans l’environnement EAS de production avant le premier build de production.
   - Une fois à jour : mettre à jour `mobile/src/constants/legalUrls.ts` avec les URLs définitives (`ops.cloudbreak.fr`) + App Store Connect (voir `ops/docs/story-1-legal-pages.md`)
-- [ ] **Paywall — badge "Essai gratuit 7 jours"** — réintégré dans `PaywallHeader.tsx`/`PaywallCTA.tsx` (story 4.4) sans mécanisme StoreKit 2 réel pour l'honorer → risque de rejet Apple. Avant soumission : soit câbler un vrai essai via StoreKit 2 (story 4.3), soit retirer à nouveau le badge/CTA
+- [x] **Paywall — badge "Essai gratuit 7 jours"** — mécanisme StoreKit 2 réel implémenté dans les PR Story 4.3 et offres Apple d'une semaine configurées le 2026-10-03. Le badge reste conditionné à l'offre renvoyée par StoreKit ; preuve Sandbox sur appareil réel encore requise avant soumission.
 - [ ] **Boutons DEV du Profil non i18n** (`mobile/src/app/(tabs)/profile.tsx`) — `DEV · CloudLayerViz Sandbox` / `DEV · Reset sommet sélectionné` / `DEV · Rejouer l'onboarding` sont des strings hardcodées (`__DEV__`-only, jamais vues en prod, mais violent la règle projet). Un fix existait sur une branche abandonnée à la demande de l'utilisateur — à refaire si on veut le corriger.
 - [x] **JWT Supabase stocké en clair dans AsyncStorage** — RÉSOLU 2026-09-06 (Keychain iOS via `expo-secure-store`, migration auto, voir `mobile/docs/security.md`). Ancien constat : (découvert lors de l'audit sécurité story 7.2) — `mobile/src/services/supabaseClient.ts:10` utilise `AsyncStorage` comme backend de session au lieu d'`expo-secure-store`. `docs/security.md` disait à tort que c'était déjà via SecureStore (corrigé). À migrer avant release 1.0.0.
 - [x] **P0 Quota invité contournable (étage 1)** — RÉSOLU 2026-09-29, PR backend
