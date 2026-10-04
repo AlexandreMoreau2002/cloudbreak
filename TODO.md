@@ -10,6 +10,66 @@
 
 ## En cours
 
+### Pré-release — fixes rangés par story (mis à jour 2026-10-04)
+
+Fait :
+- [x] **PR mobile #33** (outillage dev iOS) — squash-mergée sur `develop` le 2026-10-03.
+- [x] **Story 4.3 — PR backend #22 et mobile #32 mergées le 2026-10-03.** Reste la clôture (ci-dessous).
+
+#### Story 4.3 — StoreKit 2 (clôture)
+- [ ] **Produits invisibles en Sandbox** : `fetchProducts` renvoie 0 produit. Cause probable : accord « Paid Apps » / fiscalité / banque activé le 2026-10-03, validation Apple jusqu'à 24 h. Ensuite : capture « équipe de vérification » sur les deux produits, statut « Prêt à soumettre ». Vérifier que le Sandbox Tester est en France.
+- [ ] **Prix annuel à trancher** : App Store Connect = 44,99 €, demandé = 49,99 €. Décision, puis changer le prix dans App Store Connect. Mensuel = 4,99 €.
+- [ ] **Badge de réduction −33 % → −25 %** (paywall) : 44,99 € face à 12 × 4,99 € (59,88 €) = −25 %.
+- [ ] **Prix périmés** dans les tests (`index.test.tsx` : `5€`/`45€` ; `PaywallScreen.test.tsx` : `4,99 $` → `€`) et les docs (`prd.md`, `epics.md`, `mobile/docs/storekit.md`, `_bmad-output/…`).
+- [ ] **Incohérence backend** : `/user/subscription` renvoie `premium` même quand `status = none` (mapping `pro` → `premium`), alors que le bypass du quota exige `trial` ou `active`.
+- [ ] **Seed `pro@` / `test@`** (`backend/app/db/seed_test_users.py`) : écrit `plan = pro` et `status = none`, donc le quota n'est pas levé. Base locale corrigée à la main le 2026-10-04 ; le seed reste à corriger.
+- [ ] **Tests Sandbox sur iPhone réel** (`docs/story-4-3-storekit-2-abonnements/guide-test.md`), une fois les produits visibles.
+- [ ] **Fermer la story 4.3** : Notion, sprint-status, docs, bump des refs. Seulement après les tests Sandbox.
+- Trial : 7 jours partout (code, locales, App Store Connect). Rien à changer.
+
+#### Story 2.6 — Sign in with Apple (revalidation)
+- [ ] **Annulation de la feuille Apple fait avancer le parcours** (ajouté 2026-10-04).
+  - **Cause** : `AuthContext.signInWithApple` renvoie `null` sur annulation (`ERR_REQUEST_CANCELED`). `src/app/account.tsx` (fonction `apple()`) le lit comme un succès : `router.push('/survey')` en création, ou `complete()` en connexion.
+  - **Test existant** : « traite l'annulation Apple comme une sortie sans erreur » (`AuthContext.test.tsx`, ~ligne 1407) attend `null`. Il verrouille le comportement actuel.
+  - **Fix** : valeur distincte (`'cancelled'`) sur annulation, rien à faire dans `apple()` dans ce cas, test mis à jour.
+  - **Fichiers** : `mobile/src/contexts/AuthContext.tsx`, `mobile/src/app/account.tsx`, `mobile/src/contexts/AuthContext.test.tsx`.
+- [ ] **Session invitée supprimée côté Supabase = app bloquée** (ajouté 2026-10-04).
+  - **Symptôme** : après suppression d'utilisateurs dans le dashboard Supabase, connexion Apple et code e-mail échouent sans message clair.
+  - **Logs Supabase** : Apple `POST /token?grant_type=id_token` → 403 `User from sub claim in JWT does not exist` ; e-mail `PUT /user` → 403, même erreur.
+  - **Cause** : l'app garde le JWT d'un compte invité supprimé. Pas de déconnexion visible pour un invité (`profile.tsx`, `!isAnonymous`), et réinstaller ne suffit pas (session dans le Keychain iOS).
+  - **Contournement** : bouton DEV « Réinitialiser la session » (`EXPO_PUBLIC_DEV_TOOLS=true`, appelle `signOutToAnonymous`).
+  - **Fix** : dans `AuthContext.tsx`, détecter ce 403 et repartir sur une session invitée neuve, sans intervention.
+
+#### Story 4.6 — Build signée, TestFlight, polish pré-release
+- [ ] **Build signée, App Store Connect, TestFlight** (draft : `_bmad-output/implementation-artifacts/4-6-build-signee-testflight.md`).
+- [ ] **`EXPO_PUBLIC_SUPPORT_EMAIL`** dans l'environnement EAS de production, avant le build (`contact@cloudbreak-app.com`).
+- [ ] **Assets App Store** : icône 1024×1024, captures FR/EN.
+- [ ] **CGU / Privacy `cloudbreak-ops`** : dates réelles (`messages/fr.json`), identité légale (SIRET/adresse) à décider.
+- [ ] **MountainBackground** (login) : rework visuel, insuffisant actuellement.
+
+#### Nouvelle story — Nom utilisateur (numéro à attribuer)
+- [ ] **Nom utilisateur** (avatar + nom dans le Profil). Pas de champ DB aujourd'hui : migration + endpoint + UI à concevoir (brainstorming puis plan).
+
+#### PR « fixes » — hors story
+- [ ] **Quota dépassé affiché comme une erreur réseau** (ajouté 2026-10-04).
+  - **Symptôme** : sur l'accueil après réinitialisation de session, et sur la recherche (« mont blanc »), « Une erreur est survenue / Vérifie ta connexion » alors que le backend répond 429 (quota freemium).
+  - **Fix** : (a) 429 → paywall, pas l'erreur réseau ; (b) garder le sommet déjà chargé à l'écran, ou proposer d'y revenir.
+  - **Fichiers probables** : `mobile/src/hooks/useWeekData.ts`, `mobile/src/hooks/useSearch*` (à confirmer).
+- [ ] **Cache offline ignoré quand le quota est dépassé** : un freemium qui a déjà consulté un sommet voit le paywall au lieu des données en cache (TTL 3 h, `mobile/src/hooks/useWeekData.ts`). Attendu : afficher le cache et proposer le paywall en complément. Régression de la story 7.2.
+- [ ] **Libellé création de compte** : retirer « pour cette feature tu as besoin d'un compte ». Candidat : `mobile/src/locales/fr.ts:187` (« Crée un compte pour sauvegarder tes sommets. ») — à confirmer.
+
+#### Infra / prérequis prod (hors story)
+- [ ] **Rate-limit Traefik** sur `POST /api/v1/webhooks/apple` avant toute exposition prod.
+- [ ] **Action opérateur** : définir `EXPO_PUBLIC_SUPPORT_EMAIL` (voir story 4.6 ci-dessus).
+
+#### Autres
+- [ ] **Monitoring Better Stack / PostHog infra** : toujours pas branché (Epic 1).
+- [ ] **Message de lancement sur la maturité du score** (point 16 du sprint).
+
+Dev local (rappel) :
+- Simulateur : Xcode 27 empêche `i`. Méthode qui marche : `npm start`, puis `xcrun simctl openurl booted "…"` (cf. `mobile/docs/dev-ios-workflow.md`).
+- Backend iPhone : `EXPO_PUBLIC_API_URL` dans `mobile/.env` (IP Wi-Fi du Mac avec le backend local, ou `https://dev-api.cloudbreak-app.com`). Après changement : `npm start -- --clear`.
+
 **Sprint "finir le MVP"** — ouvert le 2026-09-27. Compte Apple Developer validé le 2026-09-27.
 Bundle id iOS figé définitivement : `com.alexandremoreau.cloudbreak` (décision explicite, zéro
 migration). Scope : tout le MVP (epics 1-7 + checklist pre-release), **epic 8 (growth V2) et
@@ -47,7 +107,7 @@ les attaque (dépendances d'abord) :
    `_bmad-output/planning-artifacts/prd.md` section V2 avant de recréer la variable. Checklist
    Notion confirmée existante :
    [✅ Tests story 4.1 — Quota invité étage 1](https://app.notion.com/p/3e9964bda18581a5ab8ec99dbb2fdae2).
-3. [ ] **Story 4.3** — StoreKit 2, abonnement Premium mensuel/annuel réel — **en review** : [PR backend #22](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/22) et [PR mobile #32](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/32). Audit sécurité : SECURE POUR LA PR ; rate-limit/WAF Traefik requis avant exposition prod. App Store Connect configuré le 2026-10-03 : groupe Cloudbreak Premium, mensuel 4,99 €, annuel 44,99 €, essai Apple réel 7 jours, France, App Store individuel. Produits non soumis. Checklist Notion `✅ Tests story 4.3 — StoreKit 2 Premium` créée sous [Cloudbreak – mer de nuage](https://app.notion.com/p/alexgrimpeur/Cloudbreak-mer-de-nuage-325964bda18580358585ff14ef1f76c6) ; URL individuelle non fournie par le connecteur. Reste : Sandbox Tester, build native, notifications V2 et test réel. Dépend du point 1 (fait).
+3. [~] **Story 4.3** — StoreKit 2 : code **mergé** le 2026-10-03 (backend #22, mobile #32). Reste la clôture : produits Sandbox, prix annuel, badge −25 %, tests Sandbox iPhone, fermeture. Détail : section « Pré-release » plus haut.
 4. [ ] **Epic 5 — Notifications push** (5.1 infra → 5.2 alertes favoris/régionales → 5.3 validation
    terrain). Dépend du point 1 (fait).
 5. [ ] **Story 3.6** — Universal Links iOS (`apple-app-site-association` + `associatedDomains`).
@@ -70,7 +130,11 @@ les attaque (dépendances d'abord) :
 17. [x] **PR mobile #28** (i18n boutons DEV Profil) — relue et mergée par Alexandre le 2026-09-28.
 18. [ ] **QA manuelle complète** — epics 2/3/4/6 sur iPhone réel + les points non validés en réel
     listés dans `sprint-status.yaml` (persistance sondage 2.8, template reset password 2.7).
-19. [ ] **TestFlight** — build soumis et approuvé.
+19. [ ] **TestFlight** — build soumis et approuvé. Cadré dans
+    `_bmad-output/implementation-artifacts/4-6-build-signee-testflight.md` (story 4.6, draft).
+20. [ ] **Tests StoreKit 4.3 sur iPhone réel** — Sandbox Tester, build dev-client, backend local
+    sur la branche, achats/restauration/annulation (checklist `docs/story-4-3-storekit-2-abonnements/guide-test.md`).
+21. [ ] **Corriger les prix périmés** — `5 €` / `45 €` (mocks `index.test.tsx`, docs PRD/epics/storekit.md) → `4,99 €` / `44,99 €` réels. L'app affiche déjà les prix Apple, rien à changer dans le rendu.
 
 Déjà réglé cette semaine :
 - [x] **Secure email change** — activé (ON) dans le Dashboard Supabase par Alexandre le 2026-09-27.
