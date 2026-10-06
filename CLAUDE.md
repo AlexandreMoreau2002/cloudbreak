@@ -4,7 +4,7 @@ Contexte projet pour Claude Code et Codex dans le repo racine Cloudbreak. Les r�
 
 ## Suivi de chantier
 
-- `TODO.md` (racine) : carnet de bord du dev — tests manuels restants, état des stories, agents lancés, notes. **Lire en début de session, mettre à jour après chaque story ou chantier clos.** Il est listé dans `.gitignore` : il reste local à la machine et ne suit pas le projet entre machines.
+- `TODO.md` (racine) : **tableau de bord court, sans historique** — features urgentes, fixes à faire, notes produit avant la release, tableau des features restantes, et le détail de ce qu'il reste à valider (ex. story 4.3). **Lire en début de session ; mettre à jour en retirant ce qui est fait** (l'historique vit dans git, `sprint-status.yaml` et `docs/versions.md`). Ne jamais y ajouter de journal de PR, de récit d'incident ni de section « Mergé ».
 - `docs/versions.md` : référence des versions déployées (dernier commit par submodule, versions clés, migrations, environnements). À mettre à jour à chaque ref de submodule bumpée sur `develop`, changement de dépendance majeure, nouvelle migration Alembic ou nouvel environnement serveur.
 - Idées de features : les ajouter dans `_bmad-output/planning-artifacts/prd.md` (section V2 ou Vision), sans les détailler.
 
@@ -278,7 +278,7 @@ Après chaque tâche, lancer les tests sans attendre qu'on le demande, corriger 
 
 1. Merge PR en squash sur `develop`.
 2. Cocher la checklist Notion ; `sprint-status.yaml` → `done` (ou `review` avec commentaire).
-3. `TODO.md` : déplacer l'entrée vers « Mergé sur develop ✅ ».
+3. `TODO.md` : **retirer** l'entrée (pas de section « Mergé » : l'historique est dans git et `sprint-status.yaml`).
 4. Docs : `docs/story-{epic}-{num}-{slug}.md` dans le submodule ; `backend/docs/product-audit.md` ; `security.md` (backend et/ou mobile) si auth, data, API, secrets ou ports ; README du submodule si installation ou commandes changent ; ce `CLAUDE.md` si stack, structure, conventions ou formule changent.
 5. Repo racine : `git add <submodule>` + commit `chore:` + `docs/versions.md`.
 6. Remettre le local sur `develop` : `git checkout develop && git pull`, supprimer la branche locale, supprimer la branche distante si elle reste.
