@@ -230,7 +230,7 @@ Documents internes consultés :
 
 - `TODO.md`
 - `docs/business-legal.md`
-- `_bmad-output/planning-artifacts/pre-release-checklist.md`
+- `TODO.md` (sections « Notes produit avant la release » et « Features urgentes »)
 - `_bmad-output/planning-artifacts/prd.md`
 - `_bmad-output/planning-artifacts/go-to-market.md`
 - `_bmad-output/planning-artifacts/aso-landing-page.md`

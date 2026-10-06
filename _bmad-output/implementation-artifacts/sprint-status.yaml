@@ -46,15 +46,13 @@ development_status:
   # FRs: FR35, FR36, FR37
   # ─────────────────────────────────────────────────────────────
   epic-1: in-progress
-  # VPS OVH acquis le 2026-07-31 — infra prod = Dokploy (plus de Docker Compose + Caddy manuel),
-  # nom de story historique conservé tel quel. Débloquée, prête à démarrer.
   1-1-setup-infra-vps-docker-compose-production: backlog
   1-2-setup-backend-fastapi-squelette-complet: backlog
   1-3-setup-mobile-expo-squelette-design-system: backlog
   1-4-cicd-github-actions-backend-mobile: backlog
-  1-5-monitoring-betterstack-posthog-initial: backlog   # rescopée 2026-08-08 : BetterStack + logs uniquement, PostHog réel déplacé en 1.8
+  1-5-monitoring-betterstack-posthog-initial: backlog
   1-7-taxonomie-instrumentation-posthog: done
-  1-8-monitoring-avance-posthog-sentry: backlog   # post-MVP, décidé 2026-08-08 — voir prd.md V2 + epics.md
+  1-8-monitoring-avance-posthog-sentry: backlog
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -62,16 +60,14 @@ development_status:
   # FRs: FR12, FR13, FR14, FR15
   # ─────────────────────────────────────────────────────────────
   epic-2: done
-  # 2026-09-26 : epic validé par Alexandre. Lot 2.5-2.8 (backend #18, mobile #25) + 2.2 (backend #19,
-  # mobile #27) mergés sur develop. Restent hors epic : quota invité (anti-abus), Secure email change (Dashboard).
   2-1-inscription-connexion-utilisateur-supabase-auth: done
-  2-2-gestion-preferences-notifications: done   # mergée develop 2026-09-16 — backend PR #19, mobile PR #27
+  2-2-gestion-preferences-notifications: done
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
   2-4-suppression-compte-donnees-personnelles-rgpd: done
-  2-5-mur-signup-differe-acces-invite: done   # mergée develop 2026-09-12 — backend PR #18, mobile PR #25
-  2-6-sign-in-with-apple: done   # mergée develop 2026-09-12 — provider/build natif Apple reste à revalider ; prérequis EAS/Apple prêts depuis 2026-09-28
-  2-7-mot-de-passe-oublie: done   # mergée develop 2026-09-12 — même lot ; template Dashboard Supabase à valider en réel
-  2-8-mini-sondage-post-creation-compte: done   # mergée develop 2026-09-12 — même lot que 2-5/2-6/2-7 ; persistance réelle non validée manuellement
+  2-5-mur-signup-differe-acces-invite: done
+  2-6-sign-in-with-apple: done
+  2-7-mot-de-passe-oublie: done
+  2-8-mini-sondage-post-creation-compte: done
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -84,7 +80,7 @@ development_status:
   3-3-recherche-sommet-favoris: done
   3-4-ecran-principal-scorecard-affichage-verdict: done
   3-5-detail-conditions-meteo-fenetre-temporelle-stabilite: done
-  3-6-message-contextuel-hors-saison-deep-link-partage: backlog  # prérequis EAS/Apple prêts depuis 2026-09-28 ; domaine déjà disponible, story à planifier
+  3-6-message-contextuel-hors-saison-deep-link-partage: backlog
   epic-3-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -92,11 +88,11 @@ development_status:
   # FRs: FR16-FR21
   # ─────────────────────────────────────────────────────────────
   epic-4: in-progress
-  4-1-quota-freemium-backend-1-check-jour: done  # étage anti-abus invité mergé 2026-09-29 : backend PR #20 + mobile PR #31 ; étage 2 (App Attest) à planifier
+  4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
-  4-3-abonnements-storekit-2-premium-pro: review   # PR backend #22 + mobile #32 ouvertes 2026-09-30 ; SECURE POUR LA PR ; App Store Connect configuré 2026-10-03 (France, 4,99 €/mois, 44,99 €/an, essai réel 7 jours, App Store individuel) ; Sandbox/build native/notifications V2 restent à tester ; rate-limit/WAF Traefik requis avant exposition prod ; checklist Notion créée sous la page Cloudbreak (URL individuelle indisponible)
-  4-4-conformite-apple-app-store: done   # mergée sur develop (backend PR #12, mobile PR #17) ; essai gratuit réel désormais câblé/configuré dans la Story 4.3, preuve Sandbox restante
-  4-5-service-web-cloudbreak-ops-pages-legales: done   # mergée sur develop (repo cloudbreak-ops, PR #2)
+  4-3-abonnements-storekit-2-premium-pro: review
+  4-4-conformite-apple-app-store: done
+  4-5-service-web-cloudbreak-ops-pages-legales: done
   epic-4-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -104,7 +100,7 @@ development_status:
   # FRs: FR22-FR25
   # ─────────────────────────────────────────────────────────────
   epic-5: backlog
-  5-1-infrastructure-push-notifications-expo-push: backlog   # prérequis EAS/Apple prêts depuis 2026-09-28 ; infra push à planifier
+  5-1-infrastructure-push-notifications-expo-push: backlog
   5-2-alertes-push-favoris-regionales-premium-pro: backlog
   5-3-notification-gps-validation-terrain: backlog
   epic-5-retrospective: optional
@@ -114,7 +110,7 @@ development_status:
   # FRs: FR26-FR29
   # ─────────────────────────────────────────────────────────────
   epic-6: in-progress
-  6-1-validation-terrain-confirmation-infirmation: done   # mergée sur develop (backend PR #15, mobile PR #22) — sans photo (6.2) ni notif push (Epic 5 bloqué)
+  6-1-validation-terrain-confirmation-infirmation: done
   6-2-photo-optionnelle-calcul-taux-de-precision: backlog
   epic-6-retrospective: optional
 
@@ -134,11 +130,11 @@ development_status:
   # Dépend de Epic 6 (validation terrain) pour les badges
   # ─────────────────────────────────────────────────────────────
   epic-8: backlog
-  8-1-carte-prediction-partageable: backlog          # V1.1 — priorité haute, faible complexité
-  8-2-systeme-parrainage: backlog                    # V1.1 — 1 mois Premium pour les deux
-  8-3-badges-et-niveaux-gamification: backlog        # V1.2 — 6 niveaux + 15 badges terrain
-  8-4-replay-prediction-photo-terrain: backlog       # V2 — prédiction vs réalité partageable
-  8-5-recap-annuel-tes-nuages: backlog               # V2 — Spotify Wrapped, jan 2027
+  8-1-carte-prediction-partageable: backlog
+  8-2-systeme-parrainage: backlog
+  8-3-badges-et-niveaux-gamification: backlog
+  8-4-replay-prediction-photo-terrain: backlog
+  8-5-recap-annuel-tes-nuages: backlog
   epic-8-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
@@ -147,6 +143,6 @@ development_status:
   # Dépend de : domaine réservé (fait le 2026-08-09, cloudbreak-app.com) — reste à créer l'env Dokploy prod
   # ─────────────────────────────────────────────────────────────
   epic-9: backlog
-  9-1-landing-page-cloudbreak-fr: backlog            # HTML/CSS statique sur Dokploy, deep links, SEO
-  9-2-optimisation-aso-app-store: backlog            # Titre / sous-titre / keywords / description / screenshots
+  9-1-landing-page-cloudbreak-fr: backlog
+  9-2-optimisation-aso-app-store: backlog
   epic-9-retrospective: optional

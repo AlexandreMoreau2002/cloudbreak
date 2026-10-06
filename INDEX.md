@@ -1,7 +1,7 @@
 # INDEX — Cloudbreak Documentation
 
 > Carte de toute la documentation du projet. Mise à jour à chaque fin de session ou bloc de travail majeur.
-> Dernière mise à jour : 2026-07-26
+> Dernière mise à jour : 2026-10-06 (purge des fichiers historiques)
 
 ---
 
@@ -10,8 +10,7 @@
 | Fichier | Contenu |
 |---|---|
 | [`CLAUDE.md`](CLAUDE.md) | **Source de vérité principale** — stack, architecture, formule de score complète (avec caps), structure git, commandes dev, workflow obligatoire par story, patterns de code, règles d'import escalier, modèle de données, variables d'env |
-| [`TODO.md`](TODO.md) | Carnet de bord de session — stories en cours, prochaines faisables, backlog bloqué, dette technique, PRs mergées |
-| [`PROGRESS.md`](PROGRESS.md) | Historique d'avancement global du projet |
+| [`TODO.md`](TODO.md) | Tableau de bord : features urgentes, fixes, notes produit avant release, features restantes, points à valider (aucun historique) |
 | [`AGENTS.md`](AGENTS.md) | Référence des agents BMAD disponibles et leurs rôles |
 | [`README.md`](README.md) | Présentation publique du projet |
 | [Page Notion Cloudbreak](https://app.notion.com/p/325964bda18580358585ff14ef1f76c6) | Suivi parallèle produit/projet (dernière mise à jour connue : 2026-07-24) — à synchroniser séparément avec l'état du repo |
@@ -28,7 +27,6 @@
 | [`docs/product-ideas.md`](docs/product-ideas.md) | Carnet d'idées produit, acquisition, données et opérations — pistes non encore validées |
 | [`docs/marketing.md`](docs/marketing.md) | Document maître opérationnel — acquisition des premiers utilisateurs, contenus, canaux, scripts, métriques et suivi hebdomadaire |
 | [`docs/marketing-positioning-2026-07-26.md`](docs/marketing-positioning-2026-07-26.md) | Analyse du positionnement, des audiences, des canaux, de la preuve terrain et du plan d'acquisition sur 90 jours |
-| [`docs/product-roadmap-2026-07-26.md`](docs/product-roadmap-2026-07-26.md) | Roadmap produit priorisée au 26 juillet 2026 — fiabilité, lancement App Store et croissance post-lancement |
 
 ---
 
@@ -46,7 +44,6 @@
 | [`backend/docs/story-3-5-contrat-score-presentation.md`](backend/docs/story-3-5-contrat-score-presentation.md) | Contrat API score (format de réponse, champs, fenêtre temporelle, stabilité) |
 | [`backend/docs/story-refacto-i18n-score.md`](backend/docs/story-refacto-i18n-score.md) | Refacto i18n du score — messages contextuels multilingues |
 | [`backend/docs/story-refactor-domain-layer.md`](backend/docs/story-refactor-domain-layer.md) | Refacto couche domaine backend |
-| [`backend/docs/research/technical-score-algorithm-research-2026-03-19.md`](backend/docs/research/technical-score-algorithm-research-2026-03-19.md) | Recherche technique initiale sur l'algorithme (Skew-T, point de rosée, validation par météorologues) |
 
 ### Infrastructure & Services
 
@@ -102,8 +99,6 @@
 
 | Fichier | Contenu |
 |---|---|
-| [`infra/docs/security.md`](infra/docs/security.md) | Sécurité infra — Dokploy, Traefik, ports exposés, secrets |
-| [`infra/readme.md`](infra/readme.md) | Procédure Dokploy — installation VPS OVH, configuration Traefik, déploiement |
 
 ## `/ops` — Service web légal
 
@@ -124,10 +119,6 @@
 | [`ux-design-specification.md`](_bmad-output/planning-artifacts/ux-design-specification.md) | Spec UX complète — écrans, flows, composants, DA (palette, typographie Josefin Sans) |
 | [`go-to-market.md`](_bmad-output/planning-artifacts/go-to-market.md) | Stratégie marketing — positionnement, canaux d'acquisition (ASO, Camptocamp, TikTok, CAF, presse), plan de lancement 3 phases, spec gamification complète (badges + niveaux), modèle économique, Apple Editorial Team |
 | [`aso-landing-page.md`](_bmad-output/planning-artifacts/aso-landing-page.md) | Copy App Store prêt à coller (titre, sous-titre, keywords, description complète), brief 5 screenshots, spec landing page cloudbreak-app.com, SEO Google |
-| [`pre-release-checklist.md`](_bmad-output/planning-artifacts/pre-release-checklist.md) | Checklist avant release 1.0.0 — App Store, Supabase, domaine, Universal Links |
-| [`prd-validation-report.md`](_bmad-output/planning-artifacts/prd-validation-report.md) | Rapport de validation du PRD |
-| [`implementation-readiness-report-2026-03-17.md`](_bmad-output/planning-artifacts/implementation-readiness-report-2026-03-17.md) | Rapport de readiness à l'implémentation (mars 2026) |
-| [`research/technical-score-algorithm-research-2026-03-19.md`](_bmad-output/planning-artifacts/research/technical-score-algorithm-research-2026-03-19.md) | Recherche technique approfondie sur l'algorithme Skew-T et l'inversion thermique |
 
 ---
 
@@ -136,18 +127,10 @@
 | Fichier | Contenu |
 |---|---|
 | [`sprint-status.yaml`](_bmad-output/implementation-artifacts/sprint-status.yaml) | **Kanban du sprint** — état de chaque story (backlog / in-progress / done) pour les 9 epics |
-| [`2-2-gestion-preferences-notifications.md`](_bmad-output/implementation-artifacts/2-2-gestion-preferences-notifications.md) | Story : PATCH/GET préférences notif (notif_favorites, notif_regional, notif_terrain) |
-| [`2-3-permission-geolocalisation-opt-in-sans-blocage.md`](_bmad-output/implementation-artifacts/2-3-permission-geolocalisation-opt-in-sans-blocage.md) | Story : expo-location opt-in, refus non-bloquant, hook useLocation |
-| [`2-4-suppression-compte-donnees-personnelles-rgpd.md`](_bmad-output/implementation-artifacts/2-4-suppression-compte-donnees-personnelles-rgpd.md) | Story : RGPD DELETE user — done |
 | [`4-3-abonnements-storekit-2-premium.md`](_bmad-output/implementation-artifacts/4-3-abonnements-storekit-2-premium.md) | Story : StoreKit 2, flux achat/restauration, webhooks Apple, SubscriptionContext |
 | [`5-1-infrastructure-push-notifications-expo-push.md`](_bmad-output/implementation-artifacts/5-1-infrastructure-push-notifications-expo-push.md) | Story : Expo Push token, ExpoPushService, gestion DeviceNotRegistered |
 | [`5-2-alertes-push-favoris-regionales-premium.md`](_bmad-output/implementation-artifacts/5-2-alertes-push-favoris-regionales-premium.md) | Story : cron alertes favoris (score ≥ 70) + alertes régionales, cooldown 12h, Premium only |
 | [`5-3-notification-gps-validation-terrain.md`](_bmad-output/implementation-artifacts/5-3-notification-gps-validation-terrain.md) | Story : géofencing foreground (Haversine 500m), notif locale, ouvre ValidationBottomSheet |
-| [`6-1-validation-terrain-confirmation-infirmation.md`](_bmad-output/implementation-artifacts/6-1-validation-terrain-confirmation-infirmation.md) | Story : POST /api/v1/validations, ValidationBottomSheet, data flywheel, stub gamification |
-| [`6-2-photo-optionnelle-calcul-taux-de-precision.md`](_bmad-output/implementation-artifacts/6-2-photo-optionnelle-calcul-taux-de-precision.md) | Story : expo-image-picker (caméra uniquement), Supabase Storage, accuracy_rate ≥ 5 validations |
-| [`7-1-parcours-onboarding-narratif.md`](_bmad-output/implementation-artifacts/7-1-parcours-onboarding-narratif.md) | Story : 3 slides (problème → solution → permissions), flag AsyncStorage, DA Cloudbreak |
-| [`7-2-mode-offline-light-cache-ttl.md`](_bmad-output/implementation-artifacts/7-2-mode-offline-light-cache-ttl.md) | Story : cacheService.ts unifié, useNetworkStatus, bandeau "données de [heure]" |
-| [`fix-3.2-region-context.md`](_bmad-output/implementation-artifacts/fix-3.2-region-context.md) | Fix story 3.2 — contexte région pour la seed des sommets |
 
 ---
 
@@ -155,9 +138,6 @@
 
 | Fichier | Contenu |
 |---|---|
-| [`brainstorming-session-2026-03-12-2120.md`](_bmad-output/brainstorming/brainstorming-session-2026-03-12-2120.md) | Session initiale — concept, positionnement, nom |
-| [`brainstorming-session-2026-03-17-naming.md`](_bmad-output/brainstorming/brainstorming-session-2026-03-17-naming.md) | Session naming — choix du nom "Cloudbreak" |
-| [`brainstorming-session-2026-03-19-peaks-search.md`](_bmad-output/brainstorming/brainstorming-session-2026-03-19-peaks-search.md) | Session recherche de sommets — stratégie OSM, Overpass, viewpoints |
 
 ---
 
@@ -168,7 +148,6 @@
 | [`CLAUDE.md`](CLAUDE.md) | Racine — règles globales, architecture, workflow, algo de score |
 | [`backend/CLAUDE.md`](backend/CLAUDE.md) | Règles spécifiques backend FastAPI |
 | [`mobile/CLAUDE.md`](mobile/CLAUDE.md) | Règles spécifiques mobile Expo |
-| [`infra/CLAUDE.md`](infra/CLAUDE.md) | Règles spécifiques infra Dokploy |
 
 ---
 

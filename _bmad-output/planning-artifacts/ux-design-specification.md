@@ -519,7 +519,7 @@ Règle : max 3 tailles par écran. `typo.display` réservé exclusivement au sco
 
 ### Design Directions Explored
 
-Trois variations de layout explorées (voir `ux-design-directions.html`) :
+Trois variations de layout ont été explorées (la direction retenue est dans `design-preview-v2.html`) :
 - **Direction A** — Score central hero, fond beige, favoris en chips horizontaux, visualisation couche intégrée dans le hero
 - **Direction B** — Score dans une card dark flottante sur fond beige organique, avec sélecteur d'heure, CTA alerte inline, favoris en bas
 - **Direction C** — Full dark immersif, score 100px pleine page, bottom sheet pour les détails

@@ -448,39 +448,7 @@ So that I can monitor all production metrics from a single interface without swi
 
 ### Story 1.7: Taxonomie & Instrumentation Events PostHog (Stub)
 
-As a developer (Alex),
-I want une taxonomie d'events business définie et câblée derrière les stubs `analytics.ts` (mobile) et `analytics.py` (backend, nouveau),
-So that l'app soit instrumentée dès le MVP, sans attendre le branchement du vrai SDK PostHog (story 1.5), pour ne rien perdre des tout premiers utilisateurs.
-
-**Source design :** `docs/superpowers/specs/2026-07-21-story-1-7-posthog-taxonomy-design.md` — taxonomie complète (backend + mobile), convention de nommage, principe "un seul propriétaire par event" (backend = vérité métier persistée, mobile = UI pure).
-
-**Note :** aucun compte PostHog ni SDK réel requis — pur stub qui logge en DEBUG. Le câblage du vrai SDK reste story 1.5 (post-MVP). Les events de validation terrain (Epic 6) et `subscription_started` réel (story 4.3) sont réservés mais non câblés ici.
-
-**Acceptance Criteria:**
-
-**Given** un point de câblage backend (score calculé, quota dépassé/bypass, favori ajouté/retiré, compte supprimé)
-**When** l'action se produit
-**Then** `track(event, user_id, properties)` du stub `app/services/analytics.py` est appelé avec le nom d'event et les propriétés exacts de la spec, sans appel réseau
-
-**Given** un point de câblage mobile (onboarding, auth, score/home, recherche, paywall, profil, session)
-**When** l'action utilisateur correspondante se produit
-**Then** `track()` du stub `analytics.ts` est appelé avec le nom d'event et les propriétés exacts de la spec
-
-**Given** l'app qui passe en arrière-plan puis revient au premier plan
-**When** ces transitions se produisent
-**Then** `app_backgrounded` porte une `session_duration_ms` cohérente
-
-**Given** une recherche de sommet
-**When** `search_performed` est émis
-**Then** aucune propriété ne contient le texte brut saisi (uniquement `query_length` et `results_count`)
-
-**Given** l'ajout ou le retrait d'un favori
-**When** l'action aboutit
-**Then** un seul event est émis (backend), aucun event mobile équivalent pour la même action
-
----
-
-✅ **Epic 1 — 6 stories MVP + 2 stories post-MVP (couverture FR35, FR36, FR37 + fondation technique complète)**
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
@@ -494,307 +462,49 @@ Les utilisateurs peuvent créer un compte, s'authentifier, gérer leurs préfér
 
 ### Story 2.1: Inscription et Connexion Utilisateur (Supabase Auth)
 
-As a new user,
-I want to create an account and log in with email/password,
-So that my preferences and history are saved across sessions.
-
-**Acceptance Criteria:**
-
-**Given** l'écran de connexion/inscription
-**When** l'utilisateur saisit un email valide et un mot de passe (min 8 caractères) et appuie sur "Créer un compte"
-**Then** Supabase crée le compte et retourne un JWT
-**And** l'app stocke le token et navigue vers l'écran principal
-
-**Given** un utilisateur existant
-**When** il saisit ses identifiants corrects et appuie sur "Se connecter"
-**Then** il est authentifié et navigue vers l'écran principal en < 3 secondes
-
-**Given** des identifiants incorrects
-**When** l'utilisateur appuie sur "Se connecter"
-**Then** un message d'erreur clair s'affiche ("Email ou mot de passe incorrect")
-**And** l'app ne crashe pas
-
-**Given** un JWT Supabase obtenu sur mobile
-**When** une requête est envoyée au backend avec `Authorization: Bearer {jwt}`
-**Then** `get_current_user` FastAPI valide le token localement (clé publique Supabase, zéro appel réseau)
-**And** retourne l'identité utilisateur
-
-**Given** un token expiré
-**When** le mobile tente un appel API
-**Then** Supabase refresh automatiquement le token via `AuthContext`
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 2.2: Gestion des Préférences de Notifications
 
-As an authenticated user,
-I want to manage my notification preferences independently per type,
-So that I only receive alerts that are relevant to me.
-
-**Acceptance Criteria:**
-
-**Given** l'écran Profil → Notifications
-**When** l'utilisateur arrive sur l'écran
-**Then** il voit 3 toggles indépendants : "Alertes favoris", "Alertes régionales", "Validation terrain GPS"
-**And** l'état actuel de chaque toggle est correctement chargé depuis le backend
-
-**Given** l'utilisateur désactive "Alertes favoris"
-**When** il appuie sur le toggle
-**Then** la préférence est sauvegardée via `PATCH /api/v1/user/notifications`
-**And** le toggle reflète immédiatement le nouvel état
-
-**Given** la table `users` en base de données
-**When** la migration est appliquée
-**Then** elle contient les colonnes `notif_favorites` (bool, default true), `notif_regional` (bool, default true), `notif_terrain` (bool, default true)
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 2.3: Permission Géolocalisation (Opt-in sans Blocage)
 
-As a user,
-I want to grant or deny location permission without being blocked from using the app,
-So that I control my privacy while still having access to core features.
-
-**Acceptance Criteria:**
-
-**Given** l'app au premier lancement (ou si permission jamais demandée)
-**When** l'utilisateur arrive sur l'écran de demande de géolocalisation
-**Then** un message explicite explique l'usage ("Pour confirmer ta présence au sommet")
-**And** deux options sont proposées : "Autoriser" et "Pas maintenant"
-
-**Given** l'utilisateur appuie sur "Pas maintenant"
-**When** il est redirigé vers l'écran principal
-**Then** toutes les fonctionnalités core (score, recherche, favoris) sont accessibles
-**And** aucun blocage ni message d'erreur permanent n'est affiché
-
-**Given** l'utilisateur a refusé la géolocalisation
-**When** il accède à la section Profil
-**Then** il peut activer la géolocalisation depuis les paramètres de l'app (lien vers Settings iOS)
-
-**Given** iOS demande la permission système
-**When** l'utilisateur accorde l'accès "En utilisant l'app"
-**Then** `expo-location` confirme `foregroundPermission: granted`
-**And** l'état est mémorisé dans `AuthContext`
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 2.4: Suppression du Compte et Données Personnelles (RGPD)
 
-As an authenticated user,
-I want to permanently delete my account and all my personal data,
-So that I exercise my right to erasure under GDPR.
-
-**Acceptance Criteria:**
-
-**Given** l'écran Profil → Compte → Supprimer mon compte
-**When** l'utilisateur appuie sur "Supprimer mon compte"
-**Then** une confirmation explicite est demandée ("Cette action est irréversible")
-**And** l'utilisateur doit saisir son email pour confirmer
-
-**Given** la confirmation validée
-**When** `DELETE /api/v1/user` est appelé avec le JWT valide
-**Then** toutes les données utilisateur sont supprimées : `users`, `predictions` (liées), `terrain_validations` (liées), `subscriptions` (liées), `events` (liées)
-**And** le compte Supabase est désactivé
-**And** la réponse est `204 No Content`
-
-**Given** l'app après suppression
-**When** l'API retourne 204
-**Then** l'utilisateur est déconnecté localement, le cache AsyncStorage est vidé, et il est redirigé vers l'écran de connexion
-
-**Given** l'endpoint DELETE
-**When** on l'appelle sans JWT valide
-**Then** il retourne `401 Unauthorized` avec `{"detail": "Non authentifié", "code": "UNAUTHORIZED"}`
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
-### Story 2.5: Mur de signup différé (accès invité au premier score) 🟢 design validé
+### Story 2.5: Mur de signup différé (accès invité au premier score)
 
-> **Design figé le 2026-09-05** — handoff Claude Design haute fidélité reçu :
-> `/Users/alex/Downloads/design_handoff_parcours_compte/` (README.md détaillé + prototype JSX/HTML,
-> voir `Workflow session.html` pour les 14 étapes rejouables). Remplace la spec de travail
-> précédente (supprimée, elle était mal cadrée). **Implémentation : 2.5 + 2.6 + 2.8 livrées
-> ensemble en un seul lot** (un seul écran, une seule PR), sur décision explicite de l'utilisateur
-> le 2026-09-05.
->
-> **Deux écarts par rapport aux échanges précédents, tranchés par le design, à ne pas re-discuter :**
-> - **Copy générique, pas de message par déclencheur.** Un seul écran, une seule copy ("Pour
->   cette fonctionnalité, il te faut un compte"), quel que soit le geste d'origine — décision
->   assumée du design, pas un oubli.
-> - **Écran de vérification par code à 6 chiffres après une création par e-mail** (`CBAuthVerify`,
->   saisi dans l'app, jamais un lien). Réactive une forme de confirmation e-mail — **décision
->   explicite de l'utilisateur le 2026-09-05**, qui remplace le "Confirm email reste désactivé"
->   acté à la story 2.1 (`mobile/docs/story-2-1-auth-supabase.md`, à mettre à jour). Le handoff
->   utilise l'OTP natif Supabase (`verifyOtp`, template e-mail à 6 chiffres), pas le lien magique.
->   **À faire dans cette story : remettre "Confirm email" ON sur le projet Supabase** (dashboard,
->   Authentication → Providers → Email) et personnaliser le template pour qu'il envoie le code
->   `{{ .Token }}` plutôt que le lien par défaut.
->
-> Parcours fonctionnel complet (simple) : `_bmad-output/planning-artifacts/userflow-session.md`.
-> Le schéma technique des 5 branches de session (Anonymous Auth, upgrade au signup, abandon au
-> signin) reste valable tel quel, voir plus bas dans cette story.
-
-As a new user,
-I want to search a peak and see a free score before being asked to create an account,
-So that I see Cloudbreak's value before committing to sign up.
-
-**Décision technique actée (2026-09-04) : Supabase Anonymous Auth**, pas de device-id maison.
-Une session anonyme (`supabase.auth.signInAnonymously()`) est créée en silence dès la fin de l'onboarding. L'invité a donc un vrai `user_id` dès la première seconde → `get_current_user` et la clé quota `quota:{user_id}:{date}` fonctionnent **sans modification**. À la création de compte, `updateUser` **élève** la session anonyme en compte permanent en conservant le même `user_id` → tout ce qui a été fait en invité reste rattaché, **aucun code de fusion à écrire**. Écarté : le device-id, qui imposait un chemin non-authentifié parallèle, du code de fusion, et cassait le funnel de conversion analytics. La sécurité n'a pas tranché (les deux sont réinitialisables) ; l'anti-abus est une couche séparée : rate-limit IP sur `/score`, captcha Supabase activable si abus constaté, purge des anonymes inactifs > 30 j.
-
-**Cycle de vie des sessions — les 5 branches actées :**
-
-```
-Onboarding (5 écrans, story 7.1, inchangé)
-      └─► signInAnonymously()  ── session anonyme, silencieuse
-            │
-            ▼
-   1re ouverture sur cet appareil ?  (flag AsyncStorage `hasSeenAccountPrompt`)
-      │                                    │
-     OUI                                  NON
-      ▼                                    ▼
- [1] PLEIN ÉCRAN création de compte    [2] Home directement, mode invité
-     invitation, PAS un blocage            aucun mur tant qu'aucun déclencheur
-     ├─ Créer un compte    → [A]
-     ├─ J'ai déjà un compte → [B]
-     └─ Explorer d'abord   → Home invité
-                                    │
-                        [4] DÉCLENCHEUR atteint en invité :
-                            • 2e sommet différent le même jour (429 QUOTA_EXCEEDED)
-                            • tap « Ajouter aux favoris »
-                            • activer une alerte (post-MVP)
-                                    ▼
-                            SHEET contextuel (dismissible)
-                            └─ referme → continue en invité, sans pénalité
-                                    │
-              ┌─────────────────────┴─────────────────────┐
-              ▼                                           ▼
- [A] CRÉE un compte (Apple ou e-mail)      [B] SE CONNECTE à un compte existant
-     updateUser → MÊME user_id conservé        user_id différent — DEUX identités
-     → historique invité rattaché auto.        → session anonyme ABANDONNÉE
-     → quota du jour reste consommé              (aucune fusion — décision actée)
-       (sinon créer un compte = check gratuit   → PAS de mini-sondage
-        supplémentaire, exploitable en boucle)
-     → MINI-SONDAGE (story 2.8)
-              └─────────────────────┬─────────────────────┘
-                                    ▼
-                    RETOUR À L'ACTION INITIALE
-                    (le favori se pose / le 2e score s'affiche)
-
- [3] Lancement suivant avec compte réel → Home directement, login jamais imposé
- [5] Déconnexion (Profil) → recrée une session anonyme, PAS de retour au login
-```
-
-**Distinction à ne jamais perdre :** un invité qui dépasse son quota voit le **mur signup** ; un utilisateur **avec compte** qui dépasse son quota voit le **Paywall** (story 4.2). Seul le cas « quota dépassé en invité » propose en lien tertiaire une passerelle vers le Paywall.
-
-**Impact code :** `AuthGuard` (`mobile/src/app/_layout.tsx`) ne protège plus l'entrée de l'app (il y a toujours une session) mais seulement l'onboarding et le 1er lancement ; le gating des fonctions réservées se fait **au point d'usage** via le claim `is_anonymous` du JWT Supabase (nouvelle dépendance backend à côté de `get_current_user`). `backend/app/services/quota.py` : **aucune modification**. `GET /peaks/search` et `/peaks/{slug}` sont déjà publics.
-
-**Blocage découvert le 2026-09-04, à lever dans cette story :** le signup autonome n'a jamais fonctionné bout en bout (l'utilisateur crée ses comptes à la main dans Supabase). Le code mobile est pourtant câblé depuis la story 2.1. Cause probable : aucun provisioning backend — **pas de modèle `user.py`** dans `backend/app/models/`, pas de trigger `auth.users → public.users`. À trancher au plan : trigger Postgres vs get-or-create backend. Attention, avec l'anonymous auth une ligne `auth.users` existe **dès le 1er lancement**, pas au signup.
-
-**Acceptance Criteria :**
-
-**Given** un nouvel utilisateur qui termine l'onboarding sans compte
-**When** il recherche un sommet et consulte un score
-**Then** le score s'affiche sans exiger de compte
-
-**Given** un utilisateur invité qui a consulté son score gratuit du jour
-**When** il tente un 2e check, ou veut ajouter un favori, ou activer une alerte
-**Then** la page compte (`CBAuthPage`, écran plein, copy générique identique quel que soit le déclencheur) s'affiche, et le chevron retour la referme en gardant l'utilisateur invité
-
-**Given** un utilisateur invité qui crée un compte par e-mail depuis la page compte
-**When** il valide le formulaire
-**Then** il passe par l'écran de code à 6 chiffres (`CBAuthVerify`) avant que le compte ne soit considéré créé
-
-**Given** un utilisateur invité qui crée un compte via Apple depuis la page compte
-**When** Supabase confirme l'authentification
-**Then** il saute directement l'écran de code (adresse déjà vérifiée par Apple) et va au mini-sondage
-
-**Given** un utilisateur invité qui crée un compte (e-mail vérifié ou Apple)
-**When** la création aboutit
-**Then** son `user_id` est conservé (session anonyme upgradée), son quota du jour reste consommé, il passe par le mini-sondage puis l'action qu'il tentait s'exécute automatiquement
-
-**Given** un utilisateur invité qui se connecte à un compte existant depuis la page compte
-**When** la connexion réussit
-**Then** la session anonyme est abandonnée sans fusion, aucun code ni sondage ne s'affiche, et il repart sur l'historique de son compte
-
-**Given** un utilisateur qui se déconnecte depuis le Profil
-**When** la déconnexion aboutit
-**Then** une session anonyme est recréée et il revient sur la Home en mode invité, sans écran de connexion imposé
-
-**Given** un utilisateur avec un compte permanent qui dépasse son quota
-**When** il demande un 2e score
-**Then** c'est le Paywall qui s'affiche, pas le mur signup
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
-### Story 2.6: Sign in with Apple 🟢 design validé
+### Story 2.6: Sign in with Apple
 
-> **Design figé le 2026-09-05** avec 2.5 (même handoff, même écran). Pas une obligation Apple (Guideline 4.8 ne s'applique qu'en présence d'un autre login social tiers) — choix produit pour réduire la friction d'inscription. **Livrée dans le même lot que 2.5 et 2.8.**
-
-As a new user,
-I want to sign up or log in with my Apple ID in one tap,
-So that I don't have to type an email and password.
-
-**Acceptance Criteria (provisoires) :**
-
-**Given** l'écran de création de compte
-**When** l'utilisateur appuie sur "Sign in with Apple"
-**Then** `expo-apple-authentication` déclenche le flow natif iOS, et Supabase crée/authentifie via le provider OAuth Apple
-
-**Given** l'app buildée pour Android (V2, pas encore construite mais codebase partagée)
-**When** l'écran de login se rend
-**Then** le bouton Apple est masqué via un guard `Platform.OS === 'ios'` explicite
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
-### Story 2.7: Mot de passe oublié 🔵 brainstorming en cours
+### Story 2.7: Mot de passe oublié
 
-> **Design pas encore validé** — brainstorming lancé le 2026-08-08. Flow actuellement inexistant. Décision SMTP custom brandé vs email Supabase générique en attente — l'utilisateur doit tester son propre serveur mail avant arbitrage.
-
-As a user who forgot their password,
-I want to request a password reset email and set a new password,
-So that I'm not permanently locked out of my account.
-
-**Acceptance Criteria (provisoires) :**
-
-**Given** l'écran de connexion
-**When** l'utilisateur appuie sur "Mot de passe oublié ?" et saisit son email
-**Then** un email de réinitialisation est envoyé via Supabase Auth
-
-**Given** l'email de réinitialisation reçu
-**When** l'utilisateur suit le lien et saisit un nouveau mot de passe (min 8 caractères)
-**Then** le mot de passe est mis à jour et l'utilisateur peut se reconnecter avec le nouveau
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
-### Story 2.8: Mini-sondage post-création de compte 🟢 design validé
+### Story 2.8: Mini-sondage post-création de compte
 
-> **Design figé le 2026-09-05** avec 2.5/2.6 (même handoff : `CBAuthSurvey`). Idée soulevée le
-> 2026-09-04 pendant le brainstorming de 2.5. **Livrée dans le même lot que 2.5 et 2.6.**
-> Destination de la donnée (colonnes `users` backend) dépend toujours du provisioning (§2.5).
-
-As a solo dev (Alex),
-I want to ask 2-3 quick optional questions right after a guest creates an account,
-So that I get lightweight acquisition/persona data on my user pool without relying on PostHog being wired yet.
-
-**Contexte / impact à trancher pendant le design :**
-- Se déclenche uniquement à la **création** d'un compte (email ou Apple), jamais à une reconnexion
-- Chaque question individuellement skippable, jamais bloquant l'entrée dans l'app
-- Contenu exact des 2-3 questions à définir (piste : canal d'acquisition, profil pratique — voir `docs/superpowers/specs/`)
-- Stockage : nouvelles colonnes sur `users` (backend) — dépend de la résolution du provisioning utilisateur découvert pendant le brainstorming 2.5 (pas de modèle `user.py`, pas de trigger `auth.users → public.users` identifié)
-
-**Acceptance Criteria (provisoires) :**
-
-**Given** un invité qui vient de créer un compte (email ou Apple)
-**When** le compte est créé avec succès
-**Then** un écran de mini-sondage skippable s'affiche avant le retour à l'action initiale
-
-**Given** un utilisateur qui se reconnecte à un compte existant
-**When** la connexion réussit
-**Then** le mini-sondage ne s'affiche pas (déjà répondu ou déjà skip)
-
----
-
-✅ **Epic 2 — 8 stories (4 rédigées et couvertes FR12, FR13, FR14, FR15 + 4 en brainstorming/design)**
-> Implémentation : 2.1 ✅ done · 2.2 ⏸ backlog (dépend Epic 5) · 2.3 ⏸ backlog (dépend Epic 5) · 2.4 ❌ à faire (bloquant App Store) · **2.5/2.6/2.8 🟢 design validé le 2026-09-05, livrées ensemble en un seul lot/PR** (décision explicite utilisateur) · 2.7 🔵 brainstorming en cours, hors de ce lot
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
@@ -808,158 +518,31 @@ Les utilisateurs peuvent rechercher un sommet, consulter le verdict probabiliste
 
 ### Story 3.1: Algorithme Score & Endpoint API Score
 
-As a developer (Alex),
-I want the sea of clouds score algorithm implemented server-side with weather provider abstraction,
-So that scores can be calculated and iterated without app updates.
-
-**Acceptance Criteria:**
-
-**Given** l'interface `WeatherProvider` dans `app/services/weather_providers/base.py`
-**When** on appelle `provider.get_forecast(lat, lng, date)`
-**Then** elle retourne un dict normalisé : `{cloud_base, humidity, wind_speed, temperature_valley, temperature_altitude, pressure}`
-**And** `OpenMeteoProvider` (provider principal MVP) et `MeteoFranceProvider` (provider secondaire FR) implémentent cette interface
-
-**Given** `app/services/score.py`
-**When** on appelle `calculate_score(weather_data, peak_altitude)`
-**Then** il retourne `{score: float, verdict: "high"|"medium"|"low", cloud_base: int, conditions: {...}}`
-**And** la formule respecte : `0.4 * cloud_base_condition + 0.2 * humidity_score + 0.2 * wind_score + 0.2 * inversion_score`
-
-**Given** `GET /api/v1/score?peak_id=&date=&hour=` avec JWT valide
-**When** les données météo sont disponibles
-**Then** la réponse contient : `score`, `verdict`, `label` (texte humain), `cloud_base`, `optimal_window_start`, `optimal_window_end`, `sunrise`, `stability_hours`, `conditions`
-**And** le temps de réponse est < 500ms pour 95% des requêtes (cache Redis actif)
-
-**Given** le cache Redis `weather:{lat}:{lng}:{date}`
-**When** deux requêtes sont faites pour le même sommet/date dans les 10 minutes
-**Then** la seconde requête utilise le cache (pas d'appel API météo externe)
-
-**Given** `tests/test_score.py`
-**When** on exécute pytest
-**Then** les cas critiques sont couverts : cloud_base < altitude → score élevé, vent fort → score réduit, pas d'inversion → score réduit, hors-saison estivale
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 3.2: Seed Base de Données des Sommets
 
-As a user,
-I want to search for real mountain peaks by name,
-So that I can get a sea of clouds forecast for my destination.
-
-**Acceptance Criteria:**
-
-**Given** `app/db/seed.py` exécuté
-**When** on requête `SELECT COUNT(*) FROM peaks`
-**Then** au moins 50 sommets alpins sont disponibles (Alpes françaises, Vosges, Massif Central prioritaires)
-**And** chaque sommet a : `id`, `name`, `slug`, `lat`, `lng`, `altitude` (en mètres)
-
-**Given** les sommets de référence MVP
-**When** on cherche "Col de la Croix-Fry", "Mont Blanc", "Champ du Feu"
-**Then** ils existent en base avec des coordonnées GPS et altitudes correctes
-
-**Given** la table `peaks`
-**When** la migration Alembic est appliquée
-**Then** un index `idx_peaks_name` existe pour les recherches textuelles rapides
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 3.3: Recherche de Sommet & Favoris
 
-As a user,
-I want to search for a peak by name and save my favorites,
-So that I can quickly access the summits I regularly check.
-
-**Acceptance Criteria:**
-
-**Given** l'écran Recherche
-**When** l'utilisateur tape au moins 2 caractères
-**Then** l'autocomplete appelle `GET /api/v1/peaks/search?q={query}` et affiche les résultats en < 500ms
-**And** chaque résultat affiche le nom du sommet et son altitude
-
-**Given** un résultat de recherche
-**When** l'utilisateur tape sur un sommet
-**Then** il est redirigé vers l'écran de prévision de ce sommet
-
-**Given** l'écran de prévision d'un sommet
-**When** l'utilisateur appuie sur l'icône favoris (étoile)
-**Then** le sommet est ajouté à sa liste de favoris via `POST /api/v1/user/favorites`
-**And** l'icône bascule en état "favori actif"
-
-**Given** l'onglet Favoris
-**When** l'utilisateur l'ouvre
-**Then** ses sommets favoris sont listés avec leur dernière prévision (si disponible en cache)
-**And** un tap sur un favori navigue vers son écran de prévision
-
-**Given** `GET /api/v1/peaks/search?q=` sans JWT
-**When** la requête est envoyée
-**Then** elle retourne `401 Unauthorized` (la recherche requiert un compte)
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 3.4: Écran Principal — ScoreCard & Affichage Verdict
 
-As a user,
-I want to see the sea of clouds probability verdict clearly on the main screen,
-So that I can make a go/no-go decision in under 3 seconds.
-
-**Acceptance Criteria:**
-
-**Given** l'utilisateur a sélectionné un sommet et une date
-**When** l'écran principal charge
-**Then** le composant `ScoreCard` affiche : le verdict coloré (🟢/🟡/🔴), le score en % grand format, le nom du sommet, la date sélectionnée
-**And** le temps d'affichage depuis le tap est < 3 secondes sur réseau 4G
-
-**Given** le score ≥ 70%
-**When** `ScoreCard` s'affiche
-**Then** la couleur de fond/accent est `#4CAF50` (vert) et le label est "Lève-toi tôt ! 🟢"
-
-**Given** le score entre 40% et 69%
-**When** `ScoreCard` s'affiche
-**Then** la couleur est `#FF9800` (orange) et le label est "Ça peut le faire 🟡"
-
-**Given** le score < 40%
-**When** `ScoreCard` s'affiche
-**Then** la couleur est `#F44336` (rouge) et le label est "Pas ce coup-ci 🔴"
-
-**Given** `useScore` hook
-**When** la requête est en cours
-**Then** l'état `AsyncState` est `loading` — un skeleton loader s'affiche (pas de spinner agressif)
-
-**Given** une erreur API
-**When** le backend retourne une erreur
-**Then** l'état est `error` — un message clair s'affiche sans crash
-**And** FR38 : si l'API météo externe est indisponible, le message "Service momentanément indisponible" s'affiche
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 3.5: Détail Conditions Météo, Fenêtre Temporelle & Stabilité
 
-As a user,
-I want to see the weather conditions, optimal time window, sunrise, and forecast stability,
-So that I can understand why the score is what it is and plan my timing precisely.
-
-**Acceptance Criteria:**
-
-**Given** l'écran de prévision avec un score affiché
-**When** l'utilisateur appuie sur "Voir les conditions" ou le score lui-même
-**Then** un accordéon/expand révèle les `ConditionBadge` : cloud_base (altitude en m), humidité (%), vent (km/h), inversion thermique (✓/✗)
-
-**Given** les données de fenêtre temporelle
-**When** l'écran charge
-**Then** la fenêtre optimale est affichée : "Fenêtre : 6h40–8h15" avec le lever du soleil "☀️ 7h02"
-**And** `CloudLayerViz` affiche le diagramme couche nuageuse vs altitude sommet
-
-**Given** l'indicateur de stabilité (FR6)
-**When** la prévision est stable depuis ≥ 36h
-**Then** "Prévision stable depuis 48h ✓" s'affiche en vert discret sous le score
-
-**Given** la prévision instable (recalculée récemment)
-**When** la stabilité est < 12h
-**Then** "À reconfirmer ce soir ⚠" s'affiche en orange
-
-**Given** `WeekStrip` (sélecteur de jours)
-**When** l'utilisateur swipe ou tape sur J+1, J+2...
-**Then** le score se met à jour pour la date sélectionnée
-**And** le jour actif est visuellement mis en valeur
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
@@ -1002,49 +585,13 @@ Les utilisateurs voient la limite gratuite, rencontrent le paywall au bon moment
 
 ### Story 4.1: Quota Freemium Backend (1 Check/Jour)
 
-As a developer (Alex),
-I want the daily free quota enforced server-side via Redis,
-So that the freemium limit cannot be bypassed from the mobile app.
-
-**Acceptance Criteria:**
-
-**Given** un utilisateur sans abonnement actif
-**When** il appelle `GET /api/v1/score` pour la 1ère fois de la journée
-**Then** le score est retourné normalement
-**And** Redis incrémente `quota:{user_id}:{date}` (TTL = fin de journée UTC)
-
-**Given** un utilisateur gratuit qui a déjà utilisé son check quotidien
-**When** il appelle `GET /api/v1/score` à nouveau
-**Then** le backend retourne `429` avec `{"detail": "Quota journalier atteint", "code": "QUOTA_EXCEEDED"}`
-
-**Given** un utilisateur Premium ou Pro avec abonnement actif
-**When** il appelle `GET /api/v1/score` n'importe combien de fois
-**Then** le quota Redis est ignoré — accès illimité
-
-**Given** un nouveau jour (minuit UTC)
-**When** la clé Redis `quota:{user_id}:{date}` expire
-**Then** le compteur repart à zéro automatiquement (TTL géré par Redis)
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 4.2: Paywall Mobile & Conversion
 
-As a free user,
-I want to see a natural paywall when I reach my daily limit,
-So that I understand the value of upgrading before being asked to pay.
-
-**Acceptance Criteria:**
-
-**Given** l'utilisateur gratuit qui fait son 2e check quotidien
-**When** le backend retourne `429 QUOTA_EXCEEDED`
-**Then** `useScore` passe en état `error` avec code `QUOTA_EXCEEDED`
-**And** `PaywallScreen` s'affiche en bottom sheet ou plein écran
-
-**Given** `PaywallScreen`
-**When** il s'affiche
-**Then** le message est formulé en bénéfice : "Débloquer les prévisions illimitées"
-**And** deux options sont visibles : "Mensuel — 4,99 €/mois" et "Annuel — 44,99 €/an" (plan unique : Premium)
-**And** "Essai gratuit 7 jours" est mis en avant visuellement
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
@@ -1080,58 +627,13 @@ So that I get unlimited forecasts with native, secure payment.
 
 ### Story 4.4: Conformité Apple App Store — Legal, Paywall & Restauration achats
 
-En tant que solo dev qui soumet l'app sur l'App Store,
-je veux que toutes les exigences légales et de conformité Apple soient implémentées avant la soumission,
-afin que l'app soit acceptée dès la première review et ne soit jamais bannie pour non-conformité.
-
-**Acceptance Criteria:**
-
-**Given** le backend démarré,
-**When** `GET /legal/privacy` est appelé,
-**Then** une page HTML valide avec la Privacy Policy est retournée.
-**And** `GET /legal/cgu` retourne les CGU de même.
-
-**Given** l'utilisateur sur l'écran Profil,
-**When** il scrolle jusqu'à la section "Légal",
-**Then** il voit "Politique de confidentialité", "Conditions d'utilisation", "Support" — chacun ouvre le lien dans le navigateur système.
-
-**Given** le paywall affiché,
-**When** l'utilisateur le consulte,
-**Then** des liens "Politique de confidentialité" et "CGU" sont visibles sous le CTA.
-**And** un bouton "Restaurer les achats" est présent (stub en attente de story 4.3).
-
-**Given** la story complétée,
-**Then** `backend/docs/security.md` est mis à jour avec la checklist App Privacy Apple (SDK + données déclarées).
-
-**Source :** Notion [🛡️ Apple App Store — Risques de bannissement & conformité]
-**Story file :** `_bmad-output/implementation-artifacts/4-4-conformite-apple-app-store.md`
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 4.5: Service web Cloudbreak Ops — Pages légales
 
-En tant que solo dev qui doit fournir des URLs de Politique de confidentialité et de CGU aux stores,
-je veux un service web dédié qui héberge ces pages légales,
-afin de répondre à l'AC1 de la story 4.4 sans dépendre du backend FastAPI, et de poser la base d'un futur dashboard ops.
-
-**Given** le service `cloudbreak-ops` (nouveau repo submodule, Next.js 16 App Router + TypeScript),
-**When** on accède à `/fr/cgu` ou `/fr/privacy`,
-**Then** la page correspondante s'affiche (200), avec sommaire ancré et contenu légal complet.
-
-**Given** le service,
-**When** on consulte sa configuration,
-**Then** aucune valeur n'est en dur — tout passe par `.env`/`.env.example`, documentés avec les URLs à fournir à App Store Connect une fois déployé.
-
-**Given** la story complétée,
-**Then** `npm run validate` (format, lint, typecheck, tests unitaires, build, e2e) passe et une CI GitHub Actions est en place.
-
-**Source :** suite directe de la story 4.4 (AC1), décision de créer un service web dédié plutôt que de patcher le backend — voir `docs/superpowers/specs/2026-07-13-cloudbreak-ops-legal-pages-design.md`
-**Repo :** `cloudbreak-ops` (submodule `ops/`) — PR `feature/4-5-service-web-legal-pages` → `develop` (https://github.com/AlexandreMoreau2002/cloudbreak-ops/pull/2)
-**Story file (dans le submodule) :** `ops/docs/story-1-legal-pages.md`
-
----
-
-✅ **Epic 4 complète — 5 stories (couverture FR16–FR21 + conformité App Store + service web légal)**
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
@@ -1235,58 +737,13 @@ Les utilisateurs peuvent confirmer ou infirmer une prévision depuis le terrain 
 
 ### Story 6.1: Validation Terrain (Confirmation/Infirmation)
 
-As a user,
-I want to confirm or deny the forecast accuracy when I'm at the summit,
-So that I contribute to improving the algorithm and close the feedback loop.
-
-**Acceptance Criteria:**
-
-**Given** `ValidationBottomSheet` affiché (depuis notification GPS ou depuis l'écran de prévision)
-**When** l'utilisateur appuie sur "Oui — mer de nuage visible ✅"
-**Then** `POST /api/v1/validations` est appelé avec `{prediction_id, result: true, lat, lng, validated_at}`
-**And** la réponse est `201 Created`
-**And** un message de remerciement s'affiche : "Merci ! Ta validation aide à affiner les prévisions 🙏"
-
-**Given** l'utilisateur appuie sur "Non — pas de mer de nuage ❌"
-**When** la requête est envoyée
-**Then** `result: false` est enregistré avec le même format
-
-**Given** la table `terrain_validations`
-**When** la migration est appliquée
-**Then** elle contient : `id`, `prediction_id`, `user_id`, `result` (bool), `photo_url` (nullable), `lat`, `lng`, `validated_at`
-
-**Given** un appel sans JWT valide
-**When** `POST /api/v1/validations` est appelé
-**Then** le backend retourne `401 Unauthorized`
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 6.2: Photo Optionnelle & Calcul Taux de Précision
 
-As a user,
-I want to attach an optional photo to my terrain validation,
-And I want the system to automatically calculate forecast accuracy by zone.
-
-**Acceptance Criteria:**
-
-**Given** `ValidationBottomSheet` avec option photo
-**When** l'utilisateur appuie sur "Ajouter une photo 📸" (optionnel)
-**Then** le sélecteur natif iOS s'ouvre (galerie photo)
-**And** la photo sélectionnée est uploadée (taille max 5MB, compression côté app)
-**And** l'URL de la photo est stockée dans `terrain_validations.photo_url`
-
-**Given** l'utilisateur ne souhaite pas ajouter de photo
-**When** il valide sans photo
-**Then** la validation est enregistrée avec `photo_url: null` sans blocage
-
-**Given** FR29 — calcul taux de précision
-**When** `GET /api/v1/stats/accuracy?zone=` est appelé (admin uniquement)
-**Then** il retourne le ratio `validations_positives / total_validations` par zone géographique (grille de ~50km)
-**And** ce calcul est disponible dans PostHog via un event `accuracy_calculated`
-
----
-
-✅ **Epic 6 complète — 2 stories (couverture FR26–FR29)**
+⏸ **Dropée le 2026-08-08** (décision explicite) — pas de priorité de reprise.
 
 ---
 
@@ -1300,115 +757,19 @@ Les nouveaux utilisateurs complètent le parcours d'onboarding narratif. L'app g
 
 ### Story 7.1: Parcours Onboarding Narratif
 
-As a new user,
-I want to experience a compelling onboarding that explains the product's unique value,
-So that I understand what sea of clouds forecasting is and why I need it.
-
-**Source design :** handoff Claude Design (`design_handoff_onboarding`) — pixel-fidèle exigé.
-
-**Note :** la géolocalisation sort du scope (reste story 2.3) ; la recherche de sommets a été rendue publique côté backend (endpoints `peaks/search` et `peaks/{slug}` sans auth) pour permettre la sélection d'un sommet par défaut avant login.
-
-**Acceptance Criteria:**
-
-**Given** le premier lancement de l'app (flag `onboarding_completed` absent)
-**When** l'app démarre
-**Then** `/onboarding` s'affiche automatiquement (splash), pas l'écran principal
-
-**Given** l'écran onboarding
-**When** l'utilisateur le parcourt
-**Then** le splash enchaîne sur un rideau mer de nuage (curtain, une seule fois), puis 3 écrans fidèles au handoff :
-- Bienvenue — hero illustration mer de nuage + CTA Continuer
-- Sommet par défaut — 6 sommets curés + recherche, sélection unique
-- Notifications — 2 cartes preview, CTA "Autoriser les notifications" ou "Plus tard"
-
-**Given** l'écran Notifications
-**When** l'utilisateur refuse la permission notification (ou choisit "Plus tard")
-**Then** il continue quand même sans message d'erreur ni friction
-
-**Given** la fin de l'onboarding (via "Autoriser" ou "Plus tard")
-**When** l'utilisateur termine le dernier écran
-**Then** le flag `onboarding_completed: true` est sauvegardé en `AsyncStorage`
-**And** l'event `onboarding_complete` est tracké (stub `analytics.ts`, PostHog branché ultérieurement)
-**And** l'utilisateur est redirigé vers login (ou l'écran principal si une session existe déjà)
-
-**Given** un utilisateur qui rouvre l'app
-**When** `onboarding_completed: true` est en `AsyncStorage`
-**Then** l'onboarding ne s'affiche plus jamais
-
-**Given** le sommet sélectionné sur l'écran "Sommet par défaut"
-**When** l'utilisateur arrive pour la première fois sur l'écran principal
-**Then** ce sommet apparaît comme sommet sélectionné
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 7.2: Mode Offline-Light & Cache TTL
 
-As a user,
-I want to see my last forecast when I have no network connection,
-So that I can still check conditions on the mountain without signal.
-
-**Acceptance Criteria:**
-
-**Given** l'utilisateur a consulté une prévision avec réseau disponible
-**When** `useScore` reçoit les données
-**Then** `cacheService.set(`score:${peakId}:${date}`, data, TTL_2H)` est appelé
-**And** la prévision est disponible hors-ligne pendant 2-3h
-
-**Given** l'utilisateur consulte la même prévision sans réseau
-**When** `useScore` détecte l'absence de réseau
-**Then** `cacheService.get()` retourne les données en cache (état `success` avec `fromCache: true`)
-**And** un bandeau s'affiche : "Données du [heure] — connexion requise pour actualiser"
-**And** l'affichage se fait en < 100ms (FR30, NFR3)
-
-**Given** le cache expiré (> 3h) et absence de réseau
-**When** l'utilisateur tente de consulter
-**Then** un message clair s'affiche : "Données non disponibles — connexion requise pour voir une prévision fraîche"
-**And** l'app ne crashe pas et n'affiche pas de données obsolètes sans avertissement (FR32)
-
-**Given** le réseau revient
-**When** l'utilisateur pull-to-refresh
-**Then** les données fraîches sont récupérées et le bandeau disparaît
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 
 ### Story 7.3: Système unifié états UI — loading, skeletons, erreurs, états vides
 
-En tant qu'utilisateur de Cloudbreak,
-je veux que tous les états transitoires de l'app soient cohérents et bien traités visuellement,
-afin que l'app paraisse finalisée et professionnelle au lancement sur l'App Store.
-
-**Contexte :** inventaire exhaustif dans `_bmad-output/planning-artifacts/PLAN-etats.md` — 15 états identifiés sur 5 screens.
-
-**Acceptance Criteria:**
-
-**Given** une erreur réseau/API sur n'importe quel screen,
-**When** `state.status === 'error'`,
-**Then** `<ErrorState />` s'affiche uniformément (icône 40px, padding `Spacing.lg`) — plus de `errorCard` inline.
-
-**Given** le chargement dans Search ou Favorites,
-**When** `state.status === 'loading'`,
-**Then** `<LoadingSpinner />` ou `<FavoritesSkeleton />` s'affiche — plus d'`ActivityIndicator` nu.
-
-**Given** la liste favoris ou résultats de recherche vides,
-**When** `state.data.length === 0`,
-**Then** `<EmptyState />` (composant existant, actuellement non branché) s'affiche.
-
-**Given** le quota dépassé sur Home,
-**Then** `<ErrorState variant="quota" />` avec CTA "Passer Premium" s'affiche.
-
-**Given** le bouton submit du login en cours de chargement,
-**Then** un spinner s'affiche à la place du texte (plus de simple changement de libellé).
-
-**Given** la modal de suppression de compte,
-**Then** le spinner utilise `colors.surface` (plus de `#fff` hardcodé).
-
-**Composants à créer :** `ErrorState`, `LoadingSpinner`, `FavoritesSkeleton`
-**Composants à brancher :** `EmptyState` (existant, jamais utilisé)
-**Story file :** `_bmad-output/implementation-artifacts/7-3-systeme-unifie-etats-ui.md`
-
----
-
-✅ **Epic 7 — 3 stories (couverture FR30–FR34 + cohérence UX états)**
+✅ **Fait** — mergée sur `develop`. Statut : `sprint-status.yaml` ; détail technique : `backend/docs/story-*.md` / `mobile/docs/story-*.md`.
 
 ---
 

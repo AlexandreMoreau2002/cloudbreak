@@ -92,8 +92,6 @@ encore été soumise à App Store Connect.**
 - **Identité app** (`mobile/app.json`) :
   - `bundleIdentifier` iOS : `com.alexandremoreau.cloudbreak` — **confirmé définitif le 2026-09-27**
     (décision explicite d'Alexandre, aucune migration nécessaire, c'est déjà celui du code).
-    `pre-release-checklist.md` mentionnait `com.cloudbreak.app` comme exemple générique — jamais
-    appliqué au code, à corriger dans ce doc.
   - `name`/`slug` : `"Cloudbreak – Mer de nuage"` / `"cloudbreak"`.
   - Icône : `mobile/assets/images/icon.png` (1024 × 1024), référencée dans `app.json`. Elle sera
     livrée avec la première build iOS téléversée à App Store Connect.
@@ -205,4 +203,4 @@ réutiliser les secrets du flux de support.
 - [`docs/infra-serveur.md`](infra-serveur.md) — détail VPS/Dokploy (accès, apps, CI/CD, sécurité)
 - [`docs/versions.md`](versions.md) — versions déployées par submodule
 - [`TODO.md`](../TODO.md) — chantiers en cours, dette technique
-- [`_bmad-output/planning-artifacts/pre-release-checklist.md`](../_bmad-output/planning-artifacts/pre-release-checklist.md) — checklist de sortie complète
+- [`TODO.md`](../TODO.md) — features urgentes, fixes et notes produit avant la release

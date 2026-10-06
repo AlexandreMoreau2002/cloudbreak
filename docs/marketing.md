@@ -420,7 +420,6 @@ Au début, privilégier le **One-to-One** : gratuit, et on apprend énormément 
 - [`_bmad-output/planning-artifacts/aso-landing-page.md`](../_bmad-output/planning-artifacts/aso-landing-page.md) — ASO, landing page et SEO.
 - [`docs/marketing-positioning-2026-07-26.md`](marketing-positioning-2026-07-26.md) — analyse détaillée du positionnement et du plan 90 jours.
 - [`docs/product-ideas.md`](product-ideas.md) — idées produit, acquisition et newsletter.
-- [`docs/product-roadmap-2026-07-26.md`](product-roadmap-2026-07-26.md) — priorités produit conditionnant le lancement.
 - [`TODO.md`](../TODO.md) — blocages et état réel d’exécution.
 - [Page Notion Cloudbreak](https://app.notion.com/p/325964bda18580358585ff14ef1f76c6) — source parallèle produit/projet.
 - [Vidéo YouTube B06b1CxLXr4](https://www.youtube.com/watch?v=B06b1CxLXr4) — méthodes de lancement SaaS sans audience (synthèse section 13).
