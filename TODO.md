@@ -10,7 +10,7 @@
 
 ## En cours
 
-### Pré-release — fixes rangés par story (mis à jour 2026-10-04)
+### Pré-release — fixes rangés par story (mis à jour 2026-10-06)
 
 Fait :
 - [x] **PR mobile #33** (outillage dev iOS) — squash-mergée sur `develop` le 2026-10-03.
@@ -59,6 +59,14 @@ Fait :
 - [ ] **Libellé création de compte** : retirer « pour cette feature tu as besoin d'un compte ». Candidat : `mobile/src/locales/fr.ts:187` (« Crée un compte pour sauvegarder tes sommets. ») — à confirmer.
 
 #### Infra / prérequis prod (hors story)
+- [ ] **Webhook Apple (App Store Server Notifications V2) jamais testé de bout en bout** : confié à Codex (cahier de conception validé 2026-10-06 dans `docs/superpowers/specs/`, plan d'implémentation à rédiger). À faire : URL Sandbox `https://dev-api.cloudbreak-app.com/api/v1/webhooks/apple` dans App Store Connect (Production laissée vide), notification de test acquittée en 204, doc `backend/docs/apple-server-notifications.md`. L'achat Sandbox sur iPhone reste à faire à la main.
+- [ ] **MEP : conteneur backend en mode production** — le dev tourne volontairement en `ENVIRONMENT=development` + `APPLE_ENVIRONMENT=Sandbox` ; la prod exige `Production` + identifiants Apple complets + fichier `.p8` (checklist : `docs/infra-serveur.md` section 8ter).
+- [ ] **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant. Avant d'ouvrir la saisie manuelle : colonne `source` (`seed`|`manual`) + chargement initial insert-only. Ne jamais automatiser le seed au deploy.
+- [ ] **Backups hors VPS + test de restauration** (aujourd'hui `/srv/backups` sur la même machine, rétention 14 j).
+- [ ] **Politique de confidentialité** : mentionner que l'email est conservé par le backend (`users.email`) en plus de Supabase, avant la 1.0.0 (`ops/src/content/`).
+- [ ] **Cause de la disparition de l'image Docker du backend dev** (2026-10-05) : non établie (prune ? build d'un autre projet ?). Surveiller.
+- [ ] **CI backend** : ajouter un job qui joue `alembic upgrade head` sur une base Postgres vide (aurait attrapé le bug `subscriptions`).
+- [ ] **Logs réseau mobile** (`mobile/src/services/fetchService.ts` : response/http error/timeout, mode DEBUG) : non commités sur `feature/4-3-storekit-2-abonnements`, à intégrer dans une PR.
 - [ ] **Rate-limit Traefik** sur `POST /api/v1/webhooks/apple` avant toute exposition prod.
 - [ ] **Action opérateur** : définir `EXPO_PUBLIC_SUPPORT_EMAIL` (voir story 4.6 ci-dessus).
 
@@ -270,6 +278,8 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
+| Fix — serveur dev remis en ligne (image Docker perdue, `ENVIRONMENT=production` vs Sandbox, table `subscriptions` jamais créée par Alembic, `peaks` vide) + migrations au démarrage du conteneur | backend [PR #23](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/23) | 2026-10-05 |
+| Feat — `users.email` (pont UUID Supabase ↔ compte lisible) | backend [PR #24](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/24) | 2026-10-06 |
 | Story 2.2 — Préférences de notifications (3 toggles indépendants) + réalignement du Profil sur la maquette du 15/09 (sections, `SettingsRow` `tone`/`disabled`/`chevron`, footer version) | backend [PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/19), mobile [PR #27](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/27) | 2026-09-16 |
 | Lot auth 2.5+2.6+2.7+2.8 (parcours compte différé, Sign in with Apple, mot de passe oublié, mini-sondage) + durcissement sécurité/robustesse post-merge (JWT issuer/audience, retry provisioning verify/account, timeout HTTP réel, garde env Supabase) | backend [PR #18](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/18), mobile [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/25) | 2026-09-12 |
 | Story 6.1 — Validation terrain (confirmation/infirmation) | backend [PR #15](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/15), mobile [PR #22](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/22) | 2026-07-25 |

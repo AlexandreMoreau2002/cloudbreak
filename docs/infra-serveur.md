@@ -146,7 +146,117 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
 
 - `/etc/dokploy/logs/<appName>/`
 
+## 8bis. Incident du 2026-10-05 — `dev-api` en 502 (backend dev down)
+
+**Symptôme** : l'app mobile (pointée sur `https://dev-api.cloudbreak-app.com`) n'avait que des erreurs
+réseau ; `GET /health` répondait **502** (Traefik sans backend derrière).
+
+**Diagnostic** (dans cet ordre, reproductible) :
+
+1. `ssh vps-ovh-projets "sudo docker service ls"` → le service backend
+   (`app-reboot-primary-circuit-vmgb6t`, nom aléatoire Dokploy, il n'apparaît pas sous « cloudbreak »)
+   était à **0/1**. Retrouver le nom : `sudo grep -rl 'dev-api.cloudbreak' /etc/dokploy/traefik/dynamic`.
+2. `sudo docker service ps <service> --no-trunc` → `Rejected … No such image: <service>:latest`.
+   **L'image Docker avait disparu du VPS** (cause non établie : prune d'images ou build d'un autre
+   projet sur ce serveur partagé, pas de swap, peu de disque). `docker ps` seul ne montre rien : un
+   service Swarm sans tâche vivante n'a pas de conteneur.
+3. Redeploy par API (méthode standard, voir section 2) : `application.deploy` avec l'`applicationId`
+   du backend → le build repasse, l'image est recréée.
+4. Le conteneur plante alors au démarrage : `sudo docker service logs <service> --tail 30` →
+   `ValidationError … Production requires APPLE_ENVIRONMENT=Production`.
+
+**Cause du 2e plantage** : `backend/app/core/config.py` refuse de démarrer si `ENVIRONMENT=production`
+avec `APPLE_ENVIRONMENT=Sandbox` (garde-fou ajouté avec la story StoreKit 2). Le défaut du code est
+`development` ; c'est donc une variable `ENVIRONMENT=production` posée dans l'env Dokploy de
+l'application qui déclenche l'erreur (déduit du message, valeur non relue sur le serveur). Le serveur
+`dev` doit rester en **Sandbox Apple**, donc `ENVIRONMENT=development`.
+
+**Résolu le 2026-10-05** : `ENVIRONMENT=development` posé via `application.saveEnvironment` puis
+`application.deploy` ; `dev-api/health` → 200 (`database: ok`, `redis: ok`), service 1/1.
+
+**Comment corriger / vérifier** : Dokploy, application backend → Environment → `ENVIRONMENT=development` →
+Save → Deploy, ou `application.saveEnvironment` puis `application.deploy` par API. Un premier essai
+manuel n'avait pas été pris en compte (l'env contenait toujours `ENVIRONMENT=production`) : toujours
+**relire** après un Save. L'env est chiffré en base (`enc:v1:`), un `psql` direct ne le montre pas ;
+passer par l'API (`application.one`) ou lire la spec du service :
+`docker service inspect <service> --format '{{range .Spec.TaskTemplate.ContainerSpec.Env}}{{println .}}{{end}}' | grep -E '^(ENVIRONMENT|APPLE_ENVIRONMENT)='`.
+
+**Suites du même incident (2026-10-05)**
+
+- `GET /score` → 500 `relation "subscriptions" does not exist` : aucune migration Alembic ne créait cette
+  table (en local elle vient de `create_all` via `make seed-test`), donc `alembic upgrade head` plantait
+  sur la base dev, qui n'a jamais eu de migration depuis `c2078c6539a6`. Corrigé par la migration
+  `a9c4e7b2d5f1` (backend PR #23) + `alembic upgrade head` désormais lancé au démarrage du conteneur
+  (`CMD` du Dockerfile). Sauvegarde faite avant : `/srv/backups/cloudbreak-postgres-2026-10-05_11-30.sql.gz`.
+- `GET /score` → 404 `PEAK_NOT_FOUND` : la table `peaks` était vide. Seed rejoué à la main :
+  `docker exec -e PYTHONPATH=. <conteneur> python -m app.db.seed` (upsert sur `slug`, 23 782 sommets).
+  Le seed n'est **pas** automatique au deploy : à refaire sur toute base neuve.
+
+- Colonne `users.email` (backend PR #24, mergée le 2026-10-06) : migration `c8d1e5f2a7b3` appliquée
+  automatiquement au démarrage du conteneur. **Vérifié le 2026-10-06** : service 1/1, `/health` 200,
+  `alembic current` = `c8d1e5f2a7b3` (head), `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`.
+  Base locale mise au head le même jour (`alembic upgrade head` dans le conteneur `cloudbreak-backend`).
+- CI GitHub : un job peut rester sans runner (annulé après 15 min, zéro étape) et faire sauter les jobs
+  suivants — ce n'est pas le code ; `gh run rerun <id> --failed`.
+
+**À retenir**
+
+- 502 sur `dev-api` : toujours commencer par `docker service ls` (réplicas) puis `service ps` /
+  `service logs`, pas `docker ps`.
+- Un redeploy d'un code `develop` récent peut révéler une variable d'env serveur devenue incompatible
+  avec un nouveau garde-fou : lire les logs du service juste après le deploy.
+- Ne jamais lancer plusieurs builds Dokploy en parallèle (2 vCPU / 3,7 Go).
+- Le seul vrai `production` possible côté backend est un futur env prod avec les credentials App Store
+  complets (`APPLE_*`) ; ne pas mettre `ENVIRONMENT=production` sur le dev.
+
+## 8ter. Mise en production (MEP) — à prévoir
+
+**Le backend dev tourne volontairement en mode développement** : `ENVIRONMENT=development` et
+`APPLE_ENVIRONMENT=Sandbox` (voir 8bis). La prod devra tourner en mode **production**, et ce mode est
+verrouillé par un garde-fou dans `backend/app/core/config.py` : avec `ENVIRONMENT=production`, le
+conteneur **refuse de démarrer** si l'une de ces conditions manque.
+
+| Variable (env Dokploy de l'app prod) | Valeur attendue en prod |
+|--------------------------------------|-------------------------|
+| `ENVIRONMENT` | `production` |
+| `APPLE_ENVIRONMENT` | `Production` (jamais `Sandbox`) |
+| `APPLE_BUNDLE_ID` | bundle id de l'app |
+| `APPLE_APP_ID` | entier > 0 (identifiant App Store Connect) |
+| `APPLE_KEY_ID`, `APPLE_ISSUER_ID` | clé API App Store Connect |
+| `APPLE_PRIVATE_KEY_PATH` | chemin d'un **fichier `.p8` lisible dans le conteneur** (monté via volume/secret Dokploy, jamais dans l'image ni dans git) |
+
+Si l'une manque, l'erreur est au démarrage : `Production requires APPLE_ENVIRONMENT=Production`,
+`Production Apple verification requires all App Store credentials` ou `Production requires a readable
+private key file` (lire `docker service logs <service>`).
+
+**Checklist avant la MEP**
+
+- [ ] Environnement Dokploy `production` **séparé** du `dev` (apps, domaines `api.` / `ops.cloudbreak-app.com`).
+- [ ] Base Postgres et Redis **prod dédiés**, avec leur propre volume. Jamais la base dev.
+- [ ] Projet Supabase de prod (URL, clés, JWKS) distinct du dev ; réactiver « Confirm email ».
+- [ ] Identifiants Apple complets + fichier `.p8` monté ; `APPLE_ENVIRONMENT=Production`.
+- [ ] Chargement initial des sommets (`python -m app.db.seed`) **une seule fois**, à la main : il n'est jamais
+  lancé par un deploy. Le seed remplace nom/GPS/altitude/région sur un `slug` existant (upsert) : ne pas
+  le rejouer une fois des sommets modifiés ou ajoutés à la main (voir « points GPS manuels » ci-dessous).
+- [ ] Migrations : lancées automatiquement au démarrage du conteneur (`CMD` du Dockerfile). Toutes
+  rétro-compatibles (ajouter avant de supprimer) ; vérifier `alembic upgrade head` sur une **base vide**.
+- [ ] Sauvegardes : celles du VPS (`/srv/backups`, rétention 14 j) sont sur la **même machine** → ajouter une
+  copie hors serveur, et **tester une restauration** au moins une fois.
+- [ ] Un deploy ne doit jamais toucher aux données : il ne reconstruit que l'image du backend.
+- [ ] Secrets : hors de Notion et de git (variables Dokploy / fichiers protégés).
+- [ ] Ne **jamais** mettre `ENVIRONMENT=production` sur le dev, ni `Sandbox` sur la prod.
+
+**Points GPS manuels (à anticiper)** : tant qu'il n'existe pas de colonne distinguant les sommets du seed
+des sommets saisis à la main (ex. `source = seed|manual`), un re-seed écraserait les corrections. À prévoir
+avant d'ouvrir la saisie manuelle.
+
 ## 9. Ce qui reste à faire (infra)
+
+- [ ] MEP : suivre la checklist de la section 8ter (conteneur backend en mode production, env prod séparé).
+
+- [x] ~~Appliquer `ENVIRONMENT=development` sur le backend dev et redéployer~~ — fait le 2026-10-05, section 8bis.
+- [ ] Comprendre pourquoi l'image du backend dev a disparu du VPS (`docker system df`, prune planifié ?) et
+  éviter la récidive.
 
 - [x] ~~Réserver un vrai nom de domaine~~ — fait le 2026-08-09, `cloudbreak-app.com`.
 - [x] ~~Migrer les URLs `nip.io` vers `cloudbreak-app.com`~~ — fait le 2026-08-09, voir section 4bis.

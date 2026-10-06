@@ -71,7 +71,7 @@ make lint              # ruff check .
 make format            # ruff format .
 make typecheck         # mypy app/
 make test              # pytest --cov=app
-make migrate           # alembic upgrade head (PYTHONPATH=.)
+make migrate           # alembic upgrade head (PYTHONPATH=.) — en déploiement, lancé tout seul au démarrage du conteneur
 make migration         # alembic revision --autogenerate (demande une description)
 make seed              # sommets initiaux (app.db.seed)
 make seed-test         # users de test freemium/pro/admin
@@ -149,6 +149,7 @@ Tests ciblés : `npx vitest run src/components/ThemeToggle.test.tsx`.
 - À tester obligatoirement : algo score (cas limites, seuils, inversion, hard gate), quota freemium Redis, validation JWT (valide/expiré/invalide), cache offline mobile, composants critiques (ScoreCard, PaywallScreen), hooks réseau.
 - Objectif de couverture 100 % sur le code métier : c'est une **convention, non imposée** par la config (ni `fail_under` dans `pyproject.toml`, ni `coverageThreshold` dans Jest).
 - Nouveau endpoint backend : requêtes ajoutées dans `backend/http/<domaine>.http` (nominal, sans `Authorization` → 403, payload invalide → 422, cas métier).
+- Toute migration doit passer sur une **base vide** (`alembic upgrade head`) : en local `create_all` (via `make seed-test`) peut masquer une table jamais créée par Alembic (incident `subscriptions`, 2026-10-05).
 - Note : `HTTPBearer` renvoie **403** (pas 401) quand `Authorization` est absent — nommer les tests en conséquence.
 
 ## Architecture Constraints
@@ -199,7 +200,7 @@ Toute modification de la formule ou des seuils = changement métier : demander c
 
 ## Data model & API
 
-Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events` ni de colonne `push_token` dans le code actuel.
+Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `email` (copie du claim JWT, jamais exposée ni loggée), `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events` ni de colonne `push_token` dans le code actuel.
 
 Endpoints (préfixe `/api/v1`, source : `backend/app/api/v1/endpoints/`) :
 
