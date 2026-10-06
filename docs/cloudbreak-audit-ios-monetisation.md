@@ -112,7 +112,7 @@ Si le quota crée surtout de la frustration sans conversion, tester 2 checks par
 | Élément | Recommandation |
 |---|---|
 | Mensuel | 4,99 €/mois |
-| Annuel | 44,99 €/an ou 45 €/an |
+| Annuel | 44,99 €/an |
 | Trial | 7 jours uniquement lorsqu’il est réellement configuré via StoreKit |
 | Bêta | Codes promotionnels ou accès de test plutôt qu’un système parallèle |
 

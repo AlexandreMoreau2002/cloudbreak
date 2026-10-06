@@ -13,7 +13,7 @@ depends_on: ["4-1", "4-2"]
 ## Description
 
 En tant qu'utilisateur ayant atteint le paywall,
-je veux pouvoir m'abonner en Premium via Apple In-App Purchase (mensuel 5€/mois ou annuel 45€/an),
+je veux pouvoir m'abonner en Premium via Apple In-App Purchase (mensuel 4,99 €/mois ou annuel 44,99 €/an),
 afin d'obtenir des consultations illimitées avec un paiement natif et sécurisé.
 
 ---
@@ -28,8 +28,8 @@ Cloudbreak est **iOS only**. Tous les paiements passent par Apple In-App Purchas
 
 | Product ID | Période | Prix affiché |
 |---|---|---|
-| `cloudbreak_premium_monthly` | Mensuel auto-renouvelable | 5 €/mois |
-| `cloudbreak_premium_yearly` | Annuel auto-renouvelable | 45 €/an |
+| `com.alexandremoreau.cloudbreak.premium.monthly` | Mensuel auto-renouvelable | 4,99 €/mois |
+| `com.alexandremoreau.cloudbreak.premium.annual` | Annuel auto-renouvelable | 44,99 €/an |
 
 > **Important** : le nom du fichier storekit.md (maintenu dans `mobile/docs/storekit.md`) utilise `app.cloudbreak.pro.monthly` comme exemple mais les **vrais Product IDs pour App Store Connect sont `cloudbreak_premium_monthly` et `cloudbreak_premium_yearly`**. À créer et configurer dans App Store Connect avant les tests Sandbox.
 
@@ -381,7 +381,7 @@ test('achat annulé → paywall reste ouvert, pas d erreur critique')
 ### AC1 — Achat depuis le paywall
 
 **Given** `PaywallScreen` affiché (après QUOTA_EXCEEDED)
-**When** l'utilisateur choisit "Mensuel — 5€/mois" et appuie sur le CTA
+**When** l'utilisateur choisit "Mensuel — 4,99 €/mois" et appuie sur le CTA
 **Then** StoreKit 2 déclenche la sheet de paiement native Apple
 **And** aucun numéro de carte n'est géré par l'app (NFR12)
 
@@ -461,13 +461,13 @@ Avant d'implémenter, créer dans App Store Connect :
 
 1. **In-App Purchases → Subscriptions** : créer un groupe d'abonnements "Cloudbreak Premium"
 2. Créer les deux produits :
-   - `cloudbreak_premium_monthly` — Auto-Renewable Subscription — 5,99€ (prix le plus proche de 5€ dans la grille Apple)
-   - `cloudbreak_premium_yearly` — Auto-Renewable Subscription — 49,99€ (prix le plus proche de 45€)
+   - `com.alexandremoreau.cloudbreak.premium.monthly` — Auto-Renewable Subscription — **4,99 €**
+   - `com.alexandremoreau.cloudbreak.premium.annual` — Auto-Renewable Subscription — **44,99 €**
 3. Configurer **Introductory Offer** sur les deux produits : Free Trial 7 days
 4. Créer un **Sandbox Tester** dans Users and Access → Sandbox → Testers
 5. Dans Xcode, créer `mobile/Cloudbreak.storekit` pour les tests locaux (sans App Store Connect)
 
-> **Note tarification** : Apple impose une grille de prix. 5€ et 45€ exacts ne sont pas disponibles. Les prix les plus proches sont respectivement 5,99€ et 49,99€ (ou 4,99€ et 44,99€ selon la grille). À valider dans App Store Connect avant l'implémentation.
+> **Tarification (décision Alexandre, 2026-10-06)** : mensuel **4,99 €**, annuel **44,99 €**, essai gratuit 7 jours. Ce sont les prix configurés dans App Store Connect et les seuls à utiliser dans le code, les tests et les docs (jamais 5 € / 45 € / 49,99 €). Le badge du paywall est donc −25 % (44,99 € face à 12 × 4,99 € = 59,88 €).
 
 ---
 

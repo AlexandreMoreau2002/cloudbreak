@@ -54,7 +54,7 @@ Source : page Notion [🛡️ Apple App Store — Risques de bannissement & conf
 ### AC5 — Paywall : prix et durée lisibles
 **Given** le paywall est affiché,
 **When** l'utilisateur voit le toggle mensuel/annuel,
-**Then** le prix (5€/mois ou 45€/an) et la durée d'engagement sont visibles clairement sans ambiguïté.
+**Then** le prix (4,99 €/mois ou 44,99 €/an) et la durée d'engagement sont visibles clairement sans ambiguïté.
 **And** si un essai gratuit est mentionné, la durée et le prix après essai sont explicitement affichés.
 **Note audit :** Vérifier visuellement le `PaywallBillingToggle` et `PaywallCTA` — ajuster le wording si nécessaire.
 
@@ -111,7 +111,7 @@ Source : page Notion [🛡️ Apple App Store — Risques de bannissement & conf
 
 - [ ] **T6 — Audit visuel paywall prix** (AC5)
   - [ ] Lancer l'app sur simulateur, ouvrir le paywall, vérifier que prix + durée sont lisibles
-  - [ ] Si wording ambigu → ajuster `fr.ts`/`en.ts` (ex: "puis 5€/mois" si essai gratuit)
+  - [ ] Si wording ambigu → ajuster `fr.ts`/`en.ts` (ex: "puis 4,99 €/mois" si essai gratuit)
 
 - [ ] **T7 — Documentation** (AC6)
   - [ ] Mettre à jour `backend/docs/security.md` — section "App Privacy Apple" avec tableau SDK / données collectées

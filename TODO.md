@@ -17,12 +17,13 @@ Fait :
 - [x] **Story 4.3 — PR backend #22 et mobile #32 mergées le 2026-10-03.** Reste la clôture (ci-dessous).
 
 #### Story 4.3 — StoreKit 2 (clôture)
-- [ ] **Produits invisibles en Sandbox** : `fetchProducts` renvoie 0 produit. Cause probable : accord « Paid Apps » / fiscalité / banque activé le 2026-10-03, validation Apple jusqu'à 24 h. Ensuite : capture « équipe de vérification » sur les deux produits, statut « Prêt à soumettre ». Vérifier que le Sandbox Tester est en France.
-- [ ] **Prix annuel à trancher** : App Store Connect = 44,99 €, demandé = 49,99 €. Décision, puis changer le prix dans App Store Connect. Mensuel = 4,99 €.
-- [ ] **Badge de réduction −33 % → −25 %** (paywall) : 44,99 € face à 12 × 4,99 € (59,88 €) = −25 %.
-- [ ] **Prix périmés** dans les tests (`index.test.tsx` : `5€`/`45€` ; `PaywallScreen.test.tsx` : `4,99 $` → `€`) et les docs (`prd.md`, `epics.md`, `mobile/docs/storekit.md`, `_bmad-output/…`).
-- [ ] **Incohérence backend** : `/user/subscription` renvoie `premium` même quand `status = none` (mapping `pro` → `premium`), alors que le bypass du quota exige `trial` ou `active`.
-- [ ] **Seed `pro@` / `test@`** (`backend/app/db/seed_test_users.py`) : écrit `plan = pro` et `status = none`, donc le quota n'est pas levé. Base locale corrigée à la main le 2026-10-04 ; le seed reste à corriger.
+- [x] **Produits visibles en Sandbox** (confirmé par Alex le 2026-10-06, testé contre le backend dev) : `fetchProducts` renvoie les 2 produits, paywall affiche 4,99 € / 44,99 €, plus d'erreur `store_unavailable`.
+- [ ] **Côté App Store Connect** : capture « équipe de vérification » sur les deux produits, statut « Prêt à soumettre », Sandbox Tester en France (non vérifié).
+- [x] **Prix annuel à trancher** : App Store Connect = 44,99 €, demandé = 49,99 €. Décision, puis changer le prix dans App Store Connect. Mensuel = 4,99 €. — tranché par Alex : **44,99 €** (mensuel 4,99 €), noté partout (docs, tests, CLAUDE.md, mémoire). Le « 49,99 € demandé » était une erreur de la story d'origine.
+- [x] **Badge de réduction −33 % → −25 %** (paywall) : 44,99 € face à 12 × 4,99 € (59,88 €) = −25 %. — fait, mobile PR #34 (−25 %).
+- [x] **Prix périmés** dans les tests (`index.test.tsx` : `5€`/`45€` ; `PaywallScreen.test.tsx` : `4,99 $` → `€`) et les docs (`prd.md`, `epics.md`, `mobile/docs/storekit.md`, `_bmad-output/…`). — fait, mobile PR #34 + docs de planification alignées (restent volontairement : brainstorming de mars et projections financières du PRD).
+- [x] **Incohérence backend** : `/user/subscription` renvoie `premium` même quand `status = none` (mapping `pro` → `premium`), alors que le bypass du quota exige `trial` ou `active`. — fait, backend PR #26 (`app/domain/entitlement.py`, `plan` = premium seulement si actif et non expiré).
+- [x] **Seed `pro@` / `test@`** (`backend/app/db/seed_test_users.py`) : écrit `plan = pro` et `status = none`, donc le quota n'est pas levé. Base locale corrigée à la main le 2026-10-04 ; le seed reste à corriger. — fait, backend PR #26 (`plan = premium`, `status = active`, +365 j). À rejouer en local pour que `test@` soit illimité : `make unseed-test && make seed-test`.
 - [ ] **Tests Sandbox sur iPhone réel** (`docs/story-4-3-storekit-2-abonnements/guide-test.md`), une fois les produits visibles.
 - [ ] **Fermer la story 4.3** : Notion, sprint-status, docs, bump des refs. Seulement après les tests Sandbox.
 - Trial : 7 jours partout (code, locales, App Store Connect). Rien à changer.

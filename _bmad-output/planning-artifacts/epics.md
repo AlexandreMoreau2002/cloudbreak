@@ -37,8 +37,8 @@ FR14 : L'utilisateur peut gérer ses préférences de notifications
 FR15 : L'utilisateur peut accorder ou refuser la géolocalisation sans blocage de l'app
 FR16 : L'utilisateur non-payant peut effectuer 1 consultation de score par jour
 FR17 : L'utilisateur voit un paywall naturel au 2e check quotidien avec message de conversion
-FR18 : L'utilisateur peut s'abonner en Premium mensuel (5€/mois) via StoreKit 2
-FR19 : L'utilisateur peut s'abonner en Premium annuel (45€/an) via StoreKit 2
+FR18 : L'utilisateur peut s'abonner en Premium mensuel (4,99 €/mois) via StoreKit 2
+FR19 : L'utilisateur peut s'abonner en Premium annuel (44,99 €/an) via StoreKit 2
 FR20 : L'utilisateur Premium peut effectuer des consultations illimitées
 FR21 : L'utilisateur peut démarrer une période d'essai gratuit avant de s'abonner
 FR22 : L'utilisateur Premium reçoit des alertes push proactives sur ses sommets favoris quand les conditions sont idéales
@@ -158,8 +158,8 @@ FR14 → Epic 2 — Gestion préférences notifications
 FR15 → Epic 2 — Géolocalisation accordée/refusée sans blocage
 FR16 → Epic 4 — Limite 1 consultation/jour utilisateur gratuit
 FR17 → Epic 4 — Paywall naturel au 2e check avec message conversion
-FR18 → Epic 4 — Abonnement Premium mensuel 5€/mois (StoreKit 2)
-FR19 → Epic 4 — Abonnement Premium annuel 45€/an (StoreKit 2)
+FR18 → Epic 4 — Abonnement Premium mensuel 4,99 €/mois (StoreKit 2)
+FR19 → Epic 4 — Abonnement Premium annuel 44,99 €/an (StoreKit 2)
 FR20 → Epic 4 — Consultations illimitées Premium
 FR21 → Epic 4 — Trial gratuit avant abonnement
 FR22 → Epic 5 — Alertes push favoris (conditions idéales) — Premium
@@ -200,7 +200,7 @@ Les utilisateurs peuvent rechercher un sommet, consulter le verdict probabiliste
 **Note backlog UX/API :** prévoir une prochaine story mobile dédiée à un composant générique d'erreur API réutilisable (`400/500/service indisponible`) pour homogénéiser `score`, `search` et `favorites`.
 
 ### Epic 4: Freemium & Monétisation
-Les utilisateurs voient la limite gratuite (1 check/jour), rencontrent le paywall au bon moment, peuvent s'abonner en Premium mensuel (5€/mois) ou Pro annuel (45€/an) via StoreKit 2, démarrer un trial gratuit. Les abonnés accèdent aux consultations illimitées.
+Les utilisateurs voient la limite gratuite (1 check/jour), rencontrent le paywall au bon moment, peuvent s'abonner en Premium mensuel (4,99 €/mois) ou Premium annuel (44,99 €/an) via StoreKit 2, démarrer un trial gratuit. Les abonnés accèdent aux consultations illimitées.
 **FRs couverts :** FR16, FR17, FR18, FR19, FR20, FR21
 
 ### Epic 5: Notifications & Alertes
@@ -994,7 +994,7 @@ So that the app remains useful year-round and I can share discoveries.
 
 ## Epic 4: Freemium & Monétisation
 
-Les utilisateurs voient la limite gratuite, rencontrent le paywall au bon moment, peuvent s'abonner en Premium mensuel (5€/mois) ou Pro annuel (45€/an) via StoreKit 2, démarrer un trial gratuit. Les abonnés accèdent aux consultations illimitées.
+Les utilisateurs voient la limite gratuite, rencontrent le paywall au bon moment, peuvent s'abonner en Premium mensuel (4,99 €/mois) ou Premium annuel (44,99 €/an) via StoreKit 2, démarrer un trial gratuit. Les abonnés accèdent aux consultations illimitées.
 
 **FRs couverts :** FR16, FR17, FR18, FR19, FR20, FR21
 
@@ -1043,7 +1043,7 @@ So that I understand the value of upgrading before being asked to pay.
 **Given** `PaywallScreen`
 **When** il s'affiche
 **Then** le message est formulé en bénéfice : "Débloquer les prévisions illimitées"
-**And** deux options sont visibles : "Mensuel — 5€/mois" et "Annuel — 45€/an" (plan unique : Premium)
+**And** deux options sont visibles : "Mensuel — 4,99 €/mois" et "Annuel — 44,99 €/an" (plan unique : Premium)
 **And** "Essai gratuit 7 jours" est mis en avant visuellement
 
 ---
@@ -1057,7 +1057,7 @@ So that I get unlimited forecasts with native, secure payment.
 **Acceptance Criteria:**
 
 **Given** `PaywallScreen` affiché
-**When** l'utilisateur choisit "Mensuel — 5€/mois" ou "Annuel — 45€/an"
+**When** l'utilisateur choisit "Mensuel — 4,99 €/mois" ou "Annuel — 44,99 €/an"
 **Then** StoreKit 2 déclenche le sheet de paiement natif iOS
 **And** Apple gère la transaction (aucun numéro de carte dans l'app)
 

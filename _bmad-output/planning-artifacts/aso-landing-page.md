@@ -66,7 +66,7 @@ CE QUE L'APP FAIT
 
 FREEMIUM
 Gratuit : 1 consultation par jour
-Premium (5€/mois ou 45€/an) : consultations illimitées + alertes push
+Premium (4,99 €/mois ou 44,99 €/an) : consultations illimitées + alertes push
 ```
 
 ### Screenshots (5 obligatoires — format 6.9" iPhone)
@@ -140,7 +140,7 @@ Screenshots de l'app en fond
 2-3 citations d'utilisateurs beta (à ajouter dès les premiers retours)
 
 [TÉLÉCHARGER]
-Badge App Store + "Gratuit — 1 check/jour offert · Premium 5€/mois"
+Badge App Store + "Gratuit — 1 check/jour offert · Premium 4,99 €/mois"
 
 [FOOTER]
 Mentions légales · Politique de confidentialité · Contact

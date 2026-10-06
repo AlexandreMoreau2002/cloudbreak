@@ -37,9 +37,9 @@ Les photographes et créateurs drone sont la cible d'acquisition prioritaire : i
 |---|---|
 | Carrot Weather Premium | 4,99 $/mois ou 19,99 $/an |
 | Windy.app Premium | ~29,99 $/an (2,50 $/mois) |
-| Strava Summit | 5 €/mois ou 45 €/an |
+| Strava Summit | 4,99 €/mois ou 44,99 €/an |
 | Fatmap Premium | ~29,99 €/an |
-| **Cloudbreak** | **5 €/mois ou 45 €/an** |
+| **Cloudbreak** | **4,99 €/mois ou 44,99 €/an** |
 
 **Verdict : bien positionné.** Aligné sur Carrot Weather et Strava — les deux références acceptées par la cible outdoor. Le ratio mensuel/annuel (×9 vs ×12) encourage la fidélisation sans bloquer l'entrée.
 

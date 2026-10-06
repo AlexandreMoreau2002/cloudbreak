@@ -611,7 +611,7 @@ flowchart TD
     F --> H[Overlay soft paywall\n'Tu as utilisé ton check quotidien']
     H --> I{User action}
     I -->|Ferme l'overlay| J[Retour Home - état bloqué]
-    I -->|'Essayer Premium'| K[Paywall Screen\nEssai 7j gratuit · 5€/mois · 45€/an]
+    I -->|'Essayer Premium'| K[Paywall Screen\nEssai 7j gratuit · 4,99 €/mois · 44,99 €/an]
     K --> L{Choix plan}
     L -->|Mensuel 5€| M[StoreKit 2 sheet\nConfirmation Touch/Face ID]
     L -->|Annuel 45€| M

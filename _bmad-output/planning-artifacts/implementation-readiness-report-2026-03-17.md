@@ -53,8 +53,8 @@ FR15 : Géolocalisation accordée/refusée sans blocage
 **Freemium & Monétisation (FR16–FR21)**
 FR16 : Limite 1 consultation/jour utilisateur gratuit
 FR17 : Paywall naturel au 2e check quotidien
-FR18 : Abonnement Premium mensuel 5€/mois (StoreKit 2)
-FR19 : Abonnement Pro annuel 45€/an (StoreKit 2)
+FR18 : Abonnement Premium mensuel 4,99 €/mois (StoreKit 2)
+FR19 : Abonnement Premium annuel 44,99 €/an (StoreKit 2)
 FR20 : Consultations illimitées Premium/Pro
 FR21 : Trial gratuit avant abonnement
 

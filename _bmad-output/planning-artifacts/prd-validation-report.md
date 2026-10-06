@@ -78,7 +78,7 @@ overallStatus: PASS
 | Feature #6 — Score fiabilité prévision | Pleinement couvert (FR6) |
 | Feature #7 — Alertes intelligentes | Pleinement couvert (FR22-25) |
 | Features V2 (feed social, timeline, découverte) | Couvert dans Périmètre V2 |
-| Modèle freemium (gratuit / 5€/mois / 45€/an) | Pleinement couvert (FR16-21) |
+| Modèle freemium (gratuit / 4,99 €/mois / 44,99 €/an) | Pleinement couvert (FR16-21) |
 | StoreKit 2 iOS obligatoire | Pleinement couvert (Domaine & Conformité) |
 | RGPD / privacy | Pleinement couvert (NFR9-14) |
 | Contraintes solo dev / budget 10€/mois | Pleinement couvert (Périmètre) |

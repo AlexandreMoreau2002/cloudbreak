@@ -161,7 +161,7 @@ Tests ciblés : `npx vitest run src/components/ThemeToggle.test.tsx`.
 - **Mobile** : réutiliser les contextes existants (`src/contexts/`) et les composants d'état partagés ; pas de nouvelle lib de state global.
 - **Paiement = StoreKit 2** (`react-native-iap` côté app, `app-store-server-library` côté backend). Pas de Stripe, pas de `STRIPE_SECRET_KEY`.
 - **Frontières** : le mobile ne parle qu'à l'API REST, jamais à la DB ni à Redis.
-- **Freemium** : Free = 1 check/jour ; Premium = illimité (mensuel ou annuel, toujours `plan: "premium"` en DB, pas de plan « Pro »). Pas de publicité.
+- **Freemium** : Free = 1 check/jour ; Premium = illimité (mensuel **4,99 €** ou annuel **44,99 €**, essai 7 jours, toujours `plan: "premium"` en DB, pas de plan « Pro »). Ces prix sont ceux d'App Store Connect : ne jamais utiliser 5 € / 45 € / 49,99 €. Premium actif ⇔ `status ∈ {trial, active}` ET `expires_at` futur (`backend/app/domain/entitlement.py`). Pas de publicité.
 
 ### Algorithme de score (`backend/app/domain/`)
 

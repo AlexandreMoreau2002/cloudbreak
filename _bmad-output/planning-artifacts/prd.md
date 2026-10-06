@@ -320,8 +320,8 @@ Pas d'accès galerie photo — l'utilisateur prend sa photo avec l'appareil nati
 
 - FR16 : L'utilisateur non-payant peut effectuer 1 consultation de score par jour
 - FR17 : L'utilisateur voit un paywall naturel au 2e check quotidien avec message de conversion
-- FR18 : L'utilisateur peut s'abonner en Premium mensuel (5€/mois) via StoreKit 2
-- FR19 : L'utilisateur peut s'abonner en Pro annuel (45€/an) via StoreKit 2
+- FR18 : L'utilisateur peut s'abonner en Premium mensuel (4,99 €/mois) via StoreKit 2
+- FR19 : L'utilisateur peut s'abonner en Premium annuel (44,99 €/an) via StoreKit 2
 - FR20 : L'utilisateur Premium/Pro peut effectuer des consultations illimitées
 - FR21 : L'utilisateur peut démarrer une période d'essai gratuit avant de s'abonner
 
