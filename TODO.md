@@ -60,14 +60,17 @@ Fait :
 - [ ] **Libellé création de compte** : retirer « pour cette feature tu as besoin d'un compte ». Candidat : `mobile/src/locales/fr.ts:187` (« Crée un compte pour sauvegarder tes sommets. ») — à confirmer.
 
 #### Infra / prérequis prod (hors story)
-- [ ] **Webhook Apple (App Store Server Notifications V2)** : code, tests, doc et migration `e5f4a0000002` (colonne `apple_period_expires_at`, ordre des événements) prêts dans backend [PR #27](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/27) (374 tests OK, à merger après #26). **Fait côté Apple** : URL Sandbox `https://dev-api.cloudbreak-app.com/api/v1/webhooks/apple` enregistrée et relue dans App Store Connect (Production vide). **Non prouvé** : sélection Version 2 (non visible dans l'interface), notification de test acquittée en 204, événement qui modifie réellement `subscriptions`. Reste à faire : envoyer un test Apple depuis App Store Connect (ou l'API App Store Server) puis l'achat Sandbox sur iPhone (`backend/docs/apple-server-notifications/guide-test.md`). La migration s'applique toute seule au deploy de `develop`.
+- [ ] **Webhook Apple (App Store Server Notifications V2)** : code, tests, doc et migration `e5f4a0000002` **mergés** (backend PR #27, 2026-10-06) et appliqués sur le dev (head vérifié, `/health` 200). **Fait côté Apple** : URL Sandbox `https://dev-api.cloudbreak-app.com/api/v1/webhooks/apple` enregistrée et relue dans App Store Connect (Production vide). **Non prouvé** : sélection Version 2, notification de test acquittée en 204, événement qui modifie réellement `subscriptions`. À faire : envoyer un test Apple depuis App Store Connect puis l'achat Sandbox sur iPhone (`docs/story-4-3-storekit-2-abonnements/guide-test.md`).
 - [ ] **MEP : conteneur backend en mode production** — le dev tourne volontairement en `ENVIRONMENT=development` + `APPLE_ENVIRONMENT=Sandbox` ; la prod exige `Production` + identifiants Apple complets + fichier `.p8` (checklist : `docs/infra-serveur.md` section 8ter).
 - [ ] **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant. Avant d'ouvrir la saisie manuelle : colonne `source` (`seed`|`manual`) + chargement initial insert-only. Ne jamais automatiser le seed au deploy.
 - [ ] **Backups hors VPS + test de restauration** (aujourd'hui `/srv/backups` sur la même machine, rétention 14 j).
 - [ ] **Politique de confidentialité** : mentionner que l'email est conservé par le backend (`users.email`) en plus de Supabase, avant la 1.0.0 (`ops/src/content/`).
 - [ ] **Cause de la disparition de l'image Docker du backend dev** (2026-10-05) : non établie (prune ? build d'un autre projet ?). Surveiller.
 - [ ] **CI backend** : ajouter un job qui joue `alembic upgrade head` sur une base Postgres vide (aurait attrapé le bug `subscriptions`).
-- [ ] **Logs réseau mobile** (`mobile/src/services/fetchService.ts` : response/http error/timeout, mode DEBUG) : non commités sur `feature/4-3-storekit-2-abonnements`, à intégrer dans une PR.
+- [x] **Logs réseau mobile** (`fetchService.ts`, StoreKit, achat — mode DEBUG) : mergés avec la mobile PR #34 (2026-10-06).
+- [ ] **Doc mobile périmée** : `mobile/docs/storekit.md` ligne 168 dit « Pas de webhook Apple » alors que `POST /api/v1/webhooks/apple` existe. À corriger (PR doc mobile).
+- [ ] **Guide de test suivi par git** : `docs/story-4-3-storekit-2-abonnements/guide-test.md` est versionné alors que la règle dit « guides de test jamais commités » (modifié le 2026-10-06 : mise en route Sandbox, accélération du temps, clés Apple inutiles en Sandbox). À trancher : `git rm --cached` ou assumer.
+- [ ] **Branches à arbitrer** (nettoyage 2026-10-06 : backend et mobile propres) : `ops/feature/ops-cloudbreak-favicon` (2 commits, aucune PR) ; racine : `feature/4-3-storekit-2-abonnements` (commits docs/versions/TODO **locaux, non poussés**), `feature/cloudbreak-reveal`, `feature/parcours-compte-2-5-2-6-2-8`, distante `origin/feature/setup-eas-apple-storeconnect`. Le repo racine est « main uniquement » : décider comment atterrir ces commits.
 - [ ] **Rate-limit Traefik** sur `POST /api/v1/webhooks/apple` avant toute exposition prod.
 - [ ] **Action opérateur** : définir `EXPO_PUBLIC_SUPPORT_EMAIL` (voir story 4.6 ci-dessus).
 
@@ -279,6 +282,10 @@ Après la spec écrite et approuvée (`docs/superpowers/specs/`) → `superpower
 
 | Story | PR | Date |
 |---|---|---|
+| Docs — audit produit (serveur dev, `users.email`, migrations au démarrage) | backend [PR #25](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/25) | 2026-10-06 |
+| Fix — `plan` = entitlement actif (`app/domain/entitlement.py`) + seed `pro@`/`test@` réellement Premium | backend [PR #26](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/26) | 2026-10-06 |
+| Feat — notifications Apple : politique d'événements testée, ordre des périodes (`apple_period_expires_at`), garde-fou « une seule tête Alembic » | backend [PR #27](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/27) | 2026-10-06 |
+| Fix — paywall : prix 4,99 € / 44,99 €, badge −25 %, logs de debug StoreKit/réseau | mobile [PR #34](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/34) | 2026-10-06 |
 | Fix — serveur dev remis en ligne (image Docker perdue, `ENVIRONMENT=production` vs Sandbox, table `subscriptions` jamais créée par Alembic, `peaks` vide) + migrations au démarrage du conteneur | backend [PR #23](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/23) | 2026-10-05 |
 | Feat — `users.email` (pont UUID Supabase ↔ compte lisible) | backend [PR #24](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/24) | 2026-10-06 |
 | Story 2.2 — Préférences de notifications (3 toggles indépendants) + réalignement du Profil sur la maquette du 15/09 (sections, `SettingsRow` `tone`/`disabled`/`chevron`, footer version) | backend [PR #19](https://github.com/AlexandreMoreau2002/cloudbreak-backend/pull/19), mobile [PR #27](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/27) | 2026-09-16 |
