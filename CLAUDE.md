@@ -15,7 +15,7 @@ Application iOS **Cloudbreak** : estime la probabilité d'une mer de nuage visib
 Architecture :
 
 ```
-App mobile (Expo SDK 55 / React Native 0.83)
+App mobile (Expo SDK 57 / React Native 0.86)
   ↓ HTTPS REST — Authorization: Bearer {jwt Supabase}
 Backend FastAPI (Gunicorn + Uvicorn workers)
   ↓ app/core/dependencies.py : JWT validé localement + quota Redis
@@ -30,7 +30,7 @@ Vérifié dans les fichiers de dépendances.
 
 | Zone | Technologies |
 |------|--------------|
-| Mobile (`mobile/`) | Expo SDK ~55.0 · React Native 0.83.6 · React 19.2 · Expo Router ~55 · TypeScript ~5.9 · Jest 29 + jest-expo + @testing-library/react-native · ESLint 9 (eslint-config-expo) · `react-native-iap` (StoreKit) · `@supabase/supabase-js` · `i18n-js` · AsyncStorage + expo-secure-store |
+| Mobile (`mobile/`) | Expo SDK ~57.0 · React Native 0.86.3 · React 19.2 · Expo Router ~57 · TypeScript ~6.0 · Jest 29 + jest-expo + @testing-library/react-native · ESLint 9 (eslint-config-expo) · `react-native-iap` (StoreKit) · `@supabase/supabase-js` · `i18n-js` · AsyncStorage + expo-secure-store |
 | Backend (`backend/`) | Python 3.12 · FastAPI 0.115.0 · Uvicorn/Gunicorn · SQLAlchemy 2.0 (asyncpg) · Alembic 1.14 · Pydantic 2.10 · redis-py 5.2 · httpx · python-jose · app-store-server-library · pytest 8 + pytest-cov · Ruff 0.8 · mypy 1.13 (strict) |
 | Ops (`ops/`) | Next.js 16.2 (App Router) · React 19.2 · next-intl 4 · TypeScript 5 · Vitest 4 + Testing Library · Playwright · ESLint 9 · Prettier 3 |
 | Infra | PostgreSQL 16 et Redis 7 (Docker, `backend/docker-compose.dev.yml`) · Dokploy sur VPS OVH (prod/dev, Traefik, webhook GitHub → redeploy) |
