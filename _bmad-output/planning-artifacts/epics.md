@@ -508,6 +508,51 @@ Les utilisateurs peuvent créer un compte, s'authentifier, gérer leurs préfér
 
 ---
 
+### Story 2.9: Nom d’usage dans le Profil
+
+En tant qu’utilisateur avec un compte permanent,
+je veux choisir, modifier ou effacer mon nom d’usage,
+afin que mon Profil m’identifie avec le nom que je souhaite sans exposer mon adresse e-mail comme identité principale.
+
+**FRs couverts :** FR12, FR13
+
+**Acceptance Criteria:**
+
+**Given** un compte e-mail ou Apple permanent sans nom d’usage
+**When** l’utilisateur ouvre le Profil
+**Then** le Profil affiche un état explicite invitant à renseigner un nom d’usage
+**And** aucun nom n’est inventé depuis son adresse e-mail.
+
+**Given** un compte Apple dont le nom a été partagé lors de la création
+**When** le compte est provisionné pour la première fois
+**Then** le nom partagé peut préremplir le nom d’usage
+**And** l’utilisateur peut le modifier ou l’effacer avant et après enregistrement.
+
+**Given** l’écran d’édition du nom d’usage
+**When** l’utilisateur saisit de 1 à 24 caractères (après `trim`) et enregistre
+**Then** la valeur est validée côté API, persistée et affichée dans le Profil
+**And** une saisie de 25 caractères ou plus, ou un champ inconnu, est rejetée avec une erreur exploitable (422)
+**And** une saisie vide après `trim` est acceptée et efface le nom d’usage.
+
+**Given** une modification en cours
+**When** l’utilisateur annule
+**Then** la valeur persistée reste inchangée.
+
+**Given** un utilisateur qui efface son nom d’usage puis enregistre
+**When** il revient au Profil ou se reconnecte
+**Then** le nom d’usage est absent et l’état d’invitation est de nouveau affiché.
+
+**Given** `display_name` est une donnée personnelle
+**When** l’API traite le nom, retourne le Profil ou supprime le compte
+**Then** elle ne le journalise jamais
+**And** la suppression de compte efface la donnée avec la ligne utilisateur.
+
+**Given** le Profil en mode sombre sur un iPhone de 375, 390 ou 430 pt
+**When** un nom d’usage de 24 caractères est affiché ou édité
+**Then** l’interface reste lisible et aucun texte ne déborde.
+
+---
+
 ## Epic 3: Score Mer de Nuage & Consultation de Prévision
 
 Les utilisateurs peuvent rechercher un sommet, consulter le verdict probabiliste avec score, détail des conditions météo, fenêtre temporelle optimale, indicateur de stabilité et message contextuel hors-saison. L'app affiche un message dégradé gracieux en cas d'indisponibilité.

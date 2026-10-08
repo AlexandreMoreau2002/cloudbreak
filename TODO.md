@@ -38,7 +38,7 @@
 
 - **Promesse « Compréhension » insuffisamment remplie** : rendre plus clairs les raisons du verdict et les indicateurs déterminants (les 3 promesses : décision, compréhension, confiance).
 - **Message de lancement sur la maturité du score** : app nouvelle, prédictions en amélioration, retours terrain = calibrage ; pas une météo fiable ni une garantie ; mention de prudence pour les décisions de sécurité.
-- **Politique de confidentialité / CGU** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), et **mentionner que l'email est conservé par le backend** (`users.email`) en plus de Supabase.
+- **Politique de confidentialité / CGU** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), et **mentionner que l'email et le nom d’usage sont conservés par le backend** (`users.email`, `users.display_name`) en plus de Supabase.
 - **`EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`** dans l'environnement EAS de production, avant le premier build.
 - **Supabase** : réactiver « Confirm email » (désactivé en dev) et tester signup → confirmation → login ; décider un projet unique ou dev/prod séparés.
 - **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.

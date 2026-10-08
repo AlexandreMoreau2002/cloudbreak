@@ -59,7 +59,7 @@ development_status:
   # EPIC 2: Authentification & Compte Utilisateur
   # FRs: FR12, FR13, FR14, FR15
   # ─────────────────────────────────────────────────────────────
-  epic-2: done
+  epic-2: in-progress
   2-1-inscription-connexion-utilisateur-supabase-auth: done
   2-2-gestion-preferences-notifications: done
   2-3-permission-geolocalisation-opt-in-sans-blocage: done
@@ -68,6 +68,7 @@ development_status:
   2-6-sign-in-with-apple: done
   2-7-mot-de-passe-oublie: done
   2-8-mini-sondage-post-creation-compte: done
+  2-9-nom-usage-dans-le-profil: in-progress
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
