@@ -24,7 +24,7 @@
 **Docs / dépôt**
 - [ ] `mobile/docs/storekit.md` (~ligne 168) dit « Pas de webhook Apple » : faux (`POST /api/v1/webhooks/apple`).
 - [ ] `docs/story-4-3-storekit-2-abonnements/guide-test.md` est versionné alors que la règle dit « guides de test jamais commités » : `git rm --cached` ou assumer.
-- [ ] Branches à arbitrer : `ops/feature/ops-cloudbreak-favicon` (2 commits, sans PR) ; racine : `feature/cloudbreak-reveal`, `feature/parcours-compte-2-5-2-6-2-8`, `origin/feature/setup-eas-apple-storeconnect`, et `feature/4-3-storekit-2-abonnements` (commits docs locaux non poussés). Le repo racine est « main uniquement » : décider comment les atterrir.
+- [ ] Branches à arbitrer : `ops/feature/ops-cloudbreak-favicon` (2 commits, sans PR) ; racine : `feature/cloudbreak-reveal`, `feature/parcours-compte-2-5-2-6-2-8`, `origin/feature/setup-eas-apple-storeconnect`. Le repo racine est « main uniquement » : décider comment les atterrir.
 
 **Infra**
 - [ ] CI backend : job qui joue `alembic upgrade head` sur une base Postgres **vide** (aurait attrapé le bug `subscriptions`).
@@ -42,7 +42,6 @@
 - **Supabase** : réactiver « Confirm email » (désactivé en dev) et tester signup → confirmation → login ; décider un projet unique ou dev/prod séparés.
 - **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.
 - **Nom utilisateur** (avatar + nom dans le Profil) : pas de champ en base, à concevoir (nouvelle story).
-- **Badge « essai gratuit 7 jours »** : n'apparaît que si StoreKit renvoie l'offre ; preuve Sandbox sur appareil réel requise avant soumission.
 - **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant → d'abord une colonne `source` (`seed`|`manual`) et un chargement initial insert-only. Ne jamais lancer le seed par un deploy.
 - **Production backend** : `ENVIRONMENT=production` exige `APPLE_ENVIRONMENT=Production` + identifiants Apple complets + fichier `.p8` ; le dev reste `development` + `Sandbox`.
 
@@ -56,7 +55,7 @@
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
 | Nom utilisateur | à concevoir | brainstorming puis plan |
-| QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée. Pour la 4.3 : annuel, restauration après réinstallation, conflit de compte (409), expiration → `expired` + retour du quota, remboursement (`revoked`), achat hors ligne |
+| QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée (scénarios 4.3 restants : voir fin de `docs/story-4-3-storekit-2-abonnements/guide-test.md`) |
 | 1.8 PostHog réel + Sentry | post-MVP | après la sortie |
 | Epic 8 (growth V2) et 9 (landing) | hors scope MVP | décidé le 2026-08-08 |
 | 6.2 Photo de validation terrain | dropée | décision explicite |
