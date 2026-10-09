@@ -200,7 +200,7 @@ Toute modification de la formule ou des seuils = changement métier : demander c
 
 ## Data model & API
 
-Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `email` (copie du claim JWT, jamais exposée ni loggée), `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events` ni de colonne `push_token` dans le code actuel.
+Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `email` (copie du claim JWT, jamais exposée ni loggée), `display_name` (nom d'usage, 24 car. max, nullable, jamais loggé), `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events` ni de colonne `push_token` dans le code actuel.
 
 Endpoints (préfixe `/api/v1`, source : `backend/app/api/v1/endpoints/`) :
 
@@ -213,6 +213,7 @@ DELETE /api/v1/user/favorites/{peak_id}
 POST   /api/v1/validations
 GET    /api/v1/user/me                   POST /api/v1/user/provision
 PATCH  /api/v1/user/survey               PATCH /api/v1/user/preferences
+PATCH  /api/v1/user/display-name
 PATCH  /api/v1/user/notifications        DELETE /api/v1/user
 GET    /api/v1/user/subscription         POST /api/v1/user/subscription/verify
 POST   /api/v1/webhooks/...              # webhooks Apple (subscription.py)
@@ -220,7 +221,7 @@ GET    /health
 ```
 
 - `POST /api/v1/user/push-token` : **aucune route trouvée dans le code** — prévu, non implémenté.
-- Endpoints protégés par JWT ; `/health` est public. `provision`, `survey` et `preferences` exigent un compte permanent (pas anonyme).
+- Endpoints protégés par JWT ; `/health` est public. `provision`, `survey`, `preferences` et `display-name` exigent un compte permanent (pas anonyme).
 
 ## Environment variables
 

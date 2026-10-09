@@ -15,10 +15,10 @@
 ## 2. Fixes à faire
 
 **App**
-- [ ] **Annulation de la feuille Apple fait avancer le parcours** (story 2.6) : `AuthContext.signInWithApple` renvoie `null` sur `ERR_REQUEST_CANCELED`, que `src/app/account.tsx` (`apple()`) lit comme un succès. Fix : valeur distincte (`'cancelled'`), ne rien faire dans `apple()`, adapter le test « traite l'annulation Apple… » (`AuthContext.test.tsx`).
 - [ ] **Session invitée supprimée côté Supabase = app bloquée** : le JWT d'un invité supprimé donne 403 `User from sub claim in JWT does not exist` (Apple `POST /token`, e-mail `PUT /user`) sans message. Fix : détecter ce 403 dans `AuthContext.tsx` et repartir sur une session invitée neuve. Contournement dev : bouton « Réinitialiser la session ».
 - [ ] **Quota dépassé (429) affiché comme une erreur réseau** (accueil après reset de session, recherche) : 429 → paywall, garder le sommet déjà chargé. Fichiers : `mobile/src/hooks/useWeekData.ts`, hooks de recherche.
 - [ ] **Cache offline ignoré quand le quota est dépassé** (régression 7.2) : un freemium voit le paywall au lieu du cache (TTL 3 h). Attendu : afficher le cache puis proposer le paywall.
+- [ ] **Rafale de fetchs à l'ouverture de l'app** (constat 2026-10-09, log Metro) : 63 `GET /score` d'un coup (7 jours × 9 heures, `useWeekData.ts`, ~3,6 s au total, 2 × 503 `WEATHER_UNAVAILABLE`), `GET /user/favorites` appelé 2 fois (`mount-or-session` puis `manual`), `useTerrainAutoDetect` distance `NaN`. Ce n'est pas Expo/Metro : requêtes émises par le code de l'app. À investiguer : (1) un endpoint batch (une requête semaine) ou chargement paresseux des heures ; (2) les 503 = rafale vers Open-Meteo / cache Redis non partagé entre requêtes concurrentes ; (3) chaque `GET /score` écrit une ligne `predictions` et peut consommer le quota freemium → vérifier ; (4) dédoublonner `useFavorites` ; (5) corriger le `NaN`.
 - [ ] **Libellé de création de compte** : retirer « pour cette feature tu as besoin d'un compte » (candidat : `mobile/src/locales/fr.ts` ~ligne 187).
 
 **Docs / dépôt**
@@ -41,7 +41,6 @@
 - **`EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`** dans l'environnement EAS de production, avant le premier build.
 - **Supabase** : réactiver « Confirm email » (désactivé en dev) et tester signup → confirmation → login ; décider un projet unique ou dev/prod séparés.
 - **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.
-- **Nom utilisateur** (avatar + nom dans le Profil) : pas de champ en base, à concevoir (nouvelle story).
 - **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant → d'abord une colonne `source` (`seed`|`manual`) et un chargement initial insert-only. Ne jamais lancer le seed par un deploy.
 - **Production backend** : `ENVIRONMENT=production` exige `APPLE_ENVIRONMENT=Production` + identifiants Apple complets + fichier `.p8` ; le dev reste `development` + `Sandbox`.
 
@@ -54,7 +53,6 @@
 | 3.6 Universal Links | backlog | rien, domaine prêt |
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
-| Nom utilisateur | à concevoir | brainstorming puis plan |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée (scénarios 4.3 restants : voir fin de `docs/story-4-3-storekit-2-abonnements/guide-test.md`) |
 | 1.8 PostHog réel + Sentry | post-MVP | après la sortie |
 | Epic 8 (growth V2) et 9 (landing) | hors scope MVP | décidé le 2026-08-08 |

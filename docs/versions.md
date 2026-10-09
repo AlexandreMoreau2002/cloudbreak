@@ -8,8 +8,8 @@
 
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
-| Backend | `backend/` | `develop` | `44c065c` (2026-10-06) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-06 : service 1/1, `/health` 200, base au head `e5f4a0000002`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — PR #22 StoreKit, #23 table `subscriptions`, #24 `users.email`, #25 audit, #26 plan = entitlement actif + seed, #27 notifications Apple + ordre des événements | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `7171962` (2026-10-08) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
+| Backend | `backend/` | `develop` | `a4cff65` (2026-10-09) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-09 : service 1/1, `/health` 200, base au head `fb27705a94f7`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — PR #22 StoreKit, #23 table `subscriptions`, #24 `users.email`, #25 audit, #26 plan = entitlement actif + seed, #27 notifications Apple + ordre des événements, #28 `users.display_name` (nom d'usage) | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
+| Mobile | `mobile/` | `develop` | `63703b0` (2026-10-09) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
 | Ops | `ops/` | `develop` | `2bbf128` (2026-09-13) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
@@ -22,11 +22,11 @@
 ## 2. Base de données
 
 - PostgreSQL 16 (instance Dokploy dédiée au backend, environnement dev)
-- Migrations Alembic : **13 fichiers** dans `backend/alembic/versions/` (init peaks, idx peaks name,
+- Migrations Alembic : **14 fichiers** dans `backend/alembic/versions/` (init peaks, idx peaks name,
   predictions, terrain_validations, user_favorites, region sur peaks, users, fusion des deux têtes,
   préférences de notifications, **`a9c4e7b2d5f1` création de `subscriptions` si absente** (la table
   n'était créée par aucune migration, seulement par `create_all` en local), cycle de vie Apple
-  (`d4e3f0000001`), **`c8d1e5f2a7b3` colonne `users.email`**, **`e5f4a0000002` colonne `subscriptions.apple_period_expires_at`** : fin de la période payée Apple, sert à ordonner les notifications). Head actuel : `e5f4a0000002` ; un test (`tests/test_migration_single_head.py`) échoue s'il y a plus d'une tête.
+  (`d4e3f0000001`), **`c8d1e5f2a7b3` colonne `users.email`**, **`e5f4a0000002` colonne `subscriptions.apple_period_expires_at`** : fin de la période payée Apple, sert à ordonner les notifications), **`fb27705a94f7` colonne `users.display_name`** (nom d'usage, `VARCHAR(24)` nullable). Head actuel : `fb27705a94f7` ; un test (`tests/test_migration_single_head.py`) échoue s'il y a plus d'une tête.
 - **Les migrations sont appliquées automatiquement au démarrage du conteneur** (`CMD` du Dockerfile
   backend : `alembic upgrade head` avant `uvicorn`). Si une migration échoue, le conteneur ne démarre pas.
 - **Le seed des sommets n'est jamais automatique** : `python -m app.db.seed` à lancer à la main sur une base
