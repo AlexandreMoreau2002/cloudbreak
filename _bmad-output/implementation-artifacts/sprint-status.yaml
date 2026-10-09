@@ -91,7 +91,7 @@ development_status:
   epic-4: in-progress
   4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
-  4-3-abonnements-storekit-2-premium-pro: review
+  4-3-abonnements-storekit-2-premium-pro: done  # clôturée 2026-10-09 : achat mensuel + essai, trial→active, webhook V2 (SUBSCRIBED/DID_RENEW → 204) prouvés en Sandbox ; scénarios restants dans TODO.md (QA manuelle)
   4-4-conformite-apple-app-store: done
   4-5-service-web-cloudbreak-ops-pages-legales: done
   epic-4-retrospective: optional

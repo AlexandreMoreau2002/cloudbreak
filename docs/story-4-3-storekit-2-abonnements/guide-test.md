@@ -77,15 +77,21 @@ Le renouvellement automatique est limité à quelques cycles (6 environ), puis l
 
 ## Checklist avant PR / release
 
-- [ ] Setup du nouvel iPhone fait (mode développeur, build installée, Sandbox Tester connecté, prix Apple affichés).
-- [ ] Les validations automatisées sont vertes et consignées dans la checklist Notion.
+- [x] Setup du nouvel iPhone fait (mode développeur, build installée, Sandbox Tester connecté, prix Apple affichés).
+- [x] Les validations automatisées sont vertes et consignées dans la checklist Notion.
 - [ ] Mensuel et annuel ont été testés sur appareil réel avec Sandbox.
-- [ ] L'essai réel est bien 7 jours et sans débit initial.
+- [x] L'essai réel est bien 7 jours et sans débit initial (Sandbox : 3 min, feuille Apple annonçant l'absence de prélèvement).
 - [ ] Achat visiteur bloqué jusqu'au compte permanent ; replay vérifié.
 - [ ] Annulation, restauration, expiration, remboursement et conflit de compte vérifiés.
-- [ ] Notification V2 Sandbox reçue par l'endpoint dev et test notification Apple passée.
-- [ ] Aucun JWS, UUID non masqué, JWT ni secret n'a été sauvegardé.
+- [x] Notification V2 Sandbox reçue par l'endpoint dev (204) : `SUBSCRIBED` puis 5 `DID_RENEW`. Le test notification Apple explicite reste à faire.
+- [x] Aucun JWS, UUID non masqué, JWT ni secret n'a été sauvegardé.
 
-Statut de preuve Apple réelle : la configuration des produits est faite ; les achats Sandbox sur
-appareil réel et les notifications V2 restent à consigner dans la checklist Notion. Cette
-documentation ne remplace pas ce test.
+Statut de preuve Apple réelle (2026-10-08, iPhone iOS 27, backend dev, Sandbox) :
+
+- Achat **mensuel** avec essai : feuille Apple en Sandbox, `verify` 200, ligne `subscriptions` en
+  `premium` / `trial`, quota levé.
+- `trial` → `active` observé, sans ouvrir l'app pour le dernier cycle ; renouvellements Sandbox
+  reçus par le webhook (`DID_RENEW`, 204, une ligne par `notification_uuid`).
+- **Non couverts à ce jour** (reportés dans `TODO.md`, QA manuelle) : achat annuel, restauration
+  après réinstallation, conflit de compte (409), expiration vers `expired` avec retour du quota,
+  remboursement (`revoked`), achat hors ligne, test notification Apple explicite.

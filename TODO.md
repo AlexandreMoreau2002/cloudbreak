@@ -1,17 +1,16 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-10-06. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Mis à jour le 2026-10-09. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
 
 ---
 
 ## 1. Features urgentes (dans l'ordre)
 
-1. **Clôturer la story 4.3 (StoreKit 2)** — détail en §5.
-2. **Build signée + TestFlight** (story 4.6, brouillon `_bmad-output/implementation-artifacts/4-6-build-signee-testflight.md`).
-3. **Notifications push** (epic 5 : 5.1 infra → 5.2 alertes → 5.3 validation terrain) — débloqué (compte Apple Dev validé).
-4. **Universal Links iOS** (story 3.6) — `apple-app-site-association` + `associatedDomains`, domaine prêt.
-5. **Environnement Dokploy de production** — checklist `docs/infra-serveur.md` §8ter.
+1. **Build signée + TestFlight** (story 4.6, brouillon `_bmad-output/implementation-artifacts/4-6-build-signee-testflight.md`).
+2. **Notifications push** (epic 5 : 5.1 infra → 5.2 alertes → 5.3 validation terrain) — débloqué (compte Apple Dev validé).
+3. **Universal Links iOS** (story 3.6) — `apple-app-site-association` + `associatedDomains`, domaine prêt.
+4. **Environnement Dokploy de production** — checklist `docs/infra-serveur.md` §8ter.
 
 ## 2. Fixes à faire
 
@@ -51,53 +50,18 @@
 
 | Feature | Statut | Bloqué par / note |
 |---|---|---|
-| 4.3 StoreKit 2 (abonnements) | en clôture | tests Sandbox iPhone + webhook à prouver (§5) |
-| 4.6 Build signée / TestFlight | brouillon | `EXPO_PUBLIC_SUPPORT_EMAIL`, assets, 4.3 |
+| 4.6 Build signée / TestFlight | brouillon | `EXPO_PUBLIC_SUPPORT_EMAIL`, assets |
 | Epic 5 — push (5.1, 5.2, 5.3) | backlog | rien, débloqué |
 | 3.6 Universal Links | backlog | rien, domaine prêt |
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
 | Nom utilisateur | à concevoir | brainstorming puis plan |
-| QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée |
+| QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée. Pour la 4.3 : annuel, restauration après réinstallation, conflit de compte (409), expiration → `expired` + retour du quota, remboursement (`revoked`), achat hors ligne |
 | 1.8 PostHog réel + Sentry | post-MVP | après la sortie |
 | Epic 8 (growth V2) et 9 (landing) | hors scope MVP | décidé le 2026-08-08 |
 | 6.2 Photo de validation terrain | dropée | décision explicite |
 
 ## 5. Détail — ce qu'il reste à valider
-
-### Story 4.3 — StoreKit 2 (clôture)
-
-**Acquis (ne plus y revenir)** : code mergé (backend + mobile), produits visibles et prix 4,99 € / 44,99 € dans le paywall (testé sur iPhone contre `dev-api`), badge −25 %, règle d'entitlement (`backend/app/domain/entitlement.py`), code du webhook mergé et appliqué sur le dev, URL Sandbox du webhook enregistrée dans App Store Connect (Production laissée vide).
-
-**A. App Store Connect — à vérifier dans la console**
-- [ ] Les deux produits (`com.alexandremoreau.cloudbreak.premium.monthly` et `.annual`) : capture « équipe de vérification » ajoutée, statut **Prêt à soumettre**.
-- [ ] Un **Sandbox Tester** existe (France, e-mail jamais utilisé comme Apple ID) et est connecté sur l'iPhone (Réglages → Développeur → Compte Apple Sandbox ; mode développeur actif).
-- [ ] App Store Server Notifications : **version 2** bien sélectionnée pour l'URL Sandbox `https://dev-api.cloudbreak-app.com/api/v1/webhooks/apple`.
-
-**B. Webhook Apple — à prouver (rien n'est prouvé aujourd'hui)**
-- [ ] Une notification de test d'Apple arrive sur l'endpoint dev et est acquittée en **204** (logs : `ssh vps-ovh-projets "sudo docker service logs app-reboot-primary-circuit-vmgb6t --since 10m 2>&1 | grep -v 'GET /health'"`).
-- [ ] Un événement qui change l'abonnement (renouvellement, expiration) met réellement à jour `subscriptions` sans ouvrir l'app.
-- [ ] Un même événement rejoué est acquitté sans second effet (idempotence).
-
-**C. Tests Sandbox sur iPhone réel** (guide pas à pas : `docs/story-4-3-storekit-2-abonnements/guide-test.md`)
-Prérequis : compte Cloudbreak **permanent** (pas anonyme), app en `EXPO_PUBLIC_API_URL=https://dev-api.cloudbreak-app.com` + `EXPO_PUBLIC_DEBUG=true`. Temps accéléré en Sandbox (essai 7 j ≈ 3 min, mensuel ≈ 5 min, annuel ≈ 1 h, 6 renouvellements max, valeurs Apple à reconfirmer).
-- [ ] **Achat mensuel avec essai** : feuille Apple « Sandbox », essai affiché seulement si StoreKit le confirme, aucune facturation initiale. Attendu : paywall fermé, `isPremium`, quota levé ; logs `[subscription]` et `verify … 200` ; ligne `subscriptions` en `premium` / `trial`.
-- [ ] **Achat annuel** : mêmes vérifications.
-- [ ] **Transitions** : `trial → active → expired` observées ; après expiration l'API renvoie `plan = free` et le quota freemium revient.
-- [ ] **Restauration** (« Restaurer un achat », puis réinstallation) : l'abonnement est retrouvé.
-- [ ] **Conflit** : le même abonnement Apple sur un second compte Cloudbreak → `409 SUBSCRIPTION_OWNERSHIP_CONFLICT`.
-- [ ] **Transaction d'un autre compte** (`app_account_token` ≠ UUID du compte) → `400 APPLE_TRANSACTION_INVALID`.
-- [ ] **Compte anonyme** : l'achat est bloqué et renvoie vers la création de compte.
-- [ ] **Hors ligne** : un achat sans réseau ne débloque rien à tort.
-- [ ] **Remboursement / révocation** : non jouable par l'utilisateur en Sandbox ; couvert par les tests automatiques et par une notification Apple rejouée. Vérifier l'état `revoked`.
-- Entre deux tests : App Store Connect → Sandbox → Testeurs → « Effacer l'historique d'achat ».
-- Vérifier la ligne en base : `SELECT u.email, s.plan, s.status, s.expires_at, (s.plan IN ('premium','pro') AND s.status IN ('trial','active') AND s.expires_at > now()) AS premium_actif FROM subscriptions s LEFT JOIN users u ON u.supabase_user_id = s.user_id;`
-- Comptes de test locaux : après le merge de l'entitlement, `make unseed-test && make seed-test` rend `pro@` et `test@` réellement illimités.
-
-**D. Fermeture** (seulement quand A, B, C sont verts)
-- [ ] Cocher la checklist Notion de la story ; `sprint-status.yaml` : 4-3 `review` → `done`.
-- [ ] Docs : `docs/story-4-3-…`, `backend/docs/security.md` (retirer « à revoir après test Sandbox »), `docs/versions.md`.
-- [ ] Bump des refs de submodules dans le repo racine ; remettre les submodules sur `develop`, supprimer les branches mergées.
 
 ### Story 2.6 / 2.7 / 2.8 — à valider en conditions réelles
 - [ ] **2.6 Sign in with Apple** : jamais testé avec un vrai compte Apple Dev sur build native (prérequis EAS/Apple prêts).
