@@ -50,7 +50,7 @@
 |---|---|---|
 | 4.6 Build signée / TestFlight | brouillon | `EXPO_PUBLIC_SUPPORT_EMAIL`, assets |
 | Epic 5 — push (5.1, 5.2, 5.3) | backlog | rien, débloqué |
-| 3.6b Message contextuel hors-saison (FR7) | backlog | volet non fait de la story 3.6 : message backend selon la météo réelle (score < 20 %, été) + affichage mobile |
+| 3.6b Message contextuel hors-saison (FR7) | reporté | prévu au MVP (PRD), repoussé le 2026-10-12 : on est en pleine saison, à faire avant l'été 2027. Message choisi côté backend selon la météo réelle (score < 20 %, été) + affichage mobile |
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée (scénarios 4.3 restants : voir fin de `docs/story-4-3-storekit-2-abonnements/guide-test.md`) |
