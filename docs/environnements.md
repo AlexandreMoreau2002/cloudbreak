@@ -63,8 +63,14 @@
   du code/de la doc vivante.
 - DNS : 2 enregistrements A créés (`dev-api`, `dev-ops` → `51.178.37.35`). Les enregistrements
   prod (`api`, `ops`, racine pour la landing) ne sont **pas encore créés**.
-- Universal Links iOS (`.well-known/apple-app-site-association`) : **pas fait**, bloqué par le
-  compte Apple Developer (story 3.6, deferred).
+- Universal Links iOS (story 3.6) : code fait. Le fichier `.well-known/apple-app-site-association`
+  est servi par `ops` (route Next.js, `APPLE_TEAM_ID` en variable d'env ops, déjà posée dans Dokploy
+  sur `cloudbreak-ops`). Le domaine racine n'est pas utilisé : le lien de partage est
+  `<hôte ops de l'env>/sommet/<slug>` (hôte lu dans `EXPO_PUBLIC_LEGAL_BASE_URL` : dev
+  `dev-ops.cloudbreak-app.com`, prod `ops.cloudbreak-app.com`). Les Associated Domains sont calculés
+  dans `mobile/app.config.ts` (`?mode=developer` automatique en dev). Scénario principal validé sur
+  iPhone le 2026-10-12. **Reste à faire pour la prod** : DNS `ops`, `APPLE_TEAM_ID` /
+  `NEXT_PUBLIC_APP_STORE_URL` côté Dokploy prod, `EXPO_PUBLIC_LEGAL_BASE_URL` de prod dans EAS.
 
 ## 4. Auth — Supabase
 
@@ -106,7 +112,7 @@ encore été soumise à App Store Connect.**
     provider OAuth réel + la vraie distribution en dépendent
   - Push notifications (certificats APNs, Epic 5)
   - StoreKit 2 réel (story 4.3)
-  - Universal Links (story 3.6)
+  - Universal Links (story 3.6) — code fait, validé sur iPhone en dev (2026-10-12), reste le DNS/déploiement ops prod
 - **App Store Connect / StoreKit** : app créée ; groupe `Cloudbreak Premium`, produits mensuel
   (4,99 €) et annuel (44,99 €), essais Apple de 7 jours, France et achats individuels configurés
   le 2026-10-03. Voir

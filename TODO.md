@@ -9,8 +9,7 @@
 
 1. **Build signée + TestFlight** (story 4.6, brouillon `_bmad-output/implementation-artifacts/4-6-build-signee-testflight.md`).
 2. **Notifications push** (epic 5 : 5.1 infra → 5.2 alertes → 5.3 validation terrain) — débloqué (compte Apple Dev validé).
-3. **Universal Links iOS** (story 3.6) — `apple-app-site-association` + `associatedDomains`, domaine prêt.
-4. **Environnement Dokploy de production** — checklist `docs/infra-serveur.md` §8ter.
+3. **Environnement Dokploy de production** — checklist `docs/infra-serveur.md` §8ter.
 
 ## 2. Fixes à faire
 
@@ -42,6 +41,7 @@
 - **Supabase** : réactiver « Confirm email » (désactivé en dev) et tester signup → confirmation → login ; décider un projet unique ou dev/prod séparés.
 - **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.
 - **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant → d'abord une colonne `source` (`seed`|`manual`) et un chargement initial insert-only. Ne jamais lancer le seed par un deploy.
+- **Universal Links (story 3.6)** : tester sur iPhone les scénarios restants (sommet inconnu, onboarding non terminé, app désinstallée) ; à la mise en prod, créer le DNS `ops.cloudbreak-app.com`, poser `APPLE_TEAM_ID` / `NEXT_PUBLIC_APP_STORE_URL` côté Dokploy prod et fournir `EXPO_PUBLIC_LEGAL_BASE_URL` de prod dans l'env EAS.
 - **Production backend** : `ENVIRONMENT=production` exige `APPLE_ENVIRONMENT=Production` + identifiants Apple complets + fichier `.p8` ; le dev reste `development` + `Sandbox`.
 
 ## 4. Features restantes
@@ -50,7 +50,7 @@
 |---|---|---|
 | 4.6 Build signée / TestFlight | brouillon | `EXPO_PUBLIC_SUPPORT_EMAIL`, assets |
 | Epic 5 — push (5.1, 5.2, 5.3) | backlog | rien, débloqué |
-| 3.6 Universal Links | backlog | rien, domaine prêt |
+| 3.6b Message contextuel hors-saison (FR7) | backlog | volet non fait de la story 3.6 : message backend selon la météo réelle (score < 20 %, été) + affichage mobile |
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée (scénarios 4.3 restants : voir fin de `docs/story-4-3-storekit-2-abonnements/guide-test.md`) |
@@ -67,9 +67,6 @@
 
 ### Story 4.6 — Build signée et TestFlight
 - [ ] Build EAS signée, app dans App Store Connect (créée), build envoyée sur TestFlight et approuvée ; `EXPO_PUBLIC_SUPPORT_EMAIL` posé avant ; assets prêts (§3).
-
-### Story 3.6 — Universal Links
-- [ ] `.well-known/apple-app-site-association` servi par le site (`cloudbreak-app.com`) + `associatedDomains` dans `app.json` ; l'URL de partage `https://cloudbreak-app.com/sommet/{slug}` ouvre l'app.
 
 ### Epic 5 — Notifications push
 - [ ] 5.1 infra Expo Push (route `POST /api/v1/user/push-token` **inexistante**, colonne `push_token` absente) → 5.2 alertes favoris / régionales (Premium) → 5.3 notification GPS de validation terrain.

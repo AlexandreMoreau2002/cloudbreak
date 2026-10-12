@@ -1,7 +1,7 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-10-06 (webhook Apple + ordre des événements mergés, plan = entitlement actif, paywall 4,99 € / 44,99 €).
+> Dernière mise à jour : 2026-10-12 (story 3.6 Universal Links mergée : ops `4ed4a91`, mobile `2e2ecf4`).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
@@ -9,8 +9,8 @@
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
 | Backend | `backend/` | `develop` | `a4cff65` (2026-10-09) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-09 : service 1/1, `/health` 200, base au head `fb27705a94f7`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — PR #22 StoreKit, #23 table `subscriptions`, #24 `users.email`, #25 audit, #26 plan = entitlement actif + seed, #27 notifications Apple + ordre des événements, #28 `users.display_name` (nom d'usage) | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `63703b0` (2026-10-09) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
-| Ops | `ops/` | `develop` | `2bbf128` (2026-09-13) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
+| Mobile | `mobile/` | `develop` | `2e2ecf4` (2026-10-12) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
+| Ops | `ops/` | `develop` | `4ed4a91` (2026-10-12) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
 > DNS + domaines Dokploy configurés, `dev-api`/`dev-ops` vérifiés en ligne (200), code des 3 submodules
@@ -18,6 +18,11 @@
 
 > ✅ **Écart résolu (2026-09-26)** : `CLAUDE.md` (racine) indiquait « FastAPI 0.135 » alors que le
 > `requirements.txt` est en `0.115.0` — doc alignée sur le code (pas d'upgrade FastAPI prévu).
+
+> **Story 3.6 (Universal Links, mergée le 2026-10-12)** : ops `4ed4a91` (route AASA + page de repli `/sommet/[slug]`),
+> mobile `2e2ecf4` (#39). Variables d'env ops (Dokploy, app `cloudbreak-ops`) : `APPLE_TEAM_ID` (posée, sert à générer
+> l'AASA) et `NEXT_PUBLIC_APP_STORE_URL` (vide tant que l'app n'est pas publiée). Le lien de partage utilise l'hôte ops
+> de l'environnement (`EXPO_PUBLIC_LEGAL_BASE_URL`), pas le domaine racine.
 
 ## 2. Base de données
 

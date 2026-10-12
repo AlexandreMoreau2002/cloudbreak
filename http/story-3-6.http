@@ -1,0 +1,11 @@
+@host = https://dev-ops.cloudbreak-app.com
+
+### AASA — 200, application/json, sans redirection
+GET {{host}}/.well-known/apple-app-site-association
+
+### Page de repli (307 vers /fr/sommet/... puis 200)
+GET {{host}}/sommet/mont-blanc
+
+### Après création du DNS prod (ops.cloudbreak-app.com)
+# GET https://ops.cloudbreak-app.com/.well-known/apple-app-site-association
+# GET https://ops.cloudbreak-app.com/sommet/mont-blanc
