@@ -1,0 +1,31 @@
+# Nécessite SUPABASE_PUBLISHABLE_KEY et SUPABASE_SERVICE_ROLE_KEY dans un .env local (jamais versionné)
+@supabaseUrl = https://yggehvcwxiqrkhsoxrxe.supabase.co
+@anonKey = {{$dotenv SUPABASE_PUBLISHABLE_KEY}}
+@serviceKey = {{$dotenv SUPABASE_SERVICE_ROLE_KEY}}
+
+### 1. Créer un invité (anonyme)
+# @name guest
+POST {{supabaseUrl}}/auth/v1/signup
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{ "data": {} }
+
+###
+@guestId = {{guest.response.body.user.id}}
+@guestToken = {{guest.response.body.access_token}}
+
+### 2. Supprimer l'invité côté serveur
+# Clé service role : usage local uniquement
+DELETE {{supabaseUrl}}/auth/v1/admin/users/{{guestId}}
+apikey: {{anonKey}}
+Authorization: Bearer {{serviceKey}}
+
+### 3. Constater le 403 avec le JWT orphelin
+# Attendu : 403 "User from sub claim in JWT does not exist"
+PUT {{supabaseUrl}}/auth/v1/user
+apikey: {{anonKey}}
+Authorization: Bearer {{guestToken}}
+Content-Type: application/json
+
+{ "email": "test@example.com" }
