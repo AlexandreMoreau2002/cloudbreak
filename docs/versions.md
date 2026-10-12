@@ -1,7 +1,7 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-10-12 (story 3.6 Universal Links mergée : ops `4ed4a91`, mobile `2e2ecf4`).
+> Dernière mise à jour : 2026-10-12 (fix session invitée supprimée côté Supabase mergé : mobile `9a356ee` ; avant : story 3.6 Universal Links, ops `4ed4a91`, mobile `2e2ecf4`).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
@@ -9,7 +9,7 @@
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
 | Backend | `backend/` | `develop` | `a4cff65` (2026-10-09) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-09 : service 1/1, `/health` 200, base au head `fb27705a94f7`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — PR #22 StoreKit, #23 table `subscriptions`, #24 `users.email`, #25 audit, #26 plan = entitlement actif + seed, #27 notifications Apple + ordre des événements, #28 `users.display_name` (nom d'usage) | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `2e2ecf4` (2026-10-12) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear` (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
+| Mobile | `mobile/` | `develop` | `9a356ee` (2026-10-12) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear`, #43 réparation silencieuse d'une session invitée supprimée côté Supabase (création de compte Apple et ajout d'e-mail rejoués une fois ; `testTimeout` Jest à 15 s ; aucune nouvelle dépendance) (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
 | Ops | `ops/` | `develop` | `4ed4a91` (2026-10-12) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.

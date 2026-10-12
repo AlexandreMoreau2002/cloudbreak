@@ -14,7 +14,6 @@
 ## 2. Fixes à faire
 
 **App**
-- [ ] **Session invitée supprimée côté Supabase = app bloquée** : le JWT d'un invité supprimé donne 403 `User from sub claim in JWT does not exist` (Apple `POST /token`, e-mail `PUT /user`) sans message. Fix : détecter ce 403 dans `AuthContext.tsx` et repartir sur une session invitée neuve. Contournement dev : bouton « Réinitialiser la session ».
 - [ ] **Quota dépassé (429) affiché comme une erreur réseau** (accueil après reset de session, recherche) : 429 → paywall, garder le sommet déjà chargé. Fichiers : `mobile/src/hooks/useWeekData.ts`, hooks de recherche.
 - [ ] **Cache offline ignoré quand le quota est dépassé** (régression 7.2) : un freemium voit le paywall au lieu du cache (TTL 3 h). Attendu : afficher le cache puis proposer le paywall.
 - [ ] **Rafale de fetchs à l'ouverture de l'app** (constat 2026-10-09, log Metro) : 63 `GET /score` d'un coup (7 jours × 9 heures, `useWeekData.ts`, ~3,6 s au total, 2 × 503 `WEATHER_UNAVAILABLE`), `GET /user/favorites` appelé 2 fois (`mount-or-session` puis `manual`), `useTerrainAutoDetect` distance `NaN`. Ce n'est pas Expo/Metro : requêtes émises par le code de l'app. À investiguer : (1) un endpoint batch (une requête semaine) ou chargement paresseux des heures ; (2) les 503 = rafale vers Open-Meteo / cache Redis non partagé entre requêtes concurrentes ; (3) chaque `GET /score` écrit une ligne `predictions` et peut consommer le quota freemium → vérifier ; (4) dédoublonner `useFavorites` ; (5) corriger le `NaN`.
