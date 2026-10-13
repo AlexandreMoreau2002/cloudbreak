@@ -1,6 +1,6 @@
 # Infra serveur — VPS OVH / Dokploy
 
-> Référence unique et à jour sur l'hébergement de Cloudbreak. Dernière mise à jour : 2026-08-09 (migration domaine `cloudbreak-app.com` terminée, environnement Dokploy renommé `dev`, voir section 4bis).
+> Référence unique et à jour sur l'hébergement de Cloudbreak. Dernière mise à jour : 2026-10-13 (backend `develop` après le correctif quota/cache : service 1/1, migrations au head, `/health` avec Postgres et Redis OK).
 > Historique détaillé des sessions de config (contexte pas-à-pas) : voir `TODO.md` section "Infra Dokploy".
 > Secrets (mots de passe, tokens API, refreshToken par app) : **jamais ici** — source de vérité = page Notion "🖥️ Serveur OVH" + Dokploy lui-même.
 
@@ -42,7 +42,7 @@ un repo GitHub (Dockerfile ou Nixpacks selon l'app).
 
 | App | Submodule | Repo GitHub | Branche | URL | Build | `applicationId` | Webhook GitHub | Dernier déploiement vérifié |
 |---|---|---|---|---|---|---|---|---|
-| Backend | `backend/` | `cloudbreak-backend` | `develop` | https://dev-api.cloudbreak-app.com | Dockerfile | `5o3f7yJUBmbYWC2uIgiZb` | ✅ actif | 2026-08-09 |
+| Backend | `backend/` | `cloudbreak-backend` | `develop` | https://dev-api.cloudbreak-app.com | Dockerfile | `5o3f7yJUBmbYWC2uIgiZb` | ✅ actif | 2026-10-13 — commit `a92406f`, service 1/1, startup et `/health` OK |
 | Ops | `ops/` | `cloudbreak-ops` | `develop` | https://dev-ops.cloudbreak-app.com | Nixpacks (Next.js) | `-qcn37AFIyLY_Sn_5QbW6` | ✅ actif | 2026-08-09 |
 
 - Backend : Postgres dédié + Redis dédié (instances Dokploy séparées ; pas de détails de connexion dans ce fichier — voir Dokploy).
