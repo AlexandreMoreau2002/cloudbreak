@@ -49,7 +49,7 @@
 
 | Fichier | Contenu |
 |---|---|
-| [`backend/docs/weather-cache-architecture.md`](backend/docs/weather-cache-architecture.md) | Architecture du cache météo Redis (TTL 10min, clés `weather:*`, stratégie hit/miss, provider abstrait Open-Meteo / Météo-France) |
+| [`backend/docs/weather-cache-architecture.md`](backend/docs/weather-cache-architecture.md) | Architecture du cache météo Redis (TTL 30 min / 1 800 secondes, clés `weather:*`, stratégie hit/miss, provider abstrait Open-Meteo / Météo-France) |
 | [`backend/docs/redis.md`](backend/docs/redis.md) | Configuration Redis, clés utilisées (`weather:*`, `quota:*`, `cache:*`), TTL, commandes utiles |
 | [`backend/docs/supabase.md`](backend/docs/supabase.md) | Intégration Supabase — JWT ECC P-256 validé localement via JWKS, configuration auth |
 | [`backend/docs/security.md`](backend/docs/security.md) | Audit sécurité backend — JWT, ports, secrets, données utilisateur, dépendances sensibles |

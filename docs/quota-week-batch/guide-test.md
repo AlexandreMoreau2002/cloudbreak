@@ -8,6 +8,9 @@
 - Deux sommets connus et un compte freemium, un compte Premium, et une session invitée de test.
 - Les variables REST Client sont renseignées sans committer de JWT.
 
+Les deux caches ont des durées distinctes : Redis conserve les données météo 30 minutes
+(1 800 secondes), tandis que le cache mobile AsyncStorage hors-ligne reste valable 3 heures.
+
 ## Scénarios
 
 ### 1. Chargement normal : une seule demande semaine
@@ -19,6 +22,8 @@
 5. Vérifier les 7 jours du calendrier, les 9 heures de la carte et une validation terrain sur le score affiché.
 
 Attendu : les données apparaissent normalement ; aucune erreur 429 ou 503 liée à une rafale.
+Pour confirmer un hit Redis, répéter la même requête dans les 30 minutes ; après expiration,
+une nouvelle lecture du fournisseur météo peut être nécessaire.
 
 ### 2. Cache mobile : ouverture hors ligne
 

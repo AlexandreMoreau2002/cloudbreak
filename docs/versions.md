@@ -36,7 +36,7 @@
   backend : `alembic upgrade head` avant `uvicorn`). Si une migration échoue, le conteneur ne démarre pas.
 - **Le seed des sommets n'est jamais automatique** : `python -m app.db.seed` à lancer à la main sur une base
   neuve (upsert sur `slug`, 23 782 sommets). Le dev a été seedé le 2026-10-05.
-- Redis 7 (cache météo TTL 10min + quota freemium) — instance Dokploy dédiée au backend
+- Redis 7 (cache météo TTL 30 min / 1 800 secondes + quota freemium) — instance Dokploy dédiée au backend
 
 ## 3. Environnements
 

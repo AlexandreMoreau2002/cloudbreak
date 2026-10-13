@@ -15,8 +15,8 @@ Nouveau trajet
 
 App ── 1 demande semaine ──> API ── 1 demande ──> Open-Meteo
  │                              │
- │                              └── cache Redis : 10 min
- └── cache du téléphone : 3 h
+ │                              └── cache météo Redis : 30 min (1 800 s)
+ └── cache mobile AsyncStorage hors-ligne : 3 h
 ```
 
 ## Ce qui se passe quand on ouvre un sommet
@@ -72,7 +72,7 @@ Le quota compte les sommets, pas les heures. Consulter 9 heures d’un même som
 | Zone | Rôle |
 |---|---|
 | `backend/app/api/v1/endpoints/score.py` | ajoute la route semaine et réutilise la construction d’un score |
-| `backend/app/services/weather.py` | garde une semaine météo entière en cache Redis 10 minutes |
+| `backend/app/services/weather.py` | garde une semaine météo entière en cache Redis 30 minutes (1 800 secondes) |
 | `backend/app/services/weather_providers/open_meteo.py` | demande 7 jours à Open-Meteo en un appel |
 | `mobile/src/hooks/useWeekData.ts` | lit le cache mobile puis lance une seule demande batch |
 | `mobile/src/services/api/score.ts` | appelle et normalise la réponse semaine |

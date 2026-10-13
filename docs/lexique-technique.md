@@ -90,10 +90,10 @@ Structure qui accélère les recherches. `idx_peaks_name` sur la colonne `name` 
 Object-Relational Mapping. Couche d'abstraction qui traduit les objets Python en lignes SQL et vice-versa.
 
 **Redis**
-Base de données clé-valeur ultra-rapide, en mémoire. On s'en sert pour deux choses : cache météo (TTL 10min) et quota freemium (1 check/jour par utilisateur).
+Base de données clé-valeur ultra-rapide, en mémoire. On s'en sert pour deux choses : cache météo (TTL 30 minutes / 1 800 secondes) et quota freemium (1 check/jour par utilisateur).
 
 **TTL — Time To Live**
-Durée de vie d'une entrée en cache. Après le TTL, l'entrée est supprimée automatiquement. Notre cache météo Redis a un TTL de 10 minutes.
+Durée de vie d'une entrée en cache. Après le TTL, l'entrée est supprimée automatiquement. Notre cache météo Redis a un TTL de 30 minutes (1 800 secondes). Le cache mobile AsyncStorage est séparé et reste valable 3 heures.
 
 **JWT — JSON Web Token**
 Token d'authentification signé. L'app mobile l'envoie à chaque requête dans le header `Authorization: Bearer {token}`. Le backend le vérifie localement sans appeler Supabase.
