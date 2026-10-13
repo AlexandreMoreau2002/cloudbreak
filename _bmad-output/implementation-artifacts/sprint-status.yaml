@@ -100,10 +100,10 @@ development_status:
   # EPIC 5: Notifications & Alertes
   # FRs: FR22-FR25
   # ─────────────────────────────────────────────────────────────
-  epic-5: backlog
-  5-1-infrastructure-push-notifications-expo-push: backlog
-  5-2-alertes-push-favoris-regionales-premium-pro: backlog
-  5-3-notification-gps-validation-terrain: backlog
+  epic-5: in-progress
+  5-1-infrastructure-push-notifications-expo-push: review  # mergé (backend #29, mobile #40) ; test iPhone/TestFlight à faire
+  5-2-alertes-push-favoris-regionales-premium-pro: review  # mergé (backend #30, mobile #45/#46) ; favoris seulement, FR23 régional reporté en V2 ; cron 18:00 posé, test TestFlight + receipts Expo à faire
+  5-3-notification-gps-validation-terrain: review  # mergé (mobile #41, bandeau #42) ; mode hybride ; test iPhone à faire (option « Toujours » ?)
   epic-5-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

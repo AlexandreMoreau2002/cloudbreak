@@ -124,6 +124,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - **Replay de prédiction** : si l'utilisateur a joint une photo terrain, l'app génère une image "prédiction vs réalité" (score d'avant + photo terrain + "Confirmé ✅") — très partageable sur les réseaux sociaux.
 - **Récap annuel "Tes nuages [année]"** : notification push début janvier, récap des validations, massifs visités, meilleure prédiction, niveau atteint — format scrollable in-app + partage natif. Timing : V2 pour janvier 2027.
 - **Anonymisation compte à la suppression** : remplacer le hard delete actuel par un soft delete anonymisé (email → `deleted@deleted.com`, user_id remplacé par hash dans toutes les tables liées) pour conserver les métriques de churn (durée avant suppression, plan au moment du départ, etc.) tout en restant conforme RGPD — à implémenter quand les tables `predictions` et `terrain_validations` seront créées
+- **Alertes push régionales (FR23)** : « mer de nuage visible dans ta région », reportée au 2026-10-12 (le MVP n'envoie que les alertes sur les sommets favoris ; la région demanderait une position approximative côté serveur).
 - Feed social par sommet (photos + conditions)
 - Mode découverte par région ("4 sommets au-dessus des nuages ce weekend")
 - Timeline visuelle altitude de la couche sur 12-24h
@@ -259,7 +260,7 @@ Croiser l'altitude de la couche nuageuse avec les horaires astronomiques pour ca
 - **Distribution :** App Store uniquement au lancement, Expo EAS Build
 - **Framework :** Expo / React Native — codebase unique pour l'extension Android V2
 - **Abonnements :** StoreKit 2 (iOS In-App Purchase)
-- **Deep links :** format `cloudbreak-app.com/sommet/[slug]` pour partage de prévisions (iOS Universal Links)
+- **Deep links :** format `<hôte ops de l'env>/sommet/[slug]` (prod : `ops.cloudbreak-app.com`) pour partage de prévisions (iOS Universal Links)
 
 ### Permissions Device
 

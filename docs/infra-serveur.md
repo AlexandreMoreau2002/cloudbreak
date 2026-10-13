@@ -146,6 +146,14 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
 
 - `/etc/dokploy/logs/<appName>/`
 
+## 8quater. Cron des alertes favoris (push, epic 5.2) — posé le 2026-10-13
+
+- **Env Dokploy du backend dev** : `INTERNAL_CRON_SECRET` (64 car., généré par `secrets.token_hex(32)`, relu après `application.saveEnvironment`). Pris en compte au prochain redeploy, à faire après le merge de backend #30.
+- **Cron** : crontab de l'utilisateur `ubuntu` sur le VPS, `CRON_TZ=Europe/Paris`, `0 18 * * *` → `/home/ubuntu/cloudbreak-run-favorites.sh` (curl `-m 120` vers `POST https://dev-api.cloudbreak-app.com/internal/notifications/run-favorites`). Log : `/home/ubuntu/cloudbreak-favorites.log` (une ligne par run : date, code HTTP, début de la réponse).
+- **Secret côté VPS** : `~/.cloudbreak-cron.env` et `~/.cloudbreak-cron.header` (mode 600) ; le script passe le header par fichier (`-H @fichier`), jamais en argument visible dans `ps`. Le secret n'est écrit nulle part dans git.
+- **Avant le deploy de #30** l'endpoint répond 404 : normal. Après : attendre `200` avec le résumé JSON. `503` = secret absent/trop court dans l'env du conteneur (redeploy oublié), `403` = secret différent.
+- **Rotation** : régénérer, `application.saveEnvironment`, redeploy, puis réécrire les deux fichiers ci-dessus.
+
 ## 8bis. Incident du 2026-10-05 — `dev-api` en 502 (backend dev down)
 
 **Symptôme** : l'app mobile (pointée sur `https://dev-api.cloudbreak-app.com`) n'avait que des erreurs

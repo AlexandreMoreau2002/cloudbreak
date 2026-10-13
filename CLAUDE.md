@@ -124,7 +124,7 @@ Tests ciblés : `npx vitest run src/components/ThemeToggle.test.tsx`.
 - SQLAlchemy ORM uniquement, pas de SQL brut. Secrets uniquement via `app/core/config.py` (variables d'env).
 - Routes minces : la logique métier pure va dans `app/domain/`, les I/O dans `app/services/`.
 - Réponses directes (pas de wrapper `{"status": "ok", "data": …}`). Erreurs : `{"detail": "...", "code": "ERROR_CODE"}`.
-- Clés Redis préfixées (`weather:*`, `quota:*`, `cache:*`). Dates en ISO 8601 UTC.
+- Clés Redis préfixées (`weather:*`, `quota:*`, `cache:*`, `notif:*`). Dates en ISO 8601 UTC.
 - Ruff : ligne max 100, règles E/F/I/UP. mypy strict : convertir explicitement les `Column[str]` SQLAlchemy avec `str()` dans les schémas Pydantic.
 
 **Mobile (TypeScript / React Native)**
@@ -200,7 +200,7 @@ Toute modification de la formule ou des seuils = changement métier : demander c
 
 ## Data model & API
 
-Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `email` (copie du claim JWT, jamais exposée ni loggée), `display_name` (nom d'usage, 24 car. max, nullable, jamais loggé), `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events` ni de colonne `push_token` dans le code actuel.
+Tables (`backend/app/models/`) : `users` (PK `supabase_user_id`, `email` (copie du claim JWT, jamais exposée ni loggée), `display_name` (nom d'usage, 24 car. max, nullable, jamais loggé), `push_token` (jeton Expo, index unique partiel, jamais loggé) + `push_token_valid`, `locale` (fr|en), `survey_*`, `newsletter_opt_in`, `notif_favorites/regional/terrain`) · `peaks` (name, slug, lat, lng, altitude) · `predictions` (écrite à chaque `GET /api/v1/score`, best-effort) · `subscriptions` (plan, status, expires_at) · `terrain_validations` (`photo_url` toujours null pour l'instant) · `user_favorites` · `apple_subscription_events`. Pas de table `events`.
 
 Endpoints (préfixe `/api/v1`, source : `backend/app/api/v1/endpoints/`) :
 
@@ -220,7 +220,7 @@ POST   /api/v1/webhooks/...              # webhooks Apple (subscription.py)
 GET    /health
 ```
 
-- `POST /api/v1/user/push-token` : **aucune route trouvée dans le code** — prévu, non implémenté.
+- `POST` / `DELETE /api/v1/user/push-token` : enregistre / retire le jeton Expo (+ `locale`). `POST /internal/notifications/run-favorites` : alertes favoris Premium, header `X-Cron-Secret` (`INTERNAL_CRON_SECRET`, 503 si absent ou < 32 car.), appelé chaque soir par un cron du VPS (`docs/infra-serveur.md` §8quater).
 - Endpoints protégés par JWT ; `/health` est public. `provision`, `survey`, `preferences` et `display-name` exigent un compte permanent (pas anonyme).
 
 ## Environment variables

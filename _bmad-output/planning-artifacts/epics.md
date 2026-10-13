@@ -607,7 +607,7 @@ So that the app remains useful year-round and I can share discoveries.
 
 **Given** l'écran de prévision d'un sommet
 **When** l'utilisateur appuie sur l'icône partage
-**Then** le deep link `https://cloudbreak-app.com/sommet/{slug}` est copié dans le presse-papiers ou partagé via le sheet iOS natif
+**Then** le deep link `https://<hôte ops de l'environnement>/sommet/{slug}` (prod : `ops.cloudbreak-app.com`) est copié dans le presse-papiers ou partagé via le sheet iOS natif
 
 **Given** un utilisateur qui reçoit un deep link
 **When** il l'ouvre sur iOS
@@ -728,7 +728,7 @@ So that I never miss an opportunity without having to check the app manually.
 **Then** une notification push est envoyée : "Conditions idéales prévues demain 6h sur [sommet] — 87% 🟢"
 **And** la notification n'est envoyée qu'une seule fois par sommet/fenêtre temporelle
 
-**Given** une alerte régionale (FR23)
+**Given** une alerte régionale (FR23) — *reportée en V2 (décision du 2026-10-12), non livrée avec la 5.2*
 **When** une mer de nuage est prévue dans la région de l'utilisateur
 **Then** une notification push est envoyée : "Mer de nuage visible dès 1600m dans ta région ce matin"
 
@@ -845,7 +845,7 @@ So that my followers discover Cloudbreak naturally through my content.
 
 **Given** le partage complété
 **When** quelqu'un clique le lien éventuel
-**Then** il est redirigé vers la landing page cloudbreak-app.com/sommet/{slug}
+**Then** il est redirigé vers la page de repli ops `<hôte ops>/sommet/{slug}`
 
 ---
 
@@ -983,7 +983,7 @@ So that I understand the app immediately and download it.
 **When** il parcourt la page
 **Then** il voit dans l'ordre : comment ça marche (3 étapes) → pour qui (4 profils) → pourquoi Cloudbreak → télécharger
 
-**Given** une prédiction partagée via deep link (ex: cloudbreak-app.com/sommet/colombier)
+**Given** une prédiction partagée via deep link (ex: ops.cloudbreak-app.com/sommet/colombier)
 **When** un non-utilisateur iOS clique le lien
 **Then** il voit la page du sommet avec le score prédit + CTA "Télécharger pour voir ta prévision"
 
