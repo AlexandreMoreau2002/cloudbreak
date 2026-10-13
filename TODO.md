@@ -22,6 +22,11 @@
 ## 2. Fixes à faire
 
 **App**
+- [ ] **Correctif quota/cache — validation manuelle sur dev** :
+  - chargement d'un sommet sans cache : une seule requête `GET /score/week`, jamais 63 requêtes `GET /score` ; vérifier aussi les 7 jours × 9 créneaux et l'envoi d'une validation terrain ;
+  - après un chargement, mode avion puis réouverture : le cache mobile de moins de 3 h reste affiché ;
+  - compte freemium de test : créer un cache, consommer le quota sur un autre sommet, puis actualiser le sommet en cache ; le paywall apparaît mais les données restent après fermeture ;
+  - répéter 13 appels hebdomadaires identiques en moins d'une minute depuis `http/quota-week-batch.http` : `RATE_LIMIT_EXCEEDED`, Réessayer, jamais de paywall.
 - [ ] **Refreshs de données trop fréquents** (constat 2026-10-09, lecture du code après le même log Metro : chaque `[data-refresh]` y correspond à un déclencheur identifiable) :
   - Favoris : `useFavorites` charge au montage (`mount-or-session`), puis `useFocusEffect` de `mobile/src/app/(tabs)/index.tsx` (~l.131) relance un `manual` aussitôt → 2 appels `GET /user/favorites` à ~3 ms d'écart. `favorites.tsx` a aussi son `useFocusEffect` + sa propre instance du hook. Le refresh au focus sert à rattraper un ajout depuis l'onglet Favoris, mais `addFavorite`/`removeFavorite` mettent déjà l'état à jour → probablement inutile.
   - Abonnement : `SubscriptionContext.tsx` (~l.188) recharge `GET /user/subscription` à chaque `AppState → active`, sans délai minimal.
