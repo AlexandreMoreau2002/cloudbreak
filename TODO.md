@@ -1,7 +1,7 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-10-12. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Mis à jour le 2026-10-13. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
 
 ---
 
@@ -22,11 +22,9 @@
 ## 2. Fixes à faire
 
 **App**
-- [ ] **Quota 429 / rafale de fetchs / cache offline ignoré (régression 7.2)** — 🔵 **en cours (Codex, worktree `quota-429-paywall`)**, un seul chantier couvre les trois : nouvel endpoint batch `GET /api/v1/score/week` (une requête semaine au lieu de 63), 429 avec étiquette (`QUOTA_EXCEEDED` → paywall sans masquer le score déjà chargé, `RATE_LIMIT_EXCEEDED` → message retry, jamais paywall), cache mobile (TTL 3 h) priorisé avant tout appel réseau. Doc du plan : `docs/quota-week-batch/` (racine, worktree Codex).
 - [ ] **Refreshs de données trop fréquents** (constat 2026-10-09, lecture du code après le même log Metro : chaque `[data-refresh]` y correspond à un déclencheur identifiable) :
   - Favoris : `useFavorites` charge au montage (`mount-or-session`), puis `useFocusEffect` de `mobile/src/app/(tabs)/index.tsx` (~l.131) relance un `manual` aussitôt → 2 appels `GET /user/favorites` à ~3 ms d'écart. `favorites.tsx` a aussi son `useFocusEffect` + sa propre instance du hook. Le refresh au focus sert à rattraper un ajout depuis l'onglet Favoris, mais `addFavorite`/`removeFavorite` mettent déjà l'état à jour → probablement inutile.
   - Abonnement : `SubscriptionContext.tsx` (~l.188) recharge `GET /user/subscription` à chaque `AppState → active`, sans délai minimal.
-  - Score semaine : `useWeekData.load` dépend de `[peakId, token]` → un renouvellement de token Supabase peut relancer les requêtes ; vérifier que le cache offline (TTL 3 h) court-circuite bien une fois le batch en place.
   - Pistes : (a) délai minimal (30–60 s) entre deux refreshs d'une même source, ou refresh au focus seulement si les données sont périmées ; (b) supprimer le doublon montage + focus des favoris (voire partager une seule instance via un contexte) ; (c) stabiliser la dépendance `token` de `useWeekData`.
 
 **Infra**

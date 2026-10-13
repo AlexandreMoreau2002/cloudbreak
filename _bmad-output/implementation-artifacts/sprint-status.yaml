@@ -147,3 +147,8 @@ development_status:
   9-1-landing-page-cloudbreak-fr: backlog
   9-2-optimisation-aso-app-store: backlog
   epic-9-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # MAINTENANCE: Score hebdomadaire, cache et erreurs 429
+  # ─────────────────────────────────────────────────────────────
+  maintenance-quota-week-batch: done
