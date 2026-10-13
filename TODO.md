@@ -8,7 +8,7 @@
 ## 1. Features urgentes (dans l'ordre)
 
 1. **Fixes logiciels en cours** (§2 App) — à clore avant de construire la prod, pour ne pas la polluer avec des bugs connus.
-2. **Notifications push** (epic 5) : code **mergé** (5.1, 5.2, 5.3, bandeau, langue) et déployé en dev, cron 18:00 posé. Reste : tests sur TestFlight / iPhone (§5), clé APNs déjà dans EAS.
+2. **Notifications push** : livrée et validée (epic 5). Restent le 1er run du cron et les receipts Expo (§5).
 3. **Environnement de production** (bloquant pour 4.6, TestFlight pointe vers la prod) :
    - Dokploy `production` sur le VPS (Postgres + Redis dédiés, `api.cloudbreak-app.com`, `ops.cloudbreak-app.com`)
    - DNS OVH : enregistrements `api` et `ops`
@@ -50,7 +50,6 @@
 |---|---|---|
 | 3.6b Message contextuel hors-saison (FR7) | reporté | prévu au MVP (PRD), repoussé le 2026-10-12 : on est en pleine saison, à faire avant l'été 2027. Message choisi côté backend selon la météo réelle (score < 20 %, été) + affichage mobile |
 | 4.6 Build signée / TestFlight | brouillon | `EXPO_PUBLIC_SUPPORT_EMAIL`, assets |
-| Epic 5 — push (5.1, 5.2, 5.3 mergées) | à tester | TestFlight / iPhone ; receipts Expo (`DeviceNotRegistered`) non faits |
 | Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
 | Epic 1 — CI/CD mobile, monitoring (1.4, 1.5), env prod | partiel | env Dokploy prod |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | à faire | build installée |
@@ -67,11 +66,7 @@
 ### Story 4.6 — Build signée et TestFlight
 - [ ] Build EAS signée, app dans App Store Connect (créée), build envoyée sur TestFlight et approuvée ; `EXPO_PUBLIC_SUPPORT_EMAIL` posé avant ; assets prêts (§3).
 
-### Epic 5 — Notifications push
-- [ ] **À tester sur TestFlight / iPhone réel** (guides `docs/5-1-push-infra/`, `docs/5-2-alertes-favoris/`, `docs/5-3-notif-terrain/`) :
-  - 5.1 : token enregistré après login + permission, retiré au logout, bandeau « notifications refusées » ;
-  - 5.2 : alerte favori reçue (Premium, verdict `high` demain 6h) en FR puis EN, bannière si app ouverte, tap → fiche du sommet, pas de doublon le même soir ;
-  - 5.3 : notif terrain près d'un sommet, **question ouverte : l'option « Toujours » apparaît-elle dans les Réglages iOS sans que l'app la demande ?** (sinon fallback premier plan seulement).
-- [ ] Vérifier le **premier run du cron** (18:00 Paris, `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` : attendu `http=200` + résumé) ; `INTERNAL_CRON_SECRET` posé, doc `docs/infra-serveur.md` §8quater.
-- [ ] Plus tard : lecture des **receipts Expo** (`DeviceNotRegistered` arrive surtout là, PR séparée, non démarrée) ; l'alerte **régionale** (FR23) est reportée en V2.
+### Epic 5 — Notifications push (livrée, reste)
+- [ ] Vérifier le **premier run du cron** (18:00 Paris) : `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` → `http=200` + résumé (doc `docs/infra-serveur.md` §8quater).
+- [ ] Plus tard : lecture des **receipts Expo** (`DeviceNotRegistered`, PR séparée, non démarrée) ; alerte **régionale** (FR23) reportée en V2.
 - [ ] Avant la 1.0.0 (cf. `backend/docs/security.md`) : rate limiting sur `POST /push-token`, valider `EXPO_ACCESS_TOKEN` en production.
