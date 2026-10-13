@@ -18,12 +18,15 @@ Les deux caches ont des durées distinctes : Redis conserve les données météo
 1. Ouvrir Metro avec `EXPO_PUBLIC_DEBUG=true`.
 2. Sélectionner un sommet jamais chargé dans les trois dernières heures.
 3. Ouvrir l’accueil.
-4. Vérifier un seul log de demande `/api/v1/score/week` et aucune série de 63 demandes `/score`.
-5. Vérifier les 7 jours du calendrier, les 9 heures de la carte et une validation terrain sur le score affiché.
+4. Dans un second terminal, lancer `cd backend && make logs` puis vérifier un seul log `/score/week`
+   et aucune série de 63 demandes `/score`.
+5. Vérifier les 7 jours du calendrier et les 9 heures de la carte ; sélectionner une heure affichée,
+   ouvrir le panneau de validation terrain et envoyer une confirmation.
 
-Attendu : les données apparaissent normalement ; aucune erreur 429 ou 503 liée à une rafale.
-Pour confirmer un hit Redis, répéter la même requête dans les 30 minutes ; après expiration,
-une nouvelle lecture du fournisseur météo peut être nécessaire.
+Attendu : les données apparaissent normalement ; aucune erreur 429 ou 503 liée à une rafale,
+et la confirmation terrain ne répond pas 404. Pour confirmer un hit Redis, répéter la même requête
+dans les 30 minutes : les logs doivent contenir `weather_week_cache_hit` sans nouveau
+`open_meteo_request`. Après expiration, une nouvelle lecture du fournisseur météo peut être nécessaire.
 
 ### 2. Cache mobile : ouverture hors ligne
 

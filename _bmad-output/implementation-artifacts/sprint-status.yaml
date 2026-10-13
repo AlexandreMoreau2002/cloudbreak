@@ -150,5 +150,7 @@ development_status:
 
   # ─────────────────────────────────────────────────────────────
   # MAINTENANCE: Score hebdomadaire, cache et erreurs 429
+  # Correctif transverse sans nouvelle story : résout les entrées TODO quota/cache/rafale.
+  # PRs liées : backend #31, mobile #47, racine #3 (à merger dans cet ordre).
   # ─────────────────────────────────────────────────────────────
   maintenance-quota-week-batch: done

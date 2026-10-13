@@ -29,6 +29,8 @@ GET {{baseUrl}}/score/week?peak_id=42cd96c1-c2c0-5cd0-8534-3931e696790b&start_da
 Authorization: Bearer {{freemiumEmail-jwt}}
 
 ### Rate limit batch — la 13e requête dans la même minute répond RATE_LIMIT_EXCEEDED
-# Utiliser un JWT de test Premium ou invité : cette protection s'applique à toutes les identités.
+# Envoyer exactement cette même requête 13 fois, dans la même minute, avec le même JWT et le même sommet.
+# Les 12 premières répondent 200 ; la 13e répond 429 avec le code RATE_LIMIT_EXCEEDED.
+# Le même sommet ne consomme pas de nouvelle unité du quota freemium.
 GET {{baseUrl}}/score/week?peak_id={{peakId}}&start_date={{startDate}}
 Authorization: Bearer {{freemiumEmail-jwt}}
