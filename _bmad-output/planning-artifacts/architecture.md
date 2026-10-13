@@ -14,6 +14,9 @@ date: '2026-03-17'
 
 # Architecture Decision Document — Cloudbreak
 
+> Mise à jour 2026-10-13 : les décisions de conception ci-dessous qui mentionnent un TTL météo
+> de 10 minutes sont historiques. L'implémentation actuelle utilise 30 minutes (1 800 secondes).
+
 _Ce document se construit collaborativement étape par étape. Les sections sont ajoutées au fil des décisions architecturales._
 
 ---

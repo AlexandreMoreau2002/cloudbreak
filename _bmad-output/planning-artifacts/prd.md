@@ -16,6 +16,9 @@ workflowType: 'prd'
 
 # Product Requirements Document — Cloudbreak
 
+> Mise à jour 2026-10-13 : le TTL de 10 minutes mentionné dans les exigences ci-dessous est
+> historique. L'implémentation actuelle du cache météo Redis utilise 30 minutes (1 800 secondes).
+
 **Auteur :** Alex
 **Date :** 2026-03-13
 

@@ -1,15 +1,15 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-10-13 (epic 5 push mergé : backend `0046d58`, mobile `4cc9d01` ; avant : fix session invitée supprimée côté Supabase mergé : mobile `0574718` ; avant : story 3.6 Universal Links, ops `4ed4a91`, mobile `2e2ecf4`).
+> Dernière mise à jour : 2026-10-13 (correctif quota/cache : backend `a92406f`, mobile `f30628d` ; avant : epic 5 push mergé : backend `0046d58`, mobile `4cc9d01`).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
 
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
-| Backend | `backend/` | `develop` | `0046d58` (2026-10-13) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-09 : service 1/1, `/health` 200, base au head `fb27705a94f7`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — PR #22 StoreKit, #23 table `subscriptions`, #24 `users.email`, #25 audit, #26 plan = entitlement actif + seed, #27 notifications Apple + ordre des événements, #28 `users.display_name` (nom d'usage), #29 infra push (`users.push_token`, envoi Expo), #30 alertes favoris Premium (endpoint interne `/internal/notifications/run-favorites` + cron 18:00, `users.locale`) | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `4cc9d01` (2026-10-13) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` (+ plugin local UIScene iOS 27) — #40–#42 push (token, notif terrain par geofencing, bandeau permission refusée) et #45/#46 (tap sur alerte, bannière au premier plan, langue envoyée avec le token) : nouvelles dépendances `expo-notifications ~57.0.22`, `expo-device ~57.0.2`, `expo-location ~57.0.20`, `expo-task-manager ~57.0.21`, point d'entrée `index.ts`, `UIBackgroundModes: location` — #37 nom d'usage éditable sur la carte Profil, #38 `expo start --clear`, #44 retrait de « il te faut un compte » du sous-titre de création de compte, #43 réparation silencieuse d'une session invitée supprimée côté Supabase (création de compte Apple et ajout d'e-mail rejoués une fois ; `testTimeout` Jest à 15 s ; aucune nouvelle dépendance) (+ `expo-apple-authentication`, `expo-crypto`, `expo-secure-store` — Sign in with Apple + Keychain, installation ID quota ; `expo-linear-gradient` déjà présent, réutilisé pour le dégradé ProBanner) |
+| Backend | `backend/` | `develop` | `a92406f` (2026-10-13) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-13 : service 1/1, `/health` 200, Postgres + Redis OK, migrations au head `b7c8d9e0f1a2`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — #31 batch `GET /score/week`, distinction quota/rate-limit et cache météo Redis 30 min ; avant : #22–#30 StoreKit, données compte et push | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
+| Mobile | `mobile/` | `develop` | `f30628d` (2026-10-13) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` — #47 consomme une requête hebdomadaire, garde le cache lors d'un 429/échec et distingue quota vs rate-limit ; avant : push #40–#42, #45/#46, profil et session invitée |
 | Ops | `ops/` | `develop` | `4ed4a91` (2026-10-12) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.
@@ -36,7 +36,7 @@
   backend : `alembic upgrade head` avant `uvicorn`). Si une migration échoue, le conteneur ne démarre pas.
 - **Le seed des sommets n'est jamais automatique** : `python -m app.db.seed` à lancer à la main sur une base
   neuve (upsert sur `slug`, 23 782 sommets). Le dev a été seedé le 2026-10-05.
-- Redis 7 (cache météo TTL 10min + quota freemium) — instance Dokploy dédiée au backend
+- Redis 7 (cache météo TTL 30 min / 1 800 secondes + quota freemium) — instance Dokploy dédiée au backend
 
 ## 3. Environnements
 

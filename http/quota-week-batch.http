@@ -1,0 +1,36 @@
+# Cloudbreak — score semaine, cache et erreurs sémantiques
+#
+# Prérequis : démarrer `backend` avec `make dev`, puis configurer les JWT dans
+# .vscode/settings.json > rest-client.environmentVariables > local.
+# Cache météo Redis : 30 minutes (1 800 secondes). Cache mobile AsyncStorage hors-ligne : 3 heures.
+
+@baseUrl = http://localhost:8000/api/v1
+@startDate = 2026-10-12
+@peakId = 0728f7c7-a0c9-5fb0-b87d-d9edc8696840
+
+### Nominal — une semaine complète (7 jours × 9 heures)
+GET {{baseUrl}}/score/week?peak_id={{peakId}}&start_date={{startDate}}
+Authorization: Bearer {{freemiumEmail-jwt}}
+
+### Sans authentification → 403
+GET {{baseUrl}}/score/week?peak_id={{peakId}}&start_date={{startDate}}
+
+### Date malformée → 422
+GET {{baseUrl}}/score/week?peak_id={{peakId}}&start_date=pas-une-date
+Authorization: Bearer {{freemiumEmail-jwt}}
+
+### Sommet inconnu → 404 PEAK_NOT_FOUND
+GET {{baseUrl}}/score/week?peak_id=00000000-0000-0000-0000-000000000000&start_date={{startDate}}
+Authorization: Bearer {{freemiumEmail-jwt}}
+
+### Quota — exécuter après l'ouverture d'un sommet différent avec le même compte
+# Attendu : 429 + code QUOTA_EXCEEDED. Ne pas confondre avec RATE_LIMIT_EXCEEDED.
+GET {{baseUrl}}/score/week?peak_id=42cd96c1-c2c0-5cd0-8534-3931e696790b&start_date={{startDate}}
+Authorization: Bearer {{freemiumEmail-jwt}}
+
+### Rate limit batch — la 13e requête dans la même minute répond RATE_LIMIT_EXCEEDED
+# Envoyer exactement cette même requête 13 fois, dans la même minute, avec le même JWT et le même sommet.
+# Les 12 premières répondent 200 ; la 13e répond 429 avec le code RATE_LIMIT_EXCEEDED.
+# Le même sommet ne consomme pas de nouvelle unité du quota freemium.
+GET {{baseUrl}}/score/week?peak_id={{peakId}}&start_date={{startDate}}
+Authorization: Bearer {{freemiumEmail-jwt}}

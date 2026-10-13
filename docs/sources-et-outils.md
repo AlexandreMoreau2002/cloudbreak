@@ -42,7 +42,7 @@ Le projet a **deux TTL différents, à deux niveaux différents**, à ne pas con
 Open-Meteo (source)
       │
       ▼
-  Cache Redis backend — TTL 10 min (600s)
+  Cache Redis backend — TTL 30 min (1 800s)
   (backend/app/services/weather.py:23)
   Limite : pas de sens d'appeler Open-Meteo plus souvent,
   la donnée météo brute ne change pas plus vite que ça
@@ -57,9 +57,9 @@ Open-Meteo (source)
   score reçu affichable sans réseau, pas de re-fetch météo
 ```
 
-- **Backend (10 min)** : évite de sur-solliciter Open-Meteo (limite gratuite 10 000 appels/jour) — ce n'est pas du temps réel, la météo ne bouge pas assez vite pour justifier un TTL plus court.
-- **Mobile (3h)** : n'a aucun lien avec la fraîcheur météo réelle — c'est une fenêtre de tolérance pour l'usage hors-ligne en randonnée (pas de réseau en montagne). Passé 3h, l'app préfère dire "données non disponibles" plutôt qu'afficher un score potentiellement obsolète sans avertir.
-- Ces deux caches ne se resynchronisent pas l'un l'autre — le mobile peut très bien afficher une donnée de 2h50 alors que le backend a déjà une donnée plus fraîche en cache depuis 10 min. C'est un choix assumé (voir `mobile/docs/story-7-2-mode-offline.md`).
+- **Backend (30 min / 1 800 s)** : évite de sur-solliciter Open-Meteo (limite gratuite 10 000 appels/jour) — ce n'est pas du temps réel, la météo ne bouge pas assez vite pour justifier un TTL plus court.
+- **Mobile (3h)** : le cache AsyncStorage reste indépendant du cache Redis et n'a aucun lien avec la fraîcheur météo réelle — c'est une fenêtre de tolérance pour l'usage hors-ligne en randonnée (pas de réseau en montagne). Passé 3h, l'app préfère dire "données non disponibles" plutôt qu'afficher un score potentiellement obsolète sans avertir.
+- Ces deux caches ne se resynchronisent pas l'un l'autre — le mobile peut très bien afficher une donnée de 2h50 alors que le backend a déjà une donnée plus fraîche en cache depuis 30 min. C'est un choix assumé (voir `mobile/docs/story-7-2-mode-offline.md`).
 
 ### Météo-France (AROME)
 - **Site** : https://portail-api.meteofrance.fr

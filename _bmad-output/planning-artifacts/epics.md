@@ -10,6 +10,9 @@ inputDocuments:
 
 # Cloudbreak - Epic Breakdown
 
+> Mise à jour 2026-10-13 : les mentions d'un TTL météo de 10 minutes ci-dessous reflètent le plan
+> initial. L'implémentation actuelle utilise 30 minutes (1 800 secondes).
+
 ## Overview
 
 Ce document fournit le découpage complet en epics et stories pour **Cloudbreak**, décomposant les exigences du PRD, du Design UX et de l'Architecture en stories implémentables.
