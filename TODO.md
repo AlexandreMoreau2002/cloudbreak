@@ -64,9 +64,8 @@
 
 ## 5. Détail — ce qu'il reste à valider
 
-### Story 2.7 / 2.8 — à valider en conditions réelles
+### Story 2.7 — à valider en conditions réelles
 - [ ] **2.7 Mot de passe oublié** : template d'e-mail du Dashboard Supabase à valider en réel.
-- [ ] **2.8 Mini-sondage** : persistance réelle non validée manuellement.
 
 ### Story 4.6 — Build signée et TestFlight
 - [ ] Build EAS signée, app dans App Store Connect (créée), build envoyée sur TestFlight et approuvée ; `EXPO_PUBLIC_SUPPORT_EMAIL` posé avant ; assets prêts (§3).
