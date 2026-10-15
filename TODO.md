@@ -32,9 +32,15 @@
   - Abonnement : `SubscriptionContext.tsx` (~l.188) recharge `GET /user/subscription` à chaque `AppState → active`, sans délai minimal.
   - Pistes : (a) délai minimal (30–60 s) entre deux refreshs d'une même source, ou refresh au focus seulement si les données sont périmées ; (b) supprimer le doublon montage + focus des favoris (voire partager une seule instance via un contexte) ; (c) stabiliser la dépendance `token` de `useWeekData`.
 
-**Infra**
+**2.8 Mini-sondage — parcours UI à valider**
+- [ ] Tester sur app réelle : skip, catégories, retry réseau et absence du sondage à la reconnexion. La persistance API/PostgreSQL est validée.
+
+**Avant l'environnement de prod**
+- [ ] **Rate-limit Traefik sur `POST /api/v1/webhooks/apple`** avant toute exposition prod (endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui — règle Traefik dynamique, pas de code backend).
+- [ ] **Pages légales ops** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), mentionner que l'email et le nom d'usage sont conservés par le backend (`users.email`, `users.display_name`) en plus de Supabase.
+
+**Infra (non bloquant)**
 - [ ] CI backend : job qui joue `alembic upgrade head` sur une base Postgres **vide** (aurait attrapé le bug `subscriptions`).
-- [ ] Rate-limit Traefik sur `POST /api/v1/webhooks/apple` avant toute exposition prod.
 - [ ] Backups hors VPS + **test de restauration** (aujourd'hui `/srv/backups` sur la même machine, rétention 14 j).
 - [ ] Comprendre pourquoi l'image Docker du backend dev avait disparu (prune ? build d'un autre projet ?).
 - [ ] Monitoring Better Stack (story 1.5) : uptime + logs, pas branché.
@@ -42,7 +48,6 @@
 ## 3. Notes produit avant la release
 
 - **Promesse « Compréhension » insuffisamment remplie** : rendre plus clairs les raisons du verdict et les indicateurs déterminants (les 3 promesses : décision, compréhension, confiance) — app nouvelle, prédictions en amélioration, retours terrain = calibrage ; pas une météo fiable ni une garantie ; mention de prudence pour les décisions de sécurité.
-- **Politique de confidentialité / CGU** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), et **mentionner que l'email et le nom d’usage sont conservés par le backend** (`users.email`, `users.display_name`) en plus de Supabase.
 - **`EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`** dans l'environnement EAS de production, avant le premier build.
 - **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.
 - **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant → d'abord une colonne `source` (`seed`|`manual`) et un chargement initial insert-only. Ne jamais lancer le seed par un deploy.
@@ -63,10 +68,6 @@
 | 6.2 Photo de validation terrain | dropée | décision explicite |
 
 ## 5. Détail — ce qu'il reste à valider
-
-### Story 2.7 / 2.8 — à valider en conditions réelles
-- [ ] **2.7 Mot de passe oublié** : template d'e-mail du Dashboard Supabase à valider en réel.
-- [ ] **2.8 Mini-sondage** : persistance réelle non validée manuellement.
 
 ### Story 4.6 — Build signée et TestFlight
 - [ ] Build EAS signée, app dans App Store Connect (créée), build envoyée sur TestFlight et approuvée ; `EXPO_PUBLIC_SUPPORT_EMAIL` posé avant ; assets prêts (§3).

@@ -1,15 +1,15 @@
 # État des versions — Cloudbreak
 
 > Référence unique et à jour sur les versions déployées/en cours de chaque service.
-> Dernière mise à jour : 2026-10-13 (correctif quota/cache : backend `a92406f`, mobile `f30628d` ; avant : epic 5 push mergé : backend `0046d58`, mobile `4cc9d01`).
+> Dernière mise à jour : 2026-10-15 (story 2.8 clôturée — persistance du mini-sondage validée, docs seulement : backend `94041da`, mobile `8fa6e1c` ; avant : correctif quota/cache : backend `a92406f`, mobile `f30628d` ; avant : epic 5 push mergé : backend `0046d58`, mobile `4cc9d01`).
 > Pour l'infra serveur (accès, CI/CD, config Dokploy) : voir `docs/infra-serveur.md`.
 
 ## 1. Vue d'ensemble par service
 
 | Service | Submodule | Branche locale | Dernier commit | Déployé en dev ? | Version dépendances clés |
 |---|---|---|---|---|---|
-| Backend | `backend/` | `develop` | `a92406f` (2026-10-13) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-13 : service 1/1, `/health` 200, Postgres + Redis OK, migrations au head `b7c8d9e0f1a2`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — #31 batch `GET /score/week`, distinction quota/rate-limit et cache météo Redis 30 min ; avant : #22–#30 StoreKit, données compte et push | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
-| Mobile | `mobile/` | `develop` | `f30628d` (2026-10-13) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` — #47 consomme une requête hebdomadaire, garde le cache lors d'un 429/échec et distingue quota vs rate-limit ; avant : push #40–#42, #45/#46, profil et session invitée |
+| Backend | `backend/` | `develop` | `94041da` (2026-10-14) | ✅ auto-deploy `develop` → https://dev-api.cloudbreak-app.com (vérifié 2026-10-13 : service 1/1, `/health` 200, Postgres + Redis OK, migrations au head `b7c8d9e0f1a2`, `ENVIRONMENT=development`, `APPLE_ENVIRONMENT=Sandbox`) — #31 batch `GET /score/week`, distinction quota/rate-limit et cache météo Redis 30 min ; avant : #22–#30 StoreKit, données compte et push | FastAPI `0.115.0`, SQLAlchemy `2.0.36`, Alembic `1.14.0`, Pydantic `2.10.0`, Redis client `5.2.0`, python-jose `3.3.0` |
+| Mobile | `mobile/` | `develop` | `8fa6e1c` (2026-10-14) | ❌ non hébergé serveur — builds EAS iOS internes / App Store désormais configurés | Expo `~57.0.27`, React Native `0.86.3`, React `19.2.3`, TypeScript `~6.0.3`, `react-native-iap` `16.7.3` — #47 consomme une requête hebdomadaire, garde le cache lors d'un 429/échec et distingue quota vs rate-limit ; avant : push #40–#42, #45/#46, profil et session invitée |
 | Ops | `ops/` | `develop` | `4ed4a91` (2026-10-12) | ✅ auto-deploy `develop` → https://dev-ops.cloudbreak-app.com | Next.js `16.2.10`, React `19.2.4`, TypeScript `^5` |
 
 > ✅ **Migration domaine (2026-08-09 → 2026-08-31)** : les URLs `nip.io` sont remplacées par `cloudbreak-app.com`.

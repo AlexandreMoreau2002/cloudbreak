@@ -67,7 +67,7 @@ development_status:
   2-5-mur-signup-differe-acces-invite: done
   2-6-sign-in-with-apple: done
   2-7-mot-de-passe-oublie: done
-  2-8-mini-sondage-post-creation-compte: done
+  2-8-mini-sondage-post-creation-compte: done # persistance API/PostgreSQL validée 2026-10-14 ; parcours UI (skip, catégories, retry, reconnexion) + OTP encore à valider, voir TODO.md
   2-9-nom-usage-dans-le-profil: done
   epic-2-retrospective: optional
 
