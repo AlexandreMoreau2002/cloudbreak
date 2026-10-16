@@ -32,9 +32,6 @@
   - Abonnement : `SubscriptionContext.tsx` (~l.188) recharge `GET /user/subscription` à chaque `AppState → active`, sans délai minimal.
   - Pistes : (a) délai minimal (30–60 s) entre deux refreshs d'une même source, ou refresh au focus seulement si les données sont périmées ; (b) supprimer le doublon montage + focus des favoris (voire partager une seule instance via un contexte) ; (c) stabiliser la dépendance `token` de `useWeekData`.
 
-**2.8 Mini-sondage — parcours UI à valider**
-- [ ] Tester sur app réelle : skip, catégories, retry réseau et absence du sondage à la reconnexion. La persistance API/PostgreSQL est validée.
-
 **Avant l'environnement de prod**
 - [ ] **Rate-limit Traefik sur `POST /api/v1/webhooks/apple`** avant toute exposition prod (endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui — règle Traefik dynamique, pas de code backend).
 - [ ] **Pages légales ops** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), mentionner que l'email et le nom d'usage sont conservés par le backend (`users.email`, `users.display_name`) en plus de Supabase.
