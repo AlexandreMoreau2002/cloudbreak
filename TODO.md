@@ -21,13 +21,6 @@
 
 ## 2. Fixes à faire
 
-**App**
-- [ ] **Correctif quota/cache — validation manuelle sur dev** :
-  - chargement d'un sommet sans cache : une seule requête `GET /score/week`, jamais 63 requêtes `GET /score` ; vérifier aussi les 7 jours × 9 créneaux et l'envoi d'une validation terrain ;
-  - après un chargement, mode avion puis réouverture : le cache mobile de moins de 3 h reste affiché ;
-  - compte freemium de test : créer un cache, consommer le quota sur un autre sommet, puis actualiser le sommet en cache ; le paywall apparaît mais les données restent après fermeture ;
-  - répéter 13 appels hebdomadaires identiques en moins d'une minute depuis `http/quota-week-batch.http` : `RATE_LIMIT_EXCEEDED`, Réessayer, jamais de paywall.
-
 **Avant l'environnement de prod**
 - [ ] **Rate-limit Traefik sur `POST /api/v1/webhooks/apple`** avant toute exposition prod (endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui — règle Traefik dynamique, pas de code backend).
 - [ ] **Pages légales ops** (`cloudbreak-ops`) : dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET / adresse), mentionner que l'email et le nom d'usage sont conservés par le backend (`users.email`, `users.display_name`) en plus de Supabase.

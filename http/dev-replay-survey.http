@@ -1,0 +1,51 @@
+# Rejouer le sondage (DEV) — VS Code REST Client
+# Prérequis : backend local (make dev) ; remplacer @token par un JWT Supabase d'un compte permanent.
+
+@baseUrl = http://localhost:8000
+@token = <JWT_SUPABASE_COMPTE_PERMANENT>
+
+### 1. État actuel (survey_completed_at / survey_skipped_at)
+# @name me
+GET {{baseUrl}}/api/v1/user/me
+Authorization: Bearer {{token}}
+
+### 2. Remise à zéro du sondage (404 si ENVIRONMENT=production)
+# Attendu : 200, survey_completed_at = null et survey_skipped_at = null
+POST {{baseUrl}}/api/v1/user/survey/reset
+Authorization: Bearer {{token}}
+
+### 3. Nouvelle réponse (acceptée car le sondage est déverrouillé)
+PATCH {{baseUrl}}/api/v1/user/survey
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "acquisition_source": "instagram",
+  "practice": "photographer",
+  "newsletter_opt_in": true,
+  "skipped": false
+}
+
+### 4. Seconde réponse : ignorée (état terminal conservé)
+PATCH {{baseUrl}}/api/v1/user/survey
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "acquisition_source": "tiktok",
+  "practice": "hiker",
+  "newsletter_opt_in": false,
+  "skipped": false
+}
+
+### 5. Sans Authorization -> 403
+POST {{baseUrl}}/api/v1/user/survey/reset
+
+### 6. Payload invalide -> 422
+PATCH {{baseUrl}}/api/v1/user/survey
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "acquisition_source": "inconnu"
+}
