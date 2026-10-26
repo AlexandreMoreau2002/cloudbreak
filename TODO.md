@@ -33,9 +33,8 @@
 
 ## 3. Notes produit avant la release
 
-- **Promesse « Compréhension » insuffisamment remplie** : rendre plus clairs les raisons du verdict et les indicateurs déterminants (les 3 promesses : décision, compréhension, confiance) — app nouvelle, prédictions en amélioration, retours terrain = calibrage ; pas une météo fiable ni une garantie ; mention de prudence pour les décisions de sécurité.
 - **`EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`** dans l'environnement EAS de production, avant le premier build.
-- **Assets App Store** : icône 1024×1024, captures FR/EN. **MountainBackground** (login) : rework visuel.
+- **Assets App Store** : icône 1024×1024, captures FR/EN.
 - **Sommets saisis à la main** (futur) : le seed remplace nom/GPS/altitude/région sur un `slug` existant → d'abord une colonne `source` (`seed`|`manual`) et un chargement initial insert-only. Ne jamais lancer le seed par un deploy.
 - **Universal Links (story 3.6)** — fini : code fait, scénario principal validé sur iPhone. Reste juste la mise en prod : créer le DNS `ops.cloudbreak-app.com`, poser `NEXT_PUBLIC_APP_STORE_URL` côté Dokploy prod (`APPLE_TEAM_ID` déjà posée) et fournir `EXPO_PUBLIC_LEGAL_BASE_URL` de prod dans l'env EAS.
 - **Production backend** : `ENVIRONMENT=production` exige `APPLE_ENVIRONMENT=Production` + identifiants Apple complets + fichier `.p8` ; le dev reste `development` + `Sandbox`.
