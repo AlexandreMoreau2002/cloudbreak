@@ -154,6 +154,33 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
 - **Avant le deploy de #30** l'endpoint répond 404 : normal. Après : attendre `200` avec le résumé JSON. `503` = secret absent/trop court dans l'env du conteneur (redeploy oublié), `403` = secret différent.
 - **Rotation** : régénérer, `application.saveEnvironment`, redeploy, puis réécrire les deux fichiers ci-dessus.
 
+## 8quinquies. Cron de purge des comptes anonymes inactifs (RGPD) — à poser après le merge de la feature
+
+**À quoi ça sert** : une session Supabase anonyme (sans email) qui n'est plus utilisée (réinstallation, appareil perdu) laisse des données orphelines (`predictions`, `terrain_validations`, favoris) que personne ne peut supprimer. Chaque nuit, un cron appelle `POST /internal/maintenance/purge-anonymous` : le backend supprime les comptes **anonymes** sans activité depuis **30 jours** (décision du 2026-10-27, à valider juridiquement). Un compte permanent n'est jamais touché (le backend vérifie `is_anonymous` auprès de Supabase avant de supprimer). Doc fonctionnelle : `backend/docs/purge-anonymous-accounts/fonctionnement.md`.
+
+**Mise en place sur CHAQUE instance** (dev, puis prod au moment de la MEP, section 8ter) — dans cet ordre :
+
+1. **Prérequis** : le backend de l'instance doit contenir la feature (backend #35 `e5760c7` et #36 `d19d0a8`, mergés dans `develop` le 2026-10-27 ; **déployée sur dev-api** le même jour ; la prod l'aura à la MEP via `main`) et avoir été redéployé. Avant ça, l'endpoint répond **404**.
+2. **Variables d'environnement Dokploy du backend** (relire après chaque Save, l'env est chiffré en base) :
+   - `INTERNAL_CRON_SECRET` : **déjà posée** pour les alertes favoris (section 8quater, 64 car.). Rien à créer, c'est le même secret pour tous les jobs internes. Sur la prod : à générer (`secrets.token_hex(32)`) comme pour le dev.
+   - `ANON_RETENTION_DAYS` (défaut `30`) et `ANON_PURGE_MAX_PER_RUN` (défaut `200`) : **optionnelles**, ne les poser que pour changer les défauts.
+   - `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY` : déjà présentes (nécessaires à la suppression de compte). Vérifier qu'elles pointent le bon projet : une mauvaise URL fait échouer la purge (erreurs comptées, rien supprimé).
+3. **Redeploy** de l'application backend (`application.deploy` par API, jamais par l'UI web).
+4. **Script sur le VPS** (une seule connexion `ssh vps-ovh-projets`) : créer `/home/ubuntu/cloudbreak-purge-anonymous.sh` (mode 700), sur le modèle de `cloudbreak-run-favorites.sh` : `curl -m 300 -s -o <tmp> -w '%{http_code}' -X POST -H @/home/ubuntu/.cloudbreak-cron.header "https://<host-api>/internal/maintenance/purge-anonymous"`, puis une ligne dans `/home/ubuntu/cloudbreak-purge-anonymous.log` (date, code HTTP, début de la réponse). Le header (`X-Cron-Secret: ...`) est lu **par fichier** (`-H @fichier`), jamais en argument. `<host-api>` = `dev-api.cloudbreak-app.com` (dev) ou `api.cloudbreak-app.com` (prod). Sur la prod, utiliser un fichier de header propre à la prod (`~/.cloudbreak-cron.prod.header`, mode 600) : le secret prod n'est pas celui du dev.
+5. **Premier passage à blanc** : lancer le script à la main avec `?dry_run=true` (ajouter le paramètre dans l'URL le temps du test). Réponse attendue `200` avec `{"candidates": N, "purged": 0, "skipped_not_anonymous": ..., "errors": 0, "dry_run": true}`. Si `candidates` est inattendu (trop élevé), **ne pas activer le cron** et investiguer.
+6. **Crontab** `ubuntu` (déjà en `CRON_TZ=Europe/Paris`) : `0 4 * * * /home/ubuntu/cloudbreak-purge-anonymous.sh` (4 h, hors des 18 h des alertes ; ne pas lancer en parallèle d'un build Dokploy, serveur 2 vCPU/3,7 Go sans swap).
+7. **Vérifier le lendemain** : `tail ~/cloudbreak-purge-anonymous.log` → `200`, `errors: 0`.
+
+**Lecture des codes** : `200` OK (résumé JSON) · `403` secret différent ou absent du header · `503` deux causes, lire le champ `code` : `INTERNAL_JOBS_DISABLED` = `INTERNAL_CRON_SECRET` absent/trop court dans l'env du conteneur (redeploy oublié) ; `SERVICE_UNAVAILABLE` = `SUPABASE_URL` ou `SUPABASE_SERVICE_ROLE_KEY` absente de l'env (rien n'est traité) · `404` feature pas encore déployée · `500` erreur serveur (voir `sudo docker service logs <service>`). `skipped_locked: 1` dans le résumé : une autre purge tournait déjà (verrou Redis `lock:anon-purge`, TTL 300 s, pas pris en `dry_run`) ; rien n'est traité, c'est normal, ne pas relancer en boucle. L'ordre de suppression est « compte Supabase d'abord, données locales ensuite » : un échec se rejoue seul au passage suivant. `errors > 0` dans le résumé : Supabase injoignable ou clé service-role invalide ; rien n'a été supprimé pour ces comptes, le prochain passage réessaie.
+
+**Texte légal déjà aligné** : la politique de confidentialité (ops, PR #6) et les CGU décrivent déjà la purge à 30 jours, quotidienne, comme livrée. Elles ne doivent être **publiées en prod qu'une fois ce cron actif** (sinon le texte promet un traitement qui ne tourne pas).
+
+**Réglages** : changer la durée = `ANON_RETENTION_DAYS` + redeploy **et** mettre à jour la politique de confidentialité (ops, `privacy.ts`, sections 2, 6 et 7, et `cgu.ts` section 3) pour que le texte légal reste vrai. Désactiver la purge = commenter la ligne du crontab (le plus sûr) ; l'endpoint reste protégé par le secret.
+
+**Exposition** : comme `/internal/notifications/run-favorites`, l'endpoint est joignable publiquement (Traefik, port 443) et protégé **uniquement** par `INTERNAL_CRON_SECRET`. Un secret compromis permet de purger au plus `ANON_PURGE_MAX_PER_RUN` comptes anonymes inactifs par appel (jamais un compte permanent). **Avant la prod** : restreindre `/internal/*` à l'IP du VPS par une règle Traefik dynamique (aucun code backend, même chantier que le rate-limit du webhook Apple, Lot 1).
+
+**Ne jamais** : lancer la purge sans `dry_run` la première fois sur une instance ; mettre le secret en argument de commande ; modifier la durée sans mettre à jour le texte légal ; l'appeler depuis l'app mobile (endpoint interne, cron seulement).
+
 ## 8bis. Incident du 2026-10-05 — `dev-api` en 502 (backend dev down)
 
 **Symptôme** : l'app mobile (pointée sur `https://dev-api.cloudbreak-app.com`) n'avait que des erreurs
@@ -252,6 +279,7 @@ private key file` (lire `docker service logs <service>`).
   copie hors serveur, et **tester une restauration** au moins une fois.
 - [ ] Un deploy ne doit jamais toucher aux données : il ne reconstruit que l'image du backend.
 - [ ] Secrets : hors de Notion et de git (variables Dokploy / fichiers protégés).
+- [ ] Crons de la prod : `INTERNAL_CRON_SECRET` **propre à la prod** (64 car.), cron des alertes favoris (8quater) **et** cron de purge des anonymes (8quinquies : script, header prod, `dry_run` d'abord, crontab 04:00).
 - [ ] Ne **jamais** mettre `ENVIRONMENT=production` sur le dev, ni `Sandbox` sur la prod.
 
 **Points GPS manuels (à anticiper)** : tant qu'il n'existe pas de colonne distinguant les sommets du seed

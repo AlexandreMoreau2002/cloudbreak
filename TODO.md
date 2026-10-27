@@ -1,7 +1,7 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-10-26. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Mis à jour le 2026-10-27. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
 > Dev du MVP app (mobile + backend) terminé. Reste : ops/pages légales (priorité basse), l'environnement de prod, TestFlight, puis la release.
 
 ---
@@ -11,7 +11,8 @@
 | Tâche | Contexte / note | Statut |
 |---|---|---|
 | Valider `EXPO_ACCESS_TOKEN` en prod | Validator de config ou log `CRITICAL` s'il est vide (`backend/docs/security.md` point b). Le rate-limit de `POST /user/push-token` est fait (backend `c3d9708`, #34). | à faire |
-| Pages légales ops (CGU/Privacy) | Dates réelles (`messages/fr.json`, `cgu.updated`/`privacy.updated`), identité légale (SIRET/adresse), mentionner que l'email et le nom d'usage sont conservés par le backend (`users.email`, `users.display_name`) en plus de Supabase. **Priorité basse** (assumé, pas bloquant pour le dev). | reste, osef pour l'instant |
+| Pages légales ops (CGU/Privacy) | Contenu aligné et mergé sur `develop` (ops `2039a5b`, #6). Reste avant la prod : identité légale (SIRET/adresse : `privacy.ts` section 1 et CGU « Éditeur et hébergeur »), médiateur de la consommation à souscrire (CGU « Réclamations et médiation »), validation juridique (bases légales, transferts hors UE, rétractation, rétention 30 j), relecture finale + bump de `LEGAL_UPDATED_AT`. **Ne pas publier en prod avant que le cron de purge tourne.** | reste identité + médiateur + juriste |
+| Valider sur dev la suppression d'un compte anonyme + un `dry_run` de la purge | Tests mockés : le champ `is_anonymous` et la suppression Admin d'un utilisateur anonyme côté Supabase réel, et la requête de candidats sur Postgres réel, ne sont pas vérifiés. | à faire |
 | Geler `develop`, dernier `make validate` / `npm run validate` | Une fois les deux lignes ci-dessus closes (ou explicitement reportées), créer `release/1.0.0` depuis `develop`. | à faire |
 
 ## Lot 1 — Environnement de prod (infra, pas de code)
@@ -23,6 +24,8 @@
 | Env backend prod | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`, clés Apple complètes + fichier `.p8` (le dev reste `development` + `Sandbox`). | à faire |
 | Env ops prod | `NEXT_PUBLIC_APP_STORE_URL` (après publication) ; `APPLE_TEAM_ID` déjà posée. | à faire |
 | Env EAS profile `production` | `EXPO_PUBLIC_LEGAL_BASE_URL=ops.cloudbreak-app.com`, `EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`. | à faire |
+| Cron de purge des comptes anonymes inactifs (30 j) | Backend mergé et déployé sur dev (#35 `e5760c7`, #36 `d19d0a8`). Reste : poser le cron sur dev puis sur prod selon `docs/infra-serveur.md` §8quinquies (secret, script, `dry_run` d'abord, crontab 04:00). | à faire (dev puis prod) |
+| Restriction IP Traefik sur `/internal/*` | Les crons (alertes favoris, purge des anonymes) ne sont protégés que par `INTERNAL_CRON_SECRET` sur un endpoint public. Règle Traefik dynamique « IP du VPS seulement », aucun code. À faire avant la prod (`docs/infra-serveur.md` §8quinquies). | à faire |
 | Rate-limit Traefik sur `POST /api/v1/webhooks/apple` | Endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui. Règle Traefik dynamique, aucun code backend. À faire avant toute exposition prod. | à faire |
 | Seed des sommets sur la DB prod | Manuel uniquement, **jamais lancé par un deploy**. | à faire, après le reste du lot |
 | Universal Links (story 3.6) | Code fait, scénario principal déjà validé sur iPhone en dev. Ne reste que le DNS `ops` + l'env EAS ci-dessus — rien de nouveau à coder. | suit le lot |
@@ -51,6 +54,7 @@
 | Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
 | CI backend sur base vide | Job `alembic upgrade head` sur Postgres vide (aurait attrapé le bug `subscriptions`). |
 | Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
+| Rétention des journaux serveur | Aucune durée garantie (la politique de confidentialité l'écrit honnêtement). Configurer une rotation Docker pour pouvoir annoncer une durée ferme. Si une newsletter est lancée : ajouter l'outil d'envoi (ex. Brevo) comme sous-traitant dans la politique. |
 | Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
 | Monitoring Better Stack (story 1.5) | Uptime + logs, pas branché. |
 | Receipts Expo (`DeviceNotRegistered`) | PR séparée, pas démarrée. Post-launch. |

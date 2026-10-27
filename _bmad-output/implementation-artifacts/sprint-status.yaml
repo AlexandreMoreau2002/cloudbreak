@@ -69,6 +69,8 @@ development_status:
   2-7-mot-de-passe-oublie: done
   2-8-mini-sondage-post-creation-compte: done # persistance API/PostgreSQL validée 2026-10-14 ; parcours UI (skip, catégories, retry, reconnexion) + OTP encore à valider, voir TODO.md
   2-9-nom-usage-dans-le-profil: done
+  2-4b-suppression-comptes-anonymes: done # backend #35 + mobile #52, mergés 2026-10-27
+  2-4c-purge-comptes-anonymes-inactifs: done # backend #36 mergé et déployé en dev ; cron VPS à poser, voir TODO.md
   epic-2-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
