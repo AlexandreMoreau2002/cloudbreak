@@ -154,9 +154,27 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
 - **Avant le deploy de #30** l'endpoint répond 404 : normal. Après : attendre `200` avec le résumé JSON. `503` = secret absent/trop court dans l'env du conteneur (redeploy oublié), `403` = secret différent.
 - **Rotation** : régénérer, `application.saveEnvironment`, redeploy, puis réécrire les deux fichiers ci-dessus.
 
-## 8quinquies. Cron de purge des comptes anonymes inactifs (RGPD) — à poser après le merge de la feature
+## 8quinquies. Cron de purge des comptes anonymes inactifs (RGPD) — posé sur dev le 2026-10-27 ; prod à poser à la MEP
 
 **À quoi ça sert** : une session Supabase anonyme (sans email) qui n'est plus utilisée (réinstallation, appareil perdu) laisse des données orphelines (`predictions`, `terrain_validations`, favoris) que personne ne peut supprimer. Chaque nuit, un cron appelle `POST /internal/maintenance/purge-anonymous` : le backend supprime les comptes **anonymes** sans activité depuis **30 jours** (décision du 2026-10-27, à valider juridiquement). Un compte permanent n'est jamais touché (le backend vérifie `is_anonymous` auprès de Supabase avant de supprimer). Doc fonctionnelle : `backend/docs/purge-anonymous-accounts/fonctionnement.md`.
+
+**État sur le dev (posé le 2026-10-27)** : backend `d19d0a8` déployé sur `dev-api` ; script `/home/ubuntu/cloudbreak-purge-anonymous.sh` (mode 700, calqué sur celui des favoris, **même secret** que les alertes via `~/.cloudbreak-cron.header`, `INTERNAL_CRON_SECRET` déjà dans l'env Dokploy) ; crontab `ubuntu` : `0 6 * * * /home/ubuntu/cloudbreak-purge-anonymous.sh >> /home/ubuntu/cloudbreak-purge-anonymous.log 2>&1`, sous la ligne `CRON_TZ=Europe/Paris` (donc **06:00 heure de Paris**) ; sauvegarde de l'ancien crontab : `~/crontab.bak-20261027`. Premier `dry_run` réel le 2026-10-27 22:02 UTC : `http=200`, `{"candidates":0,"purged":0,"skipped_not_anonymous":0,"errors":0,"dry_run":true,"skipped_locked":0}` (requête de candidats exécutée sur le vrai Postgres ; 0 candidat car aucune donnée anonyme vieille de 30 j sur le dev, donc le chemin « Supabase confirme `is_anonymous` puis suppression » n'a **pas encore été exercé en réel**). Premier vrai passage : le 2026-10-28 à 06:00 Paris, à lire dans `~/cloudbreak-purge-anonymous.log`.
+
+**Pourquoi 06:00 et pas 04:00** : la sauvegarde des bases (`sudo /srv/scripts/backup-databases.sh`) tourne à **03:00 UTC**, ligne placée *avant* `CRON_TZ=Europe/Paris` donc en heure serveur (UTC) ; 03:00 UTC = 04:00 Paris en hiver. Une purge à 04:00 Paris aurait tourné en même temps que le dump. 06:00 Paris = 05:00 UTC (hiver) / 04:00 UTC (été) : toujours après la sauvegarde. À reproduire sur la prod.
+
+**Script (contenu exact)** :
+
+```sh
+#!/bin/sh
+# Purge des comptes anonymes inactifs Cloudbreak : 1 appel par nuit. Secret lu dans un fichier 600, jamais en argument.
+# Usage : sans argument = purge réelle (cron) ; "dry" = dry_run (rien n'est supprimé, pour tester à la main).
+query=""
+[ "$1" = "dry" ] && query="?dry_run=true"
+code=$(curl -s -m 300 -o /tmp/cloudbreak-purge-anonymous.out -w "%{http_code}" -X POST -H @/home/ubuntu/.cloudbreak-cron.header "https://<host-api>/internal/maintenance/purge-anonymous$query")
+echo "$(date -u +%FT%TZ) http=$code mode=${1:-real} $(head -c 300 /tmp/cloudbreak-purge-anonymous.out)"
+```
+
+Test manuel à tout moment (n'écrit rien dans le log, ne supprime rien) : `ssh vps-ovh-projets '~/cloudbreak-purge-anonymous.sh dry'`.
 
 **Mise en place sur CHAQUE instance** (dev, puis prod au moment de la MEP, section 8ter) — dans cet ordre :
 
@@ -167,8 +185,8 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
    - `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY` : déjà présentes (nécessaires à la suppression de compte). Vérifier qu'elles pointent le bon projet : une mauvaise URL fait échouer la purge (erreurs comptées, rien supprimé).
 3. **Redeploy** de l'application backend (`application.deploy` par API, jamais par l'UI web).
 4. **Script sur le VPS** (une seule connexion `ssh vps-ovh-projets`) : créer `/home/ubuntu/cloudbreak-purge-anonymous.sh` (mode 700), sur le modèle de `cloudbreak-run-favorites.sh` : `curl -m 300 -s -o <tmp> -w '%{http_code}' -X POST -H @/home/ubuntu/.cloudbreak-cron.header "https://<host-api>/internal/maintenance/purge-anonymous"`, puis une ligne dans `/home/ubuntu/cloudbreak-purge-anonymous.log` (date, code HTTP, début de la réponse). Le header (`X-Cron-Secret: ...`) est lu **par fichier** (`-H @fichier`), jamais en argument. `<host-api>` = `dev-api.cloudbreak-app.com` (dev) ou `api.cloudbreak-app.com` (prod). Sur la prod, utiliser un fichier de header propre à la prod (`~/.cloudbreak-cron.prod.header`, mode 600) : le secret prod n'est pas celui du dev.
-5. **Premier passage à blanc** : lancer le script à la main avec `?dry_run=true` (ajouter le paramètre dans l'URL le temps du test). Réponse attendue `200` avec `{"candidates": N, "purged": 0, "skipped_not_anonymous": ..., "errors": 0, "dry_run": true}`. Si `candidates` est inattendu (trop élevé), **ne pas activer le cron** et investiguer.
-6. **Crontab** `ubuntu` (déjà en `CRON_TZ=Europe/Paris`) : `0 4 * * * /home/ubuntu/cloudbreak-purge-anonymous.sh` (4 h, hors des 18 h des alertes ; ne pas lancer en parallèle d'un build Dokploy, serveur 2 vCPU/3,7 Go sans swap).
+5. **Premier passage à blanc** : `~/cloudbreak-purge-anonymous.sh dry` (le script gère l'argument `dry`). Réponse attendue `200` avec `{"candidates": N, "purged": 0, "skipped_not_anonymous": ..., "errors": 0, "dry_run": true}`. Si `candidates` est inattendu (trop élevé), **ne pas activer le cron** et investiguer.
+6. **Crontab** `ubuntu` (déjà en `CRON_TZ=Europe/Paris`) : `0 6 * * * /home/ubuntu/cloudbreak-purge-anonymous.sh >> /home/ubuntu/cloudbreak-purge-anonymous.log 2>&1`, **à ajouter sous la ligne `CRON_TZ=Europe/Paris`** (6 h Paris : après la sauvegarde de 03:00 UTC, hors des 18 h des alertes ; ne pas lancer en parallèle d'un build Dokploy, serveur 2 vCPU/3,7 Go sans swap). Faire d'abord `cp` de `crontab -l` vers un fichier de sauvegarde, et éviter les doublons (`grep` avant d'ajouter).
 7. **Vérifier le lendemain** : `tail ~/cloudbreak-purge-anonymous.log` → `200`, `errors: 0`.
 
 **Lecture des codes** : `200` OK (résumé JSON) · `403` secret différent ou absent du header · `503` deux causes, lire le champ `code` : `INTERNAL_JOBS_DISABLED` = `INTERNAL_CRON_SECRET` absent/trop court dans l'env du conteneur (redeploy oublié) ; `SERVICE_UNAVAILABLE` = `SUPABASE_URL` ou `SUPABASE_SERVICE_ROLE_KEY` absente de l'env (rien n'est traité) · `404` feature pas encore déployée · `500` erreur serveur (voir `sudo docker service logs <service>`). `skipped_locked: 1` dans le résumé : une autre purge tournait déjà (verrou Redis `lock:anon-purge`, TTL 300 s, pas pris en `dry_run`) ; rien n'est traité, c'est normal, ne pas relancer en boucle. L'ordre de suppression est « compte Supabase d'abord, données locales ensuite » : un échec se rejoue seul au passage suivant. `errors > 0` dans le résumé : Supabase injoignable ou clé service-role invalide ; rien n'a été supprimé pour ces comptes, le prochain passage réessaie.
@@ -279,7 +297,7 @@ private key file` (lire `docker service logs <service>`).
   copie hors serveur, et **tester une restauration** au moins une fois.
 - [ ] Un deploy ne doit jamais toucher aux données : il ne reconstruit que l'image du backend.
 - [ ] Secrets : hors de Notion et de git (variables Dokploy / fichiers protégés).
-- [ ] Crons de la prod : `INTERNAL_CRON_SECRET` **propre à la prod** (64 car.), cron des alertes favoris (8quater) **et** cron de purge des anonymes (8quinquies : script, header prod, `dry_run` d'abord, crontab 04:00).
+- [ ] Crons de la prod : `INTERNAL_CRON_SECRET` **propre à la prod** (64 car.), cron des alertes favoris (8quater) **et** cron de purge des anonymes (8quinquies : script, header prod, `dry_run` d'abord, crontab 06:00).
 - [ ] Ne **jamais** mettre `ENVIRONMENT=production` sur le dev, ni `Sandbox` sur la prod.
 
 **Points GPS manuels (à anticiper)** : tant qu'il n'existe pas de colonne distinguant les sommets du seed
