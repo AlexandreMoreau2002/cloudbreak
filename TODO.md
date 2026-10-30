@@ -10,8 +10,7 @@
 
 | Tâche | Contexte / note | Statut |
 |---|---|---|
-| Purge des anonymes : cas avec un vrai candidat | Suppression d'un compte anonyme validée sur dev le 2026-10-31 (signup anonyme → `DELETE /user` 204, utilisateur Supabase supprimé). La requête de candidats s'exécute sur Postgres réel (cron 3 nuits en 200), mais aucun compte n'a encore 30 j d'inactivité : le cas « candidat trouvé puis supprimé » n'est pas vu en réel. À reporter explicitement ou à voir avec `ANON_RETENTION_DAYS` bas sur dev. | à décider |
-| Geler `develop`, dernier `make validate` / `npm run validate` | Une fois les deux lignes ci-dessus closes (ou explicitement reportées), créer `release/1.0.0` depuis `develop`. | à faire |
+| Geler `develop`, dernier `make validate` / `npm run validate` | Créer `release/1.0.0` depuis `develop`. Cas « candidat réel » de la purge des anonymes : non testé en réel, accepté (couvert par les tests mockés). | en cours |
 
 ## Lot 1 — Environnement de prod (infra, pas de code)
 
