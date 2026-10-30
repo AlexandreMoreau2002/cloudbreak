@@ -10,7 +10,6 @@
 
 | Tâche | Contexte / note | Statut |
 |---|---|---|
-| Valider `EXPO_ACCESS_TOKEN` en prod | Validator de config ou log `CRITICAL` s'il est vide (`backend/docs/security.md` point b). Le rate-limit de `POST /user/push-token` est fait (backend `c3d9708`, #34). | à faire |
 | Valider sur dev la suppression d'un compte anonyme + un `dry_run` de la purge | Tests mockés : le champ `is_anonymous` et la suppression Admin d'un utilisateur anonyme côté Supabase réel, et la requête de candidats sur Postgres réel, ne sont pas vérifiés. | à faire |
 | Geler `develop`, dernier `make validate` / `npm run validate` | Une fois les deux lignes ci-dessus closes (ou explicitement reportées), créer `release/1.0.0` depuis `develop`. | à faire |
 
