@@ -17,7 +17,11 @@ divergence, `CLAUDE.md` gagne.
    tout lui-même dans le thread principal.
 3. **Git flow** : une story = une branche `feature/<nom>` partant de `develop`. **Jamais de
    commit direct sur `develop` ou `main`.** Travail dans un submodule = commit dans le submodule
-   d'abord, puis bump de la ref dans le repo racine (`chore:`). Merge en **squash**.
+   d'abord, puis bump de la ref dans le repo racine (`chore:`). Merge en **squash** pour les PRs de
+   feature/fix. **Releases** : `release/X.Y.Z` = correctifs seulement (PR vers la release, puis
+   report dans `develop`), builds EAS depuis la release, `release → main` en merge commit
+   `--no-ff` + tag `vX.Y.Z` (jamais en squash), jamais de tag/merge `main` sans accord d'Alexandre
+   (détail : `CLAUDE.md` § Releases).
 4. **Début de story** : créer la sous-page Notion checklist de test (sous "Cloudbreak - mer de
    nuage", `page_id: 325964bd-a185-8035-8585-ff14ef1f76c6`).
 5. **Livrables de fin de lot** : `docs/story-{epic}-{num}-{slug}.md` dans le submodule concerné,

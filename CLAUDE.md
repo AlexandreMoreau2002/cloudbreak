@@ -266,8 +266,18 @@ Après chaque tâche, lancer les tests sans attendre qu'on le demande, corriger 
 - Commit **dans le submodule d'abord**, puis bump de la ref dans le repo racine (`chore: update <submodule> ref`).
 - Messages en Conventional Commits, impératifs (`feat:`, `fix:`, `chore:`, `docs:`, `style:`).
 - **Pas de `Co-Authored-By`** dans les commits, tous repos.
-- PRs : **squash merge** vers `develop`, avec `make validate` / `npm run validate` verts.
+- PRs de feature / fix : **squash merge** vers `develop` (ou vers `release/X.Y.Z` pour un correctif de release), avec `make validate` / `npm run validate` verts. Le squash vaut **uniquement** pour ces PRs : jamais pour `release → main` ni pour le report vers `develop` (voir « Releases »).
 - Plans et specs superpowers : `docs/superpowers/`, jamais committés.
+
+### Releases (`release/X.Y.Z`)
+
+Premier cas : `release/1.0.0`, créée le 2026-11-01 dans `backend`, `mobile` et `ops` à partir de `develop` (CI verte). La racine n'a pas de branche release.
+
+- **`release/X.Y.Z` ne reçoit que des correctifs** (aucune feature). Un bug trouvé en TestFlight / QA se corrige dans une PR `fix/<nom>` **vers `release/X.Y.Z`** (squash), puis **est reporté dans `develop`** (merge ou cherry-pick). Sans ce report, le bug reviendrait à la release suivante. Les features continuent sur `develop`.
+- **Les builds EAS (TestFlight / App Store) partent de `release/X.Y.Z` du mobile**, jamais de `develop`.
+- **Livraison** (après QA validée, une fois l'environnement de prod prêt — l'app Dokploy prod suivra `main`, donc le merge dans `main` déclenche le déploiement prod) : dans chaque submodule, `release/X.Y.Z` → `main` en **merge commit `--no-ff`** (pas de squash : `main` et `develop` doivent partager l'historique, sinon conflits au retour), tag annoté `vX.Y.Z` poussé, GitHub Release avec notes, puis `main` → `develop` (merge retour). Racine : bump des refs + `docs/versions.md`.
+- **Hotfix prod** : branche depuis `main`, PR vers `main`, tag patch (`vX.Y.Z+1`), puis report dans `develop` et dans la release en cours s'il y en a une.
+- Ne jamais taguer ni merger dans `main` sans accord explicite d'Alexandre.
 
 ### Début de story
 
