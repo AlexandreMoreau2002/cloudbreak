@@ -1,16 +1,10 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-10-27. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
-> Dev du MVP app (mobile + backend) terminé. Reste : l'environnement de prod, TestFlight, puis la release.
+> Mis à jour le 2026-11-01. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Code figé : `release/1.0.0` créée dans backend, mobile et ops (2026-11-01). Seuls des correctifs entrent dedans, puis report dans `develop`. Reste : l'environnement de prod, TestFlight, puis le merge dans `main` (`--no-ff`) + tag `v1.0.0` + GitHub Release.
 
 ---
-
-## Lot 0 — Figer le code (develop → release/1.0.0)
-
-| Tâche | Contexte / note | Statut |
-|---|---|---|
-| Geler `develop`, dernier `make validate` / `npm run validate` | Créer `release/1.0.0` depuis `develop`. Cas « candidat réel » de la purge des anonymes : non testé en réel, accepté (couvert par les tests mockés). | en cours |
 
 ## Lot 1 — Environnement de prod (infra, pas de code)
 
@@ -33,7 +27,7 @@
 | Tâche | Contexte / note | Statut |
 |---|---|---|
 | Assets App Store | Icône 1024×1024, captures FR/EN. Indépendant des autres lots, peut se faire en parallèle. | à faire |
-| Build EAS signée | Dépend du Lot 1 (variables EAS prod posées, notamment `EXPO_PUBLIC_SUPPORT_EMAIL`). | bloqué par Lot 1 |
+| Build EAS signée | **Depuis `release/1.0.0`** (mobile, créée le 2026-11-01), pas depuis `develop`. Les variables publiques prod sont dans `eas.json`. Dépend du Lot 1 pour les secrets/variables serveur. À contrôler dans l'IPA : `aps-environment=production`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par Lot 1 |
 | App dans App Store Connect | Déjà créée. | fait |
 | Envoi + approbation TestFlight | Après la build EAS. | bloqué par la ligne précédente |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | Via la build TestFlight installée, pas le simulateur. | bloqué par TestFlight |
