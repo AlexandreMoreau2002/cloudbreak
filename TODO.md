@@ -10,14 +10,16 @@
 
 | Tâche | Contexte / note | Statut |
 |---|---|---|
-| Dokploy `production` sur le VPS | Postgres + Redis dédiés, séparés du dev. | à faire |
-| DNS OVH `api` et `ops` | `api.cloudbreak-app.com`, `ops.cloudbreak-app.com`. | à faire |
+| Dokploy `production` sur le VPS | Postgres + Redis dédiés, séparés du dev. App prod qui **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap à 1,8/4 Go — à surveiller après la MEP. | à faire |
+| DNS OVH `api` et `ops` | `api.cloudbreak-app.com`, `ops.cloudbreak-app.com` → A `51.178.37.35`. Brief Codex prêt (`docs/superpowers/codex-briefs/`). Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | à faire (Codex) |
+| Projet Supabase `cloudbreak-prod` (séparé du dev) | Décidé le 2026-11-06. Anonymous Auth activé, « Confirm email » activé en prod. Brief Codex prêt ; valeurs déposées en fichier 600, jamais dans le chat. | à faire (Codex) |
 | Env backend prod | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`, clés Apple complètes + fichier `.p8` (le dev reste `development` + `Sandbox`). | à faire |
 | Env ops prod | `NEXT_PUBLIC_APP_STORE_URL` (après publication) ; `APPLE_TEAM_ID` déjà posée. | à faire |
-| Env EAS profile `production` | `EXPO_PUBLIC_LEGAL_BASE_URL=ops.cloudbreak-app.com`, `EXPO_PUBLIC_SUPPORT_EMAIL=contact@cloudbreak-app.com`. | à faire |
+| Env EAS profile `production` | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` du projet Supabase **prod** à poser dans le dashboard EAS (sans elles, le build `production` échoue volontairement). Le reste est dans `eas.json`. | à faire |
 | Cron de purge des comptes anonymes inactifs (30 j) | Backend mergé et déployé sur dev (#35 `e5760c7`, #36 `d19d0a8`). Pages légales finales mergées (ops `905e35b`) : posture assumée (particulier sans SIRET, pas de médiateur ni de relecture juridique), **à ne publier en prod qu'une fois ce cron actif**. **Cron posé sur dev le 2026-10-27** (06:00 Paris, premier `dry_run` OK, 0 candidat). Reste : le poser sur prod à la MEP selon `docs/infra-serveur.md` §8quinquies (secret, script, `dry_run` d'abord, crontab 06:00 Paris). | à faire (dev puis prod) |
 | Restriction IP Traefik sur `/internal/*` | Les crons (alertes favoris, purge des anonymes) ne sont protégés que par `INTERNAL_CRON_SECRET` sur un endpoint public. Règle Traefik dynamique « IP du VPS seulement », aucun code. À faire avant la prod (`docs/infra-serveur.md` §8quinquies). | à faire |
 | Rate-limit Traefik sur `POST /api/v1/webhooks/apple` | Endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui. Règle Traefik dynamique, aucun code backend. À faire avant toute exposition prod. | à faire |
+| CI sur les PR vers `release/**` | Les workflows backend/mobile/ops ne se déclenchent que pour `develop` et `main` : ajouter `release/**` aux `branches` (push + pull_request). | à faire |
 | Seed des sommets sur la DB prod | Manuel uniquement, **jamais lancé par un deploy**. | à faire, après le reste du lot |
 | Universal Links (story 3.6) | Code fait, scénario principal déjà validé sur iPhone en dev. Ne reste que le DNS `ops` + l'env EAS ci-dessus — rien de nouveau à coder. | suit le lot |
 | Supabase | Un seul projet dev+prod gardé pour le MVP, pas de split à faire. | décidé, rien à faire |
@@ -27,7 +29,7 @@
 | Tâche | Contexte / note | Statut |
 |---|---|---|
 | Assets App Store | Icône 1024×1024, captures FR/EN. Indépendant des autres lots, peut se faire en parallèle. | à faire |
-| Build EAS signée | **Depuis `release/1.0.0`** (mobile, créée le 2026-11-01), pas depuis `develop`. Les variables publiques prod sont dans `eas.json`. Dépend du Lot 1 pour les secrets/variables serveur. À contrôler dans l'IPA : `aps-environment=production`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par Lot 1 |
+| Build EAS `staging` + QA | **Depuis `release/1.0.0`**, profil `staging` (vise `dev-api`, Supabase dev, Apple Sandbox) ; `dev-api` doit suivre `release/1.0.0` pendant la QA. Test de fumée final sur la build `production` avec un compte réel supprimé ensuite. Ancienne ligne : **Depuis `release/1.0.0`** (mobile, créée le 2026-11-01), pas depuis `develop`. Les variables publiques prod sont dans `eas.json`. Dépend du Lot 1 pour les secrets/variables serveur. À contrôler dans l'IPA : `aps-environment=production`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par Lot 1 |
 | App dans App Store Connect | Déjà créée. | fait |
 | Envoi + approbation TestFlight | Après la build EAS. | bloqué par la ligne précédente |
 | QA manuelle epics 2/3/4/6 sur iPhone réel | Via la build TestFlight installée, pas le simulateur. | bloqué par TestFlight |
