@@ -1,51 +1,58 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-11-01. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
-> Code figé : `release/1.0.0` créée dans backend, mobile et ops (2026-11-01). Seuls des correctifs entrent dedans, puis report dans `develop`. Reste : l'environnement de prod, TestFlight, puis le merge dans `main` (`--no-ff`) + tag `v1.0.0` + GitHub Release.
+> Mis à jour le 2026-11-06. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+
+## Où on en est
+
+1. **Le code est figé.** `release/1.0.0` existe dans backend, mobile et ops (créée le 2026-11-01). On n'y met que des correctifs, toujours reportés dans `develop`. Deux sont déjà passés : achats Sandbox acceptés en prod, profils de build `staging` / `production`.
+2. **Maintenant : Lot 1 = monter la prod** (serveur, comptes, domaines). Rien à coder. Codex fait ce qui demande un navigateur (DNS OVH, Supabase) ; Claude fait Dokploy et Traefik ; Alex saisit les secrets lui-même.
+3. **Ensuite : Lot 2 = tester la release** sur l'environnement de test (le dev), avec une build TestFlight `staging`. La prod reste vierge.
+4. **Enfin : Lot 3 = livrer** (merge dans `main`, tag `v1.0.0`, soumission Apple).
+
+Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers/codex-briefs/`), **Claude** = API Dokploy / SSH / code, **Alex** = secrets et décisions.
 
 ---
 
-## Lot 1 — Environnement de prod (infra, pas de code)
+## Lot 1 — Monter la prod (infra, pas de code)
 
-| Tâche | Contexte / note | Statut |
-|---|---|---|
-| Dokploy `production` sur le VPS | Postgres + Redis dédiés, séparés du dev. App prod qui **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap à 1,8/4 Go — à surveiller après la MEP. | à faire |
-| DNS OVH `api` et `ops` | `api.cloudbreak-app.com`, `ops.cloudbreak-app.com` → A `51.178.37.35`. Brief Codex prêt (`docs/superpowers/codex-briefs/`). Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | à faire (Codex) |
-| Projet Supabase `cloudbreak-prod` (séparé du dev) | Décidé le 2026-11-06. Anonymous Auth activé, « Confirm email » activé en prod. Brief Codex prêt ; valeurs déposées en fichier 600, jamais dans le chat. | à faire (Codex) |
-| Env backend prod | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`, clés Apple complètes + fichier `.p8` (le dev reste `development` + `Sandbox`). | à faire |
-| Env ops prod | `NEXT_PUBLIC_APP_STORE_URL` (après publication) ; `APPLE_TEAM_ID` déjà posée. | à faire |
-| Env EAS profile `production` | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` du projet Supabase **prod** à poser dans le dashboard EAS (sans elles, le build `production` échoue volontairement). Le reste est dans `eas.json`. | à faire |
-| Cron de purge des comptes anonymes inactifs (30 j) | Backend mergé et déployé sur dev (#35 `e5760c7`, #36 `d19d0a8`). Pages légales finales mergées (ops `905e35b`) : posture assumée (particulier sans SIRET, pas de médiateur ni de relecture juridique), **à ne publier en prod qu'une fois ce cron actif**. **Cron posé sur dev le 2026-10-27** (06:00 Paris, premier `dry_run` OK, 0 candidat). Reste : le poser sur prod à la MEP selon `docs/infra-serveur.md` §8quinquies (secret, script, `dry_run` d'abord, crontab 06:00 Paris). | à faire (dev puis prod) |
-| Restriction IP Traefik sur `/internal/*` | Les crons (alertes favoris, purge des anonymes) ne sont protégés que par `INTERNAL_CRON_SECRET` sur un endpoint public. Règle Traefik dynamique « IP du VPS seulement », aucun code. À faire avant la prod (`docs/infra-serveur.md` §8quinquies). | à faire |
-| Rate-limit Traefik sur `POST /api/v1/webhooks/apple` | Endpoint public pour Apple, pas couvert par `RateLimitService` aujourd'hui. Règle Traefik dynamique, aucun code backend. À faire avant toute exposition prod. | à faire |
-| CI sur les PR vers `release/**` | Les workflows backend/mobile/ops ne se déclenchent que pour `develop` et `main` : ajouter `release/**` aux `branches` (push + pull_request). | à faire |
-| Seed des sommets sur la DB prod | Manuel uniquement, **jamais lancé par un deploy**. | à faire, après le reste du lot |
-| Universal Links (story 3.6) | Code fait, scénario principal déjà validé sur iPhone en dev. Ne reste que le DNS `ops` + l'env EAS ci-dessus — rien de nouveau à coder. | suit le lot |
-| Supabase | Un seul projet dev+prod gardé pour le MVP, pas de split à faire. | décidé, rien à faire |
+| # | Tâche | Qui | Contexte / note | Statut |
+|---|---|---|---|---|
+| 1 | DNS OVH `api` et `ops` | Codex | `api.cloudbreak-app.com` et `ops.cloudbreak-app.com` → A `51.178.37.35`. Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | à faire |
+| 2 | Projet Supabase `cloudbreak-prod` (séparé du dev) | Codex | Anonymous Auth activé, « Confirm email » activé. Les valeurs vont dans un fichier en permissions 600, jamais dans le chat. | à faire |
+| 3 | Environnement Dokploy `production` | Claude | Postgres + Redis dédiés, apps backend et ops. L'app prod **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap 1,8/4 Go : à surveiller. | à faire |
+| 4 | Variables backend prod | Claude (non secrètes) + Alex (secrets) | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`. Secrets saisis par Alex dans l'UI Dokploy : clés `APPLE_*` + fichier `.p8`, `EXPO_ACCESS_TOKEN`, `SUPABASE_*`, `INTERNAL_CRON_SECRET` (≥ 32 car.). Sans eux, le backend refuse de démarrer, volontairement. | bloqué par 2 et 3 |
+| 5 | Variables ops prod | Claude + Alex | `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL=https://ops.cloudbreak-app.com`. `NEXT_PUBLIC_APP_STORE_URL` après publication (rebuild). | bloqué par 3 |
+| 6 | Variables EAS `production` | Alex (ou Codex) | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` du Supabase prod, dans le dashboard EAS. Sans elles, le build `production` échoue volontairement. | bloqué par 2 |
+| 7 | Restriction IP Traefik sur `/internal/*` | Claude | Les crons ne sont protégés que par `INTERNAL_CRON_SECRET` sur un endpoint public. Règle « IP du VPS seulement » (`docs/infra-serveur.md` §8quinquies). | à faire |
+| 8 | Rate-limit Traefik sur `POST /api/v1/webhooks/apple` | Claude | Endpoint public pour Apple, non couvert par `RateLimitService`. | à faire |
+| 9 | Cron de purge des anonymes sur la prod | Claude | Dev déjà en place. Prod : secret, script, `dry_run` d'abord, crontab 06:00 Paris (§8quinquies). **Les pages légales ne se publient en prod qu'une fois ce cron actif.** | bloqué par 4 |
+| 10 | Seed des sommets sur la DB prod | Claude | Manuel uniquement, jamais lancé par un deploy. | après 3 et 4 |
 
-## Lot 2 — TestFlight
+Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; ne reste que les lignes 1, 5 et 6 ci-dessus.
 
-| Tâche | Contexte / note | Statut |
-|---|---|---|
-| Assets App Store | Icône 1024×1024, captures FR/EN. Indépendant des autres lots, peut se faire en parallèle. | à faire |
-| Build EAS `staging` + QA | **Depuis `release/1.0.0`**, profil `staging` (vise `dev-api`, Supabase dev, Apple Sandbox) ; `dev-api` doit suivre `release/1.0.0` pendant la QA. Test de fumée final sur la build `production` avec un compte réel supprimé ensuite. Ancienne ligne : **Depuis `release/1.0.0`** (mobile, créée le 2026-11-01), pas depuis `develop`. Les variables publiques prod sont dans `eas.json`. Dépend du Lot 1 pour les secrets/variables serveur. À contrôler dans l'IPA : `aps-environment=production`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par Lot 1 |
-| App dans App Store Connect | Déjà créée. | fait |
-| Envoi + approbation TestFlight | Après la build EAS. | bloqué par la ligne précédente |
-| QA manuelle epics 2/3/4/6 sur iPhone réel | Via la build TestFlight installée, pas le simulateur. | bloqué par TestFlight |
+## Lot 2 — Tester la release (TestFlight)
 
-## Lot 3 — Release
+| # | Tâche | Qui | Contexte / note | Statut |
+|---|---|---|---|---|
+| 1 | Assets App Store | Alex | Icône 1024×1024 (déjà aplatie sans alpha), captures FR/EN. Indépendant, à faire en parallèle. | à faire |
+| 2 | `dev-api` suit `release/1.0.0` | Claude | Pendant la QA, le dev devient l'environnement de test (Supabase dev, Apple Sandbox). | à faire |
+| 3 | Build EAS `staging` depuis `release/1.0.0` + envoi TestFlight | Alex (+ Claude) | `eas build --profile staging --platform ios` puis `eas submit`. À contrôler dans l'IPA : `aps-environment`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par 2 |
+| 4 | QA manuelle epics 2/3/4/6 sur iPhone réel | Alex | Via TestFlight, pas le simulateur. Inclut un vrai achat Sandbox (valide le correctif Apple, jamais testé avec un vrai achat). | bloqué par 3 |
+| 5 | Test de fumée final sur la prod | Alex | Build `production`, un compte réel, supprimé ensuite. Les liens de partage se testent ici (pas en staging). | bloqué par Lot 1 |
 
-| Tâche | Contexte / note | Statut |
-|---|---|---|
-| Soumission App Store (review Apple) | Dernière étape, après QA TestFlight validée. | à faire |
+## Lot 3 — Livrer
+
+| # | Tâche | Qui | Contexte / note | Statut |
+|---|---|---|---|---|
+| 1 | Merge `release/1.0.0` → `main` (`--no-ff`), tag `v1.0.0`, GitHub Release, retour dans `develop` | Claude, sur ordre d'Alex | Dans chaque submodule, puis refs racine + `docs/versions.md`. L'app Dokploy prod bascule sur `main`. | après Lot 2 |
+| 2 | Soumission App Store (review Apple) | Alex | Dernière étape. | après 1 |
 
 ## Hors lot — non bloquant, à caser quand on veut
 
 | Tâche | Contexte / note |
 |---|---|
 | Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
-| CI backend sur base vide | Job `alembic upgrade head` sur Postgres vide (aurait attrapé le bug `subscriptions`). |
 | Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
 | Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
 | Monitoring Better Stack (story 1.5) | Uptime + logs, pas branché. |
