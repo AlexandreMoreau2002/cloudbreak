@@ -19,7 +19,7 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
 | 1 | DNS OVH `api` et `ops` | Codex | `api.cloudbreak-app.com` et `ops.cloudbreak-app.com` → A `51.178.37.35`. Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | à faire |
-| 2 | Projet Supabase `cloudbreak-prod` (séparé du dev) | Codex | Anonymous Auth activé, « Confirm email » activé. Les valeurs vont dans un fichier en permissions 600, jamais dans le chat. | à faire |
+| 2 | Projet Supabase `cloudbreak-prod` (séparé du dev) | Codex | Même config d'auth que le dev, prouvée par un tableau d'équivalence : Anonymous, manual linking, Apple, templates d'email à code 6 chiffres, **SMTP Brevo prod séparé** (décision à prendre : domaine d'envoi prod + adresse expéditeur ; enregistrements SPF/DKIM à ajouter ensuite dans OVH). Valeurs en fichier 600, jamais dans le chat. | à faire |
 | 3 | Environnement Dokploy `production` | Claude | Postgres + Redis dédiés, apps backend et ops. L'app prod **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap 1,8/4 Go : à surveiller. | à faire |
 | 4 | Variables backend prod | Claude (non secrètes) + Alex (secrets) | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`. Secrets saisis par Alex dans l'UI Dokploy : clés `APPLE_*` + fichier `.p8`, `EXPO_ACCESS_TOKEN`, `SUPABASE_*`, `INTERNAL_CRON_SECRET` (≥ 32 car.). Sans eux, le backend refuse de démarrer, volontairement. | bloqué par 2 et 3 |
 | 5 | Variables ops prod | Claude + Alex | `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL=https://ops.cloudbreak-app.com`. `NEXT_PUBLIC_APP_STORE_URL` après publication (rebuild). | bloqué par 3 |
@@ -46,7 +46,8 @@ Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; ne reste 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
 | 1 | Merge `release/1.0.0` → `main` (`--no-ff`), tag `v1.0.0`, GitHub Release, retour dans `develop` | Claude, sur ordre d'Alex | Dans chaque submodule, puis refs racine + `docs/versions.md`. L'app Dokploy prod bascule sur `main`. | après Lot 2 |
-| 2 | Soumission App Store (review Apple) | Alex | Dernière étape. | après 1 |
+| 2 | Fiche App Store Connect (page produit, captures, confidentialité, abonnements, accords fiscaux/bancaires) | Codex en brouillon (brief C), Alex valide | Prérequis : ops prod en ligne (URL de politique de confidentialité), captures prises sur une build. Codex ne soumet jamais. | après le Lot 2 |
+| 3 | Soumission App Store (review Apple) | Alex | Dernière étape produit. Review Apple ~24-48 h, puis publication manuelle ou automatique. | après 1 et 2 |
 
 ## Hors lot — non bloquant, à caser quand on veut
 
