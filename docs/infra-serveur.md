@@ -304,6 +304,25 @@ private key file` (lire `docker service logs <service>`).
 des sommets saisis à la main (ex. `source = seed|manual`), un re-seed écraserait les corrections. À prévoir
 avant d'ouvrir la saisie manuelle.
 
+## 8sexies. Environnement Dokploy `prod` — créé le 2026-11-06 (non déployé)
+
+Projet Dokploy `cloudbreak`, **nouvel environnement `prod`** (le nom `production` est refusé par Dokploy : réservé à l'environnement par défaut, que le dev a renommé en `dev`). Créé par l'API Dokploy depuis le VPS.
+
+| Élément | Nom Dokploy | État | Détail |
+|---|---|---|---|
+| Postgres prod | `cloudbreak-postgres-prod` | **en marche** (1/1) | `postgres:16-alpine`, base et utilisateur `cloudbreak`, mot de passe aléatoire |
+| Redis prod | `cloudbreak-redis-prod` | **en marche** (1/1) | `redis:7-alpine`, mot de passe aléatoire |
+| Backend prod | `cloudbreak-backend-prod` | `idle`, **jamais déployé** | Dockerfile, branche **`release/1.0.0`** (passera sur `main` à la livraison), domaine `api.cloudbreak-app.com` → port 8000, HTTPS Let's Encrypt |
+| Ops prod | `cloudbreak-ops-prod` | `idle`, **jamais déployé** | Nixpacks, branche `release/1.0.0`, clé SSH de déploiement en lecture seule déjà utilisée par le dev, domaine `ops.cloudbreak-app.com` → port 3000 |
+
+**Variables déjà posées (non secrètes ou générées)** — backend : `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`, `APPLE_BUNDLE_ID`, `DATABASE_URL`, `REDIS_URL` (mots de passe générés sur le VPS). Ops : `NODE_ENV`, `NEXT_PUBLIC_SITE_URL=https://ops.cloudbreak-app.com`, `APPLE_TEAM_ID`.
+
+**Les mots de passe Postgres/Redis** sont dans `~/.cloudbreak-prod/state.json` sur le VPS (permissions 600, utilisateur `ubuntu`) ; ils ne sont dans aucun dépôt ni chat.
+
+**À poser par Alexandre dans l'interface Dokploy** (sinon le backend refuse de démarrer, volontairement) : `APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID`, `APPLE_PRIVATE_KEY_PATH` + le fichier `.p8` monté dans le conteneur, `EXPO_ACCESS_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_JWT_JWKS`, `SUPABASE_SERVICE_ROLE_KEY`, `INTERNAL_CRON_SECRET` (≥ 32 caractères, propre à la prod).
+
+**Ordre de mise en ligne** : (1) secrets Apple et Supabase posés ; (2) règles Traefik (restriction IP sur `/internal/*`, rate-limit sur le webhook Apple) ; (3) déploiement du backend, `/health` ; (4) cron de purge prod en `dry_run` puis réel (§8quinquies) ; (5) **seulement ensuite** déploiement d'`ops` (publie les pages légales) ; (6) seed des sommets, à la main, une fois ; (7) webhooks GitHub si l'on veut le redéploiement automatique.
+
 ## 9. Ce qui reste à faire (infra)
 
 - [ ] MEP : suivre la checklist de la section 8ter (conteneur backend en mode production, env prod séparé).
