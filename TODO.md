@@ -18,16 +18,14 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | DNS OVH `api` et `ops` | Codex | `api.cloudbreak-app.com` et `ops.cloudbreak-app.com` → A `51.178.37.35`. Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | à faire |
+| 1 | DNS OVH `api` et `ops` | Codex | `api.cloudbreak-app.com` et `ops.cloudbreak-app.com` → A `51.178.37.35`. Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | fait (vérifié par `dig` le 2026-11-06) ; reste à confirmer que `contact@` reçoit du courrier |
 | 2 | Projet Supabase `cloudbreak-prod` (séparé du dev) | Codex | Même config d'auth que le dev, prouvée par un tableau d'équivalence : Anonymous, manual linking, Apple, templates d'email à code 6 chiffres, **SMTP Brevo prod séparé** (décision à prendre : domaine d'envoi prod + adresse expéditeur ; enregistrements SPF/DKIM à ajouter ensuite dans OVH). Valeurs en fichier 600, jamais dans le chat. | à faire |
-| 3 | Environnement Dokploy `prod` | Claude | **Fait le 2026-11-06 (non déployé)** : Postgres + Redis prod en marche, apps backend et ops créées avec domaines (voir `docs/infra-serveur.md` §8sexies). Reste le déploiement, après les lignes 4, 7, 8 et 9. L'app prod **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap 1,8/4 Go : à surveiller. | fait (à déployer plus tard) |
+| 3 | Environnement Dokploy `prod` | Claude | **Fait le 2026-11-06 (non déployé)** : Postgres + Redis prod en marche, apps backend et ops créées avec domaines (voir `docs/infra-serveur.md` §8sexies). Règles Traefik posées le 2026-11-07 (`/internal` réservé au VPS, rate-limit webhook Apple, `docs/traefik/cloudbreak-prod-security.yml`). Reste le déploiement, après les lignes 4 et 7. L'app prod **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap 1,8/4 Go : à surveiller. | fait (à déployer plus tard) |
 | 4 | Variables backend prod | Claude (non secrètes) + Alex (secrets) | `ENVIRONMENT=production`, `APPLE_ENVIRONMENT=Production`. Secrets saisis par Alex dans l'UI Dokploy : clés `APPLE_*` + fichier `.p8`, `EXPO_ACCESS_TOKEN`, `SUPABASE_*`, `INTERNAL_CRON_SECRET` (≥ 32 car.). Sans eux, le backend refuse de démarrer, volontairement. | non secrètes posées ; secrets : bloqué par 2 (Supabase) |
 | 5 | Variables ops prod | Claude + Alex | `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL=https://ops.cloudbreak-app.com`. `NEXT_PUBLIC_APP_STORE_URL` après publication (rebuild). | bloqué par 3 |
 | 6 | Variables EAS `production` | Alex (ou Codex) | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` du Supabase prod, dans le dashboard EAS. Sans elles, le build `production` échoue volontairement. | bloqué par 2 |
-| 7 | Restriction IP Traefik sur `/internal/*` | Claude | Les crons ne sont protégés que par `INTERNAL_CRON_SECRET` sur un endpoint public. Règle « IP du VPS seulement » (`docs/infra-serveur.md` §8quinquies). | à faire |
-| 8 | Rate-limit Traefik sur `POST /api/v1/webhooks/apple` | Claude | Endpoint public pour Apple, non couvert par `RateLimitService`. | à faire |
-| 9 | Cron de purge des anonymes sur la prod | Claude | Dev déjà en place. Prod : secret, script, `dry_run` d'abord, crontab 06:00 Paris (§8quinquies). **Les pages légales ne se publient en prod qu'une fois ce cron actif.** | bloqué par 4 |
-| 10 | Seed des sommets sur la DB prod | Claude | Manuel uniquement, jamais lancé par un deploy. | après 3 et 4 |
+| 7 | Cron de purge des anonymes sur la prod | Claude | Dev déjà en place. Prod : secret, script, `dry_run` d'abord, crontab 06:00 Paris (§8quinquies). **Les pages légales ne se publient en prod qu'une fois ce cron actif.** | bloqué par 4 (secrets) |
+| 8 | Seed des sommets sur la DB prod | Claude | Manuel uniquement, jamais lancé par un deploy. | après 3 et 4 |
 
 Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; ne reste que les lignes 1, 5 et 6 ci-dessus.
 

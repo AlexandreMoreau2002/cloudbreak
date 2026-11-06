@@ -1,0 +1,58 @@
+# Règles Traefik de sécurité pour la PROD Cloudbreak (api.cloudbreak-app.com)
+#
+# Destination sur le VPS : /etc/dokploy/traefik/dynamic/cloudbreak-prod-security.yml
+# (Traefik recharge ce dossier à chaud, aucun redémarrage). Fichier séparé exprès :
+# les fichiers générés par Dokploy (app-*.yml) sont réécrits à chaque déploiement.
+# Ne concerne QUE le host api.cloudbreak-app.com : dev-api et les autres projets ne sont pas touchés.
+#
+# Dépendance : le service de l'app backend prod, défini dans
+# /etc/dokploy/traefik/dynamic/app-copy-online-port-a8v8mh.yml
+# (nom `app-copy-online-port-a8v8mh-service-19`). Si le domaine de l'app est supprimé/recréé
+# dans Dokploy, ce nom change : mettre à jour ce fichier (voir docs/infra-serveur.md §8sexies).
+#
+# Aucun secret ici.
+
+http:
+  middlewares:
+    # /internal/* : crons du VPS uniquement (alertes favoris, purge des anonymes).
+    # Traefik compare l'IP réelle de la connexion (X-Forwarded-For n'est pas approuvé :
+    # un client externe ne peut pas la falsifier). Mesuré le 2026-11-07 : un appel du VPS vers
+    # son propre domaine public (ce que font les crons) arrive avec l'IP publique du VPS ;
+    # les plages privées Docker ne servent qu'aux appels via 127.0.0.1 (--resolve), inutilisés.
+    cloudbreak-prod-internal-allowlist:
+      ipAllowList:
+        sourceRange:
+          - 127.0.0.1/32
+          - 51.178.37.35/32
+
+    # Webhook Apple : endpoint public (Apple change d'adresses, pas de filtrage IP).
+    # Limite par IP source pour qu'un flood de requêtes non signées ne consomme pas le CPU
+    # de vérification de signature. Généreux pour les rafales légitimes d'Apple.
+    cloudbreak-prod-apple-webhook-ratelimit:
+      rateLimit:
+        average: 10
+        period: 1s
+        burst: 30
+
+  routers:
+    cloudbreak-prod-internal:
+      rule: Host(`api.cloudbreak-app.com`) && PathPrefix(`/internal`)
+      priority: 1000
+      entryPoints:
+        - websecure
+      middlewares:
+        - cloudbreak-prod-internal-allowlist
+      service: app-copy-online-port-a8v8mh-service-19@file
+      tls:
+        certResolver: letsencrypt
+
+    cloudbreak-prod-apple-webhook:
+      rule: Host(`api.cloudbreak-app.com`) && PathPrefix(`/api/v1/webhooks/apple`)
+      priority: 1000
+      entryPoints:
+        - websecure
+      middlewares:
+        - cloudbreak-prod-apple-webhook-ratelimit
+      service: app-copy-online-port-a8v8mh-service-19@file
+      tls:
+        certResolver: letsencrypt

@@ -319,6 +319,11 @@ Projet Dokploy `cloudbreak`, **nouvel environnement `prod`** (le nom `production
 
 **Les mots de passe Postgres/Redis** sont dans `~/.cloudbreak-prod/state.json` sur le VPS (permissions 600, utilisateur `ubuntu`) ; ils ne sont dans aucun dépôt ni chat.
 
+**Règles Traefik de la prod (posées et testées le 2026-11-07)** — fichier versionné `docs/traefik/cloudbreak-prod-security.yml`, copié dans `/etc/dokploy/traefik/dynamic/cloudbreak-prod-security.yml` (fichier séparé : ceux d'`app-*.yml` sont réécrits par Dokploy à chaque déploiement). Ne concerne que `api.cloudbreak-app.com`.
+- `/internal/*` : autorisé seulement depuis `127.0.0.1` et l'IP publique du VPS `51.178.37.35`. Mesuré : un appel du VPS vers le domaine public (ce que font les crons) arrive avec l'IP publique ; les plages privées Docker n'étaient nécessaires que pour un appel via `127.0.0.1`. Test : depuis l'extérieur `403` (corps `Forbidden`), depuis le VPS `502` tant que le backend n'est pas déployé (= autorisé), puis la réponse du backend.
+- `POST /api/v1/webhooks/apple` : rate-limit 10 req/s par IP, rafale 30 (300 requêtes en parallèle : 242 refusées en `429`, 58 passées).
+- **Fragilité** : les routeurs référencent le service `app-copy-online-port-a8v8mh-service-19@file`, dont le suffixe vient de l'id du domaine dans Dokploy. Si le domaine de l'app est supprimé/recréé, mettre à jour ce fichier, sinon les règles ne s'appliquent plus (et `/internal` redevient protégé par le seul secret).
+
 **À poser par Alexandre dans l'interface Dokploy** (sinon le backend refuse de démarrer, volontairement) : `APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID`, `APPLE_PRIVATE_KEY_PATH` + le fichier `.p8` monté dans le conteneur, `EXPO_ACCESS_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_JWT_JWKS`, `SUPABASE_SERVICE_ROLE_KEY`, `INTERNAL_CRON_SECRET` (≥ 32 caractères, propre à la prod).
 
 **Ordre de mise en ligne** : (1) secrets Apple et Supabase posés ; (2) règles Traefik (restriction IP sur `/internal/*`, rate-limit sur le webhook Apple) ; (3) déploiement du backend, `/health` ; (4) cron de purge prod en `dry_run` puis réel (§8quinquies) ; (5) **seulement ensuite** déploiement d'`ops` (publie les pages légales) ; (6) seed des sommets, à la main, une fois ; (7) webhooks GitHub si l'on veut le redéploiement automatique.
