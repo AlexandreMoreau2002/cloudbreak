@@ -16,18 +16,19 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 
 ## Lot 1 — Monter la prod (infra, pas de code)
 
+**État au 2026-11-08 : le backend prod est en ligne** (`https://api.cloudbreak-app.com/health` → ok, base et Redis OK, migrations appliquées sur base vide jusqu'au head, Swagger coupé, `/internal` réservé au VPS, cron de purge `dry_run` OK puis actif à 06:05 et alertes favoris à 18:05, heure de Paris). DNS, Supabase prod et clé Apple sont faits. Il reste ce qui suit.
+
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | DNS OVH `api` et `ops` | Codex | `api.cloudbreak-app.com` et `ops.cloudbreak-app.com` → A `51.178.37.35`. Vérifier aussi que `contact@cloudbreak-app.com` reçoit du courrier. | fait (vérifié par `dig` le 2026-11-06) ; reste à confirmer que `contact@` reçoit du courrier |
-| 2 | Projet Supabase `cloudbreak-prod` (séparé du dev) | Codex + Claude | **Fait le 2026-11-07** : projet `mjtohynpmzfxhfhtegiv` (Londres), auth identique au dev, SMTP Brevo (`no-reply@cloudbreak-app.com`, DKIM + DMARC) **validé par un vrai email reçu avec code à 6 chiffres**, JWT ECC P-256, Data API désactivée, base vide. Valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env` (600). Non relus : gabarits Invite / Magic link / Reauthentication (supposés par défaut comme au dev). | fait |
-| 3 | Environnement Dokploy `prod` | Claude | **Fait le 2026-11-06 (non déployé)** : Postgres + Redis prod en marche, apps backend et ops créées avec domaines (voir `docs/infra-serveur.md` §8sexies). Règles Traefik posées le 2026-11-07 (`/internal` réservé au VPS, rate-limit webhook Apple, `docs/traefik/cloudbreak-prod-security.yml`). Reste le déploiement, après les lignes 4 et 7. L'app prod **suit `release/1.0.0`** pendant la QA puis `main` à la livraison. VPS : ~1,6 Go de RAM dispo, swap 1,8/4 Go : à surveiller. | fait (à déployer plus tard) |
-| 4 | Variables backend prod | Claude (fait) + Alex (2 secrets) | **Posées par Claude le 2026-11-08** : Apple complet (`APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID`, `APPLE_PRIVATE_KEY_PATH`, clé `.p8` déposée sur le VPS et montée dans `/run/apple`), Supabase publiques, `INTERNAL_CRON_SECRET`, DB/Redis. **Reste à Alex, dans l'UI Dokploy (`cloudbreak-backend-prod` > Environment)** : `SUPABASE_SERVICE_ROLE_KEY` (clé secrète du projet `cloudbreak-prod`) et `EXPO_ACCESS_TOKEN`. Sans eux le backend refuse de démarrer (`EXPO_ACCESS_TOKEN`) ou la purge des anonymes répond 503 (`SERVICE_ROLE`). | à faire (Alex, 2 valeurs) |
-| 5 | Variables ops prod | Claude + Alex | `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL=https://ops.cloudbreak-app.com`. `NEXT_PUBLIC_APP_STORE_URL` après publication (rebuild). | bloqué par 3 |
-| 6 | Variables EAS `production` | Alex (ou Codex) | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` du Supabase prod, dans le dashboard EAS. Sans elles, le build `production` échoue volontairement. | à faire (valeurs publiques prêtes dans le fichier ci-dessus) |
-| 7 | Cron de purge des anonymes sur la prod | Claude | Dev déjà en place. Prod : secret, script, `dry_run` d'abord, crontab 06:00 Paris (§8quinquies). **Les pages légales ne se publient en prod qu'une fois ce cron actif.** | bloqué par 4 (secrets) |
-| 8 | Seed des sommets sur la DB prod | Claude | Manuel uniquement, jamais lancé par un deploy. | après 3 et 4 |
+| 1 | Déployer `ops` prod (rend les pages légales publiques) | Claude, **sur accord d'Alex** | App `cloudbreak-ops-prod` configurée (branche `release/1.0.0`, `ops.cloudbreak-app.com`, `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL`). La condition « cron de purge actif » est remplie. Le garde-fou a bloqué le déclenchement : il faut le feu vert explicite d'Alex. | à faire |
+| 2 | Seed des sommets (≈ 23 782) sur la DB prod | Claude, sur accord | Manuel, une seule fois (`python -m app.db.seed` dans le conteneur backend prod), jamais par un deploy. Ne pas rejouer après des corrections manuelles. | à faire |
+| 3 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
+| 4 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
+| 5 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
+| 6 | Accepter le contrat de licence du Developer Program | Alex (titulaire) | Bandeau dans App Store Connect : bloque la mise à jour et la soumission. | à faire |
+| 7 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
 
-Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; ne reste que les lignes 1, 5 et 6 ci-dessus.
+Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que les lignes 1 et 3 ci-dessus.
 
 ## Lot 2 — Tester la release (TestFlight)
 
