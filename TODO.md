@@ -16,18 +16,17 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 
 ## Lot 1 — Monter la prod (infra, pas de code)
 
-**État au 2026-11-08 : le backend prod ET `ops` prod sont en ligne** (`api.cloudbreak-app.com/health` ok, migrations appliquées, Swagger coupé, `/internal` réservé au VPS, crons purge 06:05 et favoris 18:05 actifs ; `ops.cloudbreak-app.com` : CGU et confidentialité publiques au 1er novembre 2026, headers de sécurité, AASA, robots/sitemap vérifiés). DNS, Supabase prod et clé Apple sont faits. Il reste ce qui suit.
+**État au 2026-11-08 : le backend prod ET `ops` prod sont en ligne** (`api.cloudbreak-app.com/health` ok, migrations appliquées, Swagger coupé, `/internal` réservé au VPS, crons purge 06:05 et favoris 18:05 actifs ; `ops.cloudbreak-app.com` : CGU et confidentialité publiques au 1er novembre 2026, headers de sécurité, AASA, robots/sitemap vérifiés). DNS, Supabase prod, clé Apple et **seed des sommets (23 782, fait le 2026-11-08)** sont faits. Il reste ce qui suit.
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Seed des sommets (≈ 23 782) sur la DB prod | Claude, sur accord | Manuel, une seule fois (`python -m app.db.seed` dans le conteneur backend prod), jamais par un deploy. Ne pas rejouer après des corrections manuelles. | à faire |
-| 2 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
-| 3 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
-| 4 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
-| 5 | Accepter le contrat de licence du Developer Program | Alex (titulaire) | Bandeau dans App Store Connect : bloque la mise à jour et la soumission. | à faire |
-| 6 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
+| 1 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
+| 2 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
+| 3 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
+| 4 | Accepter le contrat de licence du Developer Program | Alex (titulaire) | Bandeau dans App Store Connect : bloque la mise à jour et la soumission. | à faire |
+| 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
 
-Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que la ligne 2 ci-dessus (variables EAS).
+Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que la ligne 1 ci-dessus (variables EAS).
 
 ## Lot 2 — Tester la release (TestFlight)
 
