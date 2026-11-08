@@ -324,7 +324,11 @@ Projet Dokploy `cloudbreak`, **nouvel environnement `prod`** (le nom `production
 - `POST /api/v1/webhooks/apple` : rate-limit 10 req/s par IP, rafale 30 (300 requêtes en parallèle : 242 refusées en `429`, 58 passées).
 - **Fragilité** : les routeurs référencent le service `app-copy-online-port-a8v8mh-service-19@file`, dont le suffixe vient de l'id du domaine dans Dokploy. Si le domaine de l'app est supprimé/recréé, mettre à jour ce fichier, sinon les règles ne s'appliquent plus (et `/internal` redevient protégé par le seul secret).
 
-**À poser par Alexandre dans l'interface Dokploy** (sinon le backend refuse de démarrer, volontairement) : `APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID`, `APPLE_PRIVATE_KEY_PATH` + le fichier `.p8` monté dans le conteneur, `EXPO_ACCESS_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_JWT_JWKS`, `SUPABASE_SERVICE_ROLE_KEY`, `INTERNAL_CRON_SECRET` (≥ 32 caractères, propre à la prod).
+**Clé Apple (posée le 2026-11-08)** : clé In-App Purchase `cloudbreak_key` créée par Alexandre dans App Store Connect ; le fichier `.p8` est dans `~/.cloudbreak-prod/apple/` sur le VPS (700/600), monté en bind dans le conteneur backend prod sur `/run/apple` ; `APPLE_PRIVATE_KEY_PATH` pointe dessus. Copie locale privée chez Alexandre dans `~/.cloudbreak-secrets/` (600). `APPLE_APP_ID`, `APPLE_KEY_ID` et `APPLE_ISSUER_ID` sont posés. Le contenu du `.p8` n'a jamais été lu ni affiché.
+
+**Reste à poser par Alexandre dans l'interface Dokploy** : `SUPABASE_SERVICE_ROLE_KEY` et `EXPO_ACCESS_TOKEN` (les autres variables listées ci-dessous sont déjà posées).
+
+**Liste d'origine des variables à poser (pour mémoire)** (sinon le backend refuse de démarrer, volontairement) : `APPLE_APP_ID`, `APPLE_KEY_ID`, `APPLE_ISSUER_ID`, `APPLE_PRIVATE_KEY_PATH` + le fichier `.p8` monté dans le conteneur, `EXPO_ACCESS_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_JWT_JWKS`, `SUPABASE_SERVICE_ROLE_KEY`, `INTERNAL_CRON_SECRET` (≥ 32 caractères, propre à la prod).
 
 **Ordre de mise en ligne** : (1) secrets Apple et Supabase posés ; (2) règles Traefik (restriction IP sur `/internal/*`, rate-limit sur le webhook Apple) ; (3) déploiement du backend, `/health` ; (4) cron de purge prod en `dry_run` puis réel (§8quinquies) ; (5) **seulement ensuite** déploiement d'`ops` (publie les pages légales) ; (6) seed des sommets, à la main, une fois ; (7) webhooks GitHub si l'on veut le redéploiement automatique.
 
