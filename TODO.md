@@ -16,19 +16,18 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 
 ## Lot 1 — Monter la prod (infra, pas de code)
 
-**État au 2026-11-08 : le backend prod est en ligne** (`https://api.cloudbreak-app.com/health` → ok, base et Redis OK, migrations appliquées sur base vide jusqu'au head, Swagger coupé, `/internal` réservé au VPS, cron de purge `dry_run` OK puis actif à 06:05 et alertes favoris à 18:05, heure de Paris). DNS, Supabase prod et clé Apple sont faits. Il reste ce qui suit.
+**État au 2026-11-08 : le backend prod ET `ops` prod sont en ligne** (`api.cloudbreak-app.com/health` ok, migrations appliquées, Swagger coupé, `/internal` réservé au VPS, crons purge 06:05 et favoris 18:05 actifs ; `ops.cloudbreak-app.com` : CGU et confidentialité publiques au 1er novembre 2026, headers de sécurité, AASA, robots/sitemap vérifiés). DNS, Supabase prod et clé Apple sont faits. Il reste ce qui suit.
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Déployer `ops` prod (rend les pages légales publiques) | Claude, **sur accord d'Alex** | App `cloudbreak-ops-prod` configurée (branche `release/1.0.0`, `ops.cloudbreak-app.com`, `APPLE_TEAM_ID`, `NEXT_PUBLIC_SITE_URL`). La condition « cron de purge actif » est remplie. Le garde-fou a bloqué le déclenchement : il faut le feu vert explicite d'Alex. | à faire |
-| 2 | Seed des sommets (≈ 23 782) sur la DB prod | Claude, sur accord | Manuel, une seule fois (`python -m app.db.seed` dans le conteneur backend prod), jamais par un deploy. Ne pas rejouer après des corrections manuelles. | à faire |
-| 3 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
-| 4 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
-| 5 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
-| 6 | Accepter le contrat de licence du Developer Program | Alex (titulaire) | Bandeau dans App Store Connect : bloque la mise à jour et la soumission. | à faire |
-| 7 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
+| 1 | Seed des sommets (≈ 23 782) sur la DB prod | Claude, sur accord | Manuel, une seule fois (`python -m app.db.seed` dans le conteneur backend prod), jamais par un deploy. Ne pas rejouer après des corrections manuelles. | à faire |
+| 2 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
+| 3 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
+| 4 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
+| 5 | Accepter le contrat de licence du Developer Program | Alex (titulaire) | Bandeau dans App Store Connect : bloque la mise à jour et la soumission. | à faire |
+| 6 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
 
-Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que les lignes 1 et 3 ci-dessus.
+Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que la ligne 2 ci-dessus (variables EAS).
 
 ## Lot 2 — Tester la release (TestFlight)
 
