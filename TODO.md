@@ -22,7 +22,6 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 |---|---|---|---|---|
 | 1 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
 | 2 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
-| 3 | `contact@cloudbreak-app.com` reçoit du courrier | Alex | Routage entrant ImprovMX en place (MX). À tester par un envoi réel. | à vérifier |
 | 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
 
 Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que la ligne 1 ci-dessus (variables EAS).
