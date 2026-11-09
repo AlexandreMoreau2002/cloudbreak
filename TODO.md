@@ -33,8 +33,8 @@ Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne res
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
 | 1 | Assets App Store | Alex | Icône 1024×1024 (déjà aplatie sans alpha), captures FR/EN. Indépendant, à faire en parallèle. | à faire |
-| 2 | `dev-api` suit `release/1.0.0` | Claude | Pendant la QA, le dev devient l'environnement de test (Supabase dev, Apple Sandbox). | à faire |
-| 3 | Build EAS `staging` depuis `release/1.0.0` + envoi TestFlight | Alex (+ Claude) | `eas build --profile staging --platform ios` puis `eas submit`. À contrôler dans l'IPA : `aps-environment`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | bloqué par 2 |
+| 2 | `dev-api` suit `release/1.0.0` | Claude | Pendant la QA, le dev devient l'environnement de test (Supabase dev, Apple Sandbox). | fait le 2026-11-09 (backend et ops dev) |
+| 3 | Build EAS `staging` depuis `release/1.0.0` + envoi TestFlight | Alex (+ Claude) | `eas build --profile staging --platform ios` puis `eas submit`. À contrôler dans l'IPA : `aps-environment`, icône, splash, pas de `NSLocalNetworkUsageDescription`. | à faire |
 | 4 | QA manuelle epics 2/3/4/6 sur iPhone réel | Alex | Via TestFlight, pas le simulateur. Inclut un vrai achat Sandbox (valide le correctif Apple, jamais testé avec un vrai achat). | bloqué par 3 |
 | 5 | Test de fumée final sur la prod | Alex | Build `production`, un compte réel, supprimé ensuite. Les liens de partage se testent ici (pas en staging). | bloqué par Lot 1 |
 
