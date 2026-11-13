@@ -1,14 +1,14 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-11-09. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Mis à jour le 2026-11-12. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
 
 ## Où on en est
 
-1. **Le code est figé.** `release/1.0.0` existe dans backend, mobile et ops (créée le 2026-11-01). On n'y met que des correctifs, toujours reportés dans `develop`. Deux sont déjà passés : achats Sandbox acceptés en prod, profils de build `staging` / `production`.
-2. **Maintenant : Lot 1 = monter la prod** (serveur, comptes, domaines). Rien à coder. Codex fait ce qui demande un navigateur (DNS OVH, Supabase) ; Claude fait Dokploy et Traefik ; Alex saisit les secrets lui-même.
-3. **Ensuite : Lot 2 = tester la release** sur l'environnement de test (le dev), avec une build TestFlight `staging`. La prod reste vierge.
-4. **Enfin : Lot 3 = livrer** (merge dans `main`, tag `v1.0.0`, soumission Apple).
+1. **Le code est figé.** `release/1.0.0` existe dans backend, mobile et ops (créée le 2026-11-01). On n'y met que des correctifs, toujours reportés dans `develop`.
+2. **Prod montée et release testée** (reste, côté Alex, les captures App Store) : la prod est montée (vierge, vérifiée le 2026-11-10 : 0 utilisateur, 0 abonnement) et la release a été testée de bout en bout sur iPhone (QA staging + test de fumée avec le build `production` 10).
+3. **Soumission Apple en cours.** Build 1.0.0 (10) rejeté le 2026-11-12 (guideline 2.1 « Information Needed »). Réponse apportée dans les Remarques (texte en anglais : `docs/release-1.0.0/apple-review-notes.md`) + vidéo d'écran jointe, **nouvelle soumission envoyée le 2026-11-12 à 13:34, en attente de vérification** (publication automatique dès approbation). Risque connu : le plan **mensuel** plante à l'achat, Apple est invité à tester l'annuel.
+4. **Reste : Lot 3 = livrer** une fois Apple OK (merge dans `main`, tag `v1.0.0`, GitHub Release, refs racine + `docs/versions.md`).
 
 Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers/codex-briefs/`), **Claude** = API Dokploy / SSH / code, **Alex** = secrets et décisions.
 
@@ -20,20 +20,16 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Variables EAS `production` | Alex | `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` dans le dashboard EAS (valeurs publiques dans `~/.cloudbreak-secrets/supabase-prod-public.env`). Sans elles, le build `production` échoue volontairement. | à faire |
 | 2 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
 | 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
 
-Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne reste que la ligne 1 ci-dessus (variables EAS).
+Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (test de fumée du 2026-11-10).
 
 ## Lot 2 — Tester la release (TestFlight)
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
 | 1 | Assets App Store | Alex | Icône 1024×1024 (déjà aplatie sans alpha), captures FR/EN. Indépendant, à faire en parallèle. | à faire |
-| 2 | `dev-api` suit `release/1.0.0` | Claude | Pendant la QA, le dev devient l'environnement de test (Supabase dev, Apple Sandbox). | fait le 2026-11-09 (backend et ops dev) |
-| 4 | QA manuelle epics 2/3/4/6 sur iPhone réel | Alex | Build staging 1.0.0 (5) installé via TestFlight le 2026-11-09. Inclut un vrai achat Sandbox (valide le correctif Apple, jamais testé avec un vrai achat). Contrôler aussi `aps-environment`, icône, splash. | en cours |
-| 5 | Test de fumée final sur la prod | Alex | Build `production`, un compte réel, supprimé ensuite. Les liens de partage se testent ici (pas en staging). | bloqué par Lot 1 |
 
 ## Lot 3 — Livrer
 
@@ -41,12 +37,18 @@ Universal Links (story 3.6) : code fait et validé sur iPhone en dev ; il ne res
 |---|---|---|---|---|
 | 1 | Merge `release/1.0.0` → `main` (`--no-ff`), tag `v1.0.0`, GitHub Release, retour dans `develop` | Claude, sur ordre d'Alex | Dans chaque submodule, puis refs racine + `docs/versions.md`. L'app Dokploy prod bascule sur `main`. | après Lot 2 |
 | 2 | Fiche App Store Connect (page produit, captures, confidentialité, abonnements, accords fiscaux/bancaires) | Codex en brouillon (brief C), Alex valide | Prérequis : ops prod en ligne (URL de politique de confidentialité), captures prises sur une build. Codex ne soumet jamais. | après le Lot 2 |
-| 3 | Soumission App Store (review Apple) | Alex | Dernière étape produit. Review Apple ~24-48 h, puis publication manuelle ou automatique. | après 1 et 2 |
+| 3 | Soumission App Store (review Apple) | Alex | Resoumise le 2026-11-12 à 13:34 après rejet 2.1. Review ~24-48 h. Ne pas remettre à zéro la prod ni supprimer de compte de test tant qu'Apple n'a pas répondu. | en attente d'Apple |
 
 ## Hors lot — non bloquant, à caser quand on veut
 
 | Tâche | Contexte / note |
 |---|---|
+| Onboarding après suppression de compte (1.0.1) | `AsyncStorage.clear()` (`AuthContext.tsx:683`) efface le drapeau d'onboarding mais l'état mémoire reste « fait » : l'onboarding ne se rejoue qu'au prochain démarrage. Conserver le drapeau ou remettre l'état à zéro. |
+| Achat refusé : bouton en chargement sans fin (1.0.1) | Si `/subscription/verify` renvoie 400, l'app ne termine pas la transaction et la rejoue à chaque lancement ; afficher une erreur claire. |
+| « Supprimer le compte » visible en session anonyme (1.0.1) | Dans l'onglet Profil, la ligne `profile.deleteAccount` (`profile.tsx`) s'affiche aussi sans compte permanent. La masquer pour les anonymes (la purge à 30 j les couvre déjà). |
+| Plantage intermittent sur la card « Cloudbreak Pro » du Profil (1.0.1) | Observé en TestFlight (build 10, iPhone iOS 27) : toucher la card ouvre le paywall, l'app plante ou reste figée, et le même geste fonctionne parfois. Même famille que le bouton d'abonnement qui reste en chargement sans feuille Apple. À reproduire avec les logs (`idevicesyslog`) et à corriger avec le bug paywall. |
+| Abonnement mensuel : plante à chaque achat (1.0.1) | Observé en TestFlight (build 10) : le bouton mensuel reste en chargement sans feuille Apple, alors que l'annuel passe (avec relance de l'app). À reproduire avec `idevicesyslog` et corriger avec le bug paywall. |
+| Rechargement automatique après le paiement (1.0.1) | Après un achat réussi, le paywall reste en chargement et Premium n'apparaît qu'après avoir fermé et rouvert l'app à la main. Rafraîchir l'état de l'abonnement (`refresh()` / `verifyAndFinish`) et fermer le paywall dès que StoreKit confirme l'achat. |
 | Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
 | Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
 | Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
