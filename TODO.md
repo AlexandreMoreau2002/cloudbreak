@@ -34,7 +34,7 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Branche `hotfix/1.0.1` depuis `main` du mobile : version 1.0.1 + correctifs paywall | Claude | Correctifs : bouton « Réessayer » qui recharge les offres StoreKit, abonnement mensuel qui plante à l'achat, rechargement après paiement (détail dans « Hors lot »). PR vers `main`, tag `v1.0.1`, report dans `develop`. | en cours |
+| 1 | Branche `hotfix/1.0.1` depuis `main` du mobile : version 1.0.1 + correctifs paywall | Claude | Correctifs : bouton « Réessayer » qui recharge les offres StoreKit, abonnement mensuel qui plante à l'achat, rechargement après paiement (détail dans « Hors lot »). « Réessayer » fait et validé : [cloudbreak-mobile#69](https://github.com/AlexandreMoreau2002/cloudbreak-mobile/pull/69) (version 1.0.1 incluse). Restent le mensuel et le rechargement après paiement : à reproduire sur iPhone branché (`idevicesyslog`). Puis merge dans `main`, tag `v1.0.1`, report dans `develop`. | en cours |
 | 2 | Build EAS `production` depuis le hotfix + envoi à Apple | Alex (Apple ID + code) / Claude | La 1.0.0 étant approuvée, le build 10 ne peut pas être réutilisé. | à faire |
 | 3 | Version 1.0.1 dans App Store Connect avec les **deux abonnements joints** | Alex | Section « Achats intégrés et abonnements » de la page de version (ou « Ajouter pour vérification » sur chaque abonnement). Vérifier la capture d'écran de vérification de chaque abonnement et la disponibilité (annuel : 1 pays sur 175 aujourd'hui). | à faire |
 | 4 | Soumission et review Apple | Alex | ~24-48 h. Apple testera les achats : le mensuel doit fonctionner. | à faire |
@@ -43,7 +43,6 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 
 | Tâche | Contexte / note |
 |---|---|
-| « Réessayer » du paywall ne recharge pas les offres (1.0.1) | `onRetryProducts` appelle `refresh()` (relit l'abonnement backend) ; `fetchProducts` n'est lancé qu'une fois au montage (`SubscriptionContext.tsx`, `initialiseStore`). Exposer un rechargement des produits StoreKit et le brancher sur le bouton. |
 | Onboarding après suppression de compte (1.0.1) | `AsyncStorage.clear()` (`AuthContext.tsx:683`) efface le drapeau d'onboarding mais l'état mémoire reste « fait » : l'onboarding ne se rejoue qu'au prochain démarrage. Conserver le drapeau ou remettre l'état à zéro. |
 | Achat refusé : bouton en chargement sans fin (1.0.1) | Si `/subscription/verify` renvoie 400, l'app ne termine pas la transaction et la rejoue à chaque lancement ; afficher une erreur claire. |
 | « Supprimer le compte » visible en session anonyme (1.0.1) | Dans l'onglet Profil, la ligne `profile.deleteAccount` (`profile.tsx`) s'affiche aussi sans compte permanent. La masquer pour les anonymes (la purge à 30 j les couvre déjà). |
