@@ -1,80 +1,44 @@
 # TODO — Cloudbreak
 
-> Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-11-13. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Ce fichier est le **plan d'action à court terme**, dans l'ordre de traitement. Il ne contient pas l'historique des releases : git, `docs/versions.md` et `_bmad-output/implementation-artifacts/sprint-status.yaml` font foi.
+>
 
-## Où on en est
+## État de départ
 
-1. **1.0.0 livrée (2026-11-13).** Build 10 publié sur l'App Store ; `release/1.0.0` mergée dans `main`, tag `v1.0.0` et GitHub Release dans backend, mobile et ops ; `main` reporté dans `develop` ; apps Dokploy prod sur `main`.
-2. **Mais les abonnements ne marchent pas en production.** Les deux abonnements sont restés « Finaliser avant soumission » dans App Store Connect : ils n'ont pas été joints à la 1.0.0, donc StoreKit ne renvoie aucune offre et le paywall affiche « Abonnements indisponibles ». Apple impose de soumettre le premier groupe d'abonnements **avec une nouvelle version de l'app**.
-3. **Hotfix 1.0.1 (mobile seul) en review Apple depuis le 2026-11-13 à 23:24** : version 1.0.1 (build 11) avec les abonnements joints — voir « Lot 4 ». Les correctifs paywall restants (mensuel, rechargement après paiement) partent en **1.0.2**.
+- **1.0.0 / build 10** est publique sur l'App Store depuis le 2026-11-13.
+- **1.0.1 / build 11** a été soumise à Apple avec le groupe « Cloudbreak Premium » et les abonnements mensuel et annuel : elle est en attente de vérification.
+- Le backend et ops de production suivent `main` et l'API prod est saine (Postgres et Redis OK).
 
-Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers/codex-briefs/`), **Claude** = API Dokploy / SSH / code, **Alex** = secrets et décisions.
+## 1. Actions à faire pendant l'attente Apple
 
----
+1. Configurer `NEXT_PUBLIC_APP_STORE_URL` sur ops prod avec la fiche App Store, puis reconstruire/redéployer ops : les pages `/sommet/*` doivent ouvrir l'app au lieu d'afficher « L'app arrive bientôt ».
+2. Écrire une checklist réutilisable de post-MEP : app installée depuis le store, score, création de compte, paywall/achat, logs, crons, `/health` et critères de retour arrière.
+3. Documenter le workflow dev → MEP, avec les schémas Mermaid : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` → tag/GitHub Release → report vers `develop`, hotfix compris.
+4. Vérifier si les webhooks GitHub redéploient bien backend et ops après un push sur `main`; décider de les ajouter s'ils sont absents.
 
-## Lot 1 — Monter la prod (infra, pas de code)
+## 2. Valider la 1.0.1 et les abonnements
 
-**État au 2026-11-08 : le backend prod ET `ops` prod sont en ligne** (`api.cloudbreak-app.com/health` ok, migrations appliquées, Swagger coupé, `/internal` réservé au VPS, crons purge 06:05 et favoris 18:05 actifs ; `ops.cloudbreak-app.com` : CGU et confidentialité publiques au 1er novembre 2026, headers de sécurité, AASA, robots/sitemap vérifiés). DNS, Supabase prod, clé Apple et **seed des sommets (23 782, fait le 2026-11-08)** sont faits. Il reste ce qui suit.
+1. Attendre la décision d'Apple sur la 1.0.1 et les deux abonnements soumis ensemble.
+2. Après l'approbation, laisser le temps aux offres d'apparaître, puis tester sur un iPhone avec l'app téléchargée depuis l'App Store :
+   - le paywall affiche les prix mensuel et annuel ;
+   - un achat annuel et un achat mensuel ouvrent bien la feuille Apple et aboutissent ;
+   - une annulation ou un refus laisse un bouton utilisable, sans chargement infini ;
+   - Premium est appliqué sans redémarrage de l'app.
+3. Pendant ce test de fumée, vérifier `/health`, les logs backend prod et les premiers crons (purge à 06:05, favoris à 18:05 Paris).
 
-| # | Tâche | Qui | Contexte / note | Statut |
-|---|---|---|---|---|
-| 2 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
-| 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). Les apps prod suivent `main` depuis le 2026-11-13 ; vérifier si un webhook existe déjà (`gh api repos/.../hooks`). | à décider |
+## 3. Préparer la 1.0.2 — fiabiliser le paywall
 
-Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (test de fumée du 2026-11-10).
+1. Reproduire avec les logs appareil (`idevicesyslog`) les problèmes d'achat et du bouton « Cloudbreak Pro » : crash/gel intermittent, mensuel qui reste en chargement et absence de feuille Apple.
+2. Corriger le cycle d'achat : finir proprement une transaction refusée ou invalide, afficher une erreur actionnable et recharger l'abonnement/fermer le paywall dès que StoreKit confirme l'achat.
+3. Corriger les régressions de compte : rejouer l'onboarding après suppression et masquer « Supprimer le compte » pour une session anonyme.
+4. Uniformiser le nom **Premium** dans l'app, les traductions et les métadonnées App Store (ne plus afficher « Pro »).
 
-## Lot 2 — Tester la release (TestFlight)
+## 4. Prochaines améliorations produit
 
-| # | Tâche | Qui | Contexte / note | Statut |
-|---|---|---|---|---|
-| 1 | Assets App Store | Alex | Icône 1024×1024 (déjà aplatie sans alpha), captures FR/EN. Indépendant, à faire en parallèle. | à faire |
+1. Rendre la recherche de sommets tolérante aux fautes de frappe, accents et variantes proches, sans dégrader la pertinence.
+2. Préparer les sommets saisis à la main avec une colonne `source` (`seed` ou `manual`), puis ajouter la tour Eiffel (environ 330 m, Paris).
 
-## Lot 4 — Hotfix 1.0.1 (abonnements en production)
+## Notes à conserver
 
-**Soumise à Apple le 2026-11-13 à 23:24** : version 1.0.1 (build 11) + « Premium annuel » + « Premium mensuel » + groupe « Cloudbreak Premium », dans une seule soumission (4 éléments). Hotfix mergé dans `main` du mobile (tag `v1.0.1`, GitHub Release, reporté dans `develop`). La vidéo jointe à la 1.0.0 n'a pas été reprise (facultative).
-
-| # | Tâche | Qui | Contexte / note | Statut |
-|---|---|---|---|---|
-| 1 | Review Apple de la 1.0.1 (app + abonnements) | Apple | Jusqu'à 48 h, mail d'Apple à la fin. Risque connu : le mensuel plante à l'achat (prévu en 1.0.2). | en attente d'Apple |
-| 2 | Après approbation : vérifier sur iPhone (app de l'App Store) que le paywall affiche les prix et qu'un achat passe | Alex | Les offres peuvent mettre quelques heures à apparaître après l'approbation. | à faire |
-
-## Lot 5 — Juste après la MEP (correctifs 1.0.2 et suites)
-
-À traiter une fois la 1.0.1 approuvée. S'y ajoutent `NEXT_PUBLIC_APP_STORE_URL` (Lot 1, n° 2) et la vérification du paywall sur l'app du store (Lot 4, n° 2).
-
-| Tâche | Contexte / note |
-|---|---|
-| Onboarding après suppression de compte (1.0.2) | `AsyncStorage.clear()` (`AuthContext.tsx:683`) efface le drapeau d'onboarding mais l'état mémoire reste « fait » : l'onboarding ne se rejoue qu'au prochain démarrage. Conserver le drapeau ou remettre l'état à zéro. |
-| Achat refusé : bouton en chargement sans fin (1.0.2) | Si `/subscription/verify` renvoie 400, l'app ne termine pas la transaction et la rejoue à chaque lancement ; afficher une erreur claire. |
-| « Supprimer le compte » visible en session anonyme (1.0.2) | Dans l'onglet Profil, la ligne `profile.deleteAccount` (`profile.tsx`) s'affiche aussi sans compte permanent. La masquer pour les anonymes (la purge à 30 j les couvre déjà). |
-| Plantage intermittent sur la card « Cloudbreak Pro » du Profil (1.0.2) | Observé en TestFlight (build 10, iPhone iOS 27) : toucher la card ouvre le paywall, l'app plante ou reste figée, et le même geste fonctionne parfois. Même famille que le bouton d'abonnement qui reste en chargement sans feuille Apple. À reproduire avec les logs (`idevicesyslog`) et à corriger avec le bug paywall. |
-| Abonnement mensuel : plante à chaque achat (1.0.2) | Observé en TestFlight (build 10) : le bouton mensuel reste en chargement sans feuille Apple, alors que l'annuel passe (avec relance de l'app). À reproduire avec `idevicesyslog` et corriger avec le bug paywall. |
-| Rechargement automatique après le paiement (1.0.2) | Après un achat réussi, le paywall reste en chargement et Premium n'apparaît qu'après avoir fermé et rouvert l'app à la main. Rafraîchir l'état de l'abonnement (`refresh()` / `verifyAndFinish`) et fermer le paywall dès que StoreKit confirme l'achat. |
-| Aligner le nom « Pro » / « Premium » partout | Un seul nom dans toute l'app (card « Cloudbreak Pro » du Profil, paywall, textes fr/en) et sur la fiche produit App Store (description, captures, noms des abonnements). Référence : le plan s'appelle « Premium » (groupe « Cloudbreak Premium », `plan: "premium"` en DB). |
-| Process de vérification après MEP | À dérouler dès qu'une version est publiée sur l'App Store : test de fumée sur l'app du store (score, compte, paywall, achat), suivi des logs backend prod et des crons, `/health`, critères de retour arrière. À écrire sous forme de checklist réutilisable. |
-| Doc du workflow dev → MEP (`.md` + graphes Mermaid) | Un seul fichier qui déroule tout le parcours : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` (`--no-ff`) → tag `vX.Y.Z` + GitHub Release → report dans `develop` → bump des refs à la racine, hotfix compris. Les règles existent déjà dans `CLAUDE.md` (« Releases ») : les mettre en schéma. |
-| Ajouter la tour Eiffel aux sommets | Sommet saisi à la main (≈ 330 m, Paris) : dépend de la colonne `source` (`seed`\|`manual`), voir « Sommets saisis à la main » plus bas. |
-
-## Hors lot — non bloquant, à caser quand on veut
-
-| Tâche | Contexte / note |
-|---|---|
-| Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
-| Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
-| Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
-| Monitoring Better Stack (story 1.5) | Uptime + logs, pas branché. |
-| Receipts Expo (`DeviceNotRegistered`) | PR séparée, pas démarrée. Post-launch. |
-| Alerte régionale (FR23) | Reportée en V2. |
-| Message hors-saison (3.6b, FR7) | Reporté, à faire avant l'été 2027 (on est en pleine saison). |
-
-## Features hors scope MVP (backlog, pas dans le chemin de release)
-
-| Feature | Statut | Note |
-|---|---|---|
-| Quota invité étage 2 (App Attest / DeviceCheck) | à planifier | — |
-| Epic 1 — CI/CD mobile complet (1.4) | partiel | post-MVP |
-| 1.8 PostHog réel + Sentry | post-MVP | après la sortie |
-| Epic 8 (growth V2) et 9 (landing) | hors scope MVP | décidé le 2026-08-08 |
-| 6.2 Photo de validation terrain | dropée | décision explicite |
-| Sommets saisis à la main | futur | nécessite une colonne `source` (`seed`\|`manual`) avant tout chargement manuel |
+- Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
+- Les sujets post-MVP (monitoring Better Stack, PostHog/Sentry, receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme.
