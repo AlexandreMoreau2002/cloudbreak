@@ -39,7 +39,9 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 | 1 | Review Apple de la 1.0.1 (app + abonnements) | Apple | Jusqu'à 48 h, mail d'Apple à la fin. Risque connu : le mensuel plante à l'achat (prévu en 1.0.2). | en attente d'Apple |
 | 2 | Après approbation : vérifier sur iPhone (app de l'App Store) que le paywall affiche les prix et qu'un achat passe | Alex | Les offres peuvent mettre quelques heures à apparaître après l'approbation. | à faire |
 
-## Hors lot — non bloquant, à caser quand on veut
+## Lot 5 — Juste après la MEP (correctifs 1.0.2 et suites)
+
+À traiter une fois la 1.0.1 approuvée. S'y ajoutent `NEXT_PUBLIC_APP_STORE_URL` (Lot 1, n° 2) et la vérification du paywall sur l'app du store (Lot 4, n° 2).
 
 | Tâche | Contexte / note |
 |---|---|
@@ -49,9 +51,15 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 | Plantage intermittent sur la card « Cloudbreak Pro » du Profil (1.0.2) | Observé en TestFlight (build 10, iPhone iOS 27) : toucher la card ouvre le paywall, l'app plante ou reste figée, et le même geste fonctionne parfois. Même famille que le bouton d'abonnement qui reste en chargement sans feuille Apple. À reproduire avec les logs (`idevicesyslog`) et à corriger avec le bug paywall. |
 | Abonnement mensuel : plante à chaque achat (1.0.2) | Observé en TestFlight (build 10) : le bouton mensuel reste en chargement sans feuille Apple, alors que l'annuel passe (avec relance de l'app). À reproduire avec `idevicesyslog` et corriger avec le bug paywall. |
 | Rechargement automatique après le paiement (1.0.2) | Après un achat réussi, le paywall reste en chargement et Premium n'apparaît qu'après avoir fermé et rouvert l'app à la main. Rafraîchir l'état de l'abonnement (`refresh()` / `verifyAndFinish`) et fermer le paywall dès que StoreKit confirme l'achat. |
+| Aligner le nom « Pro » / « Premium » partout | Un seul nom dans toute l'app (card « Cloudbreak Pro » du Profil, paywall, textes fr/en) et sur la fiche produit App Store (description, captures, noms des abonnements). Référence : le plan s'appelle « Premium » (groupe « Cloudbreak Premium », `plan: "premium"` en DB). |
 | Process de vérification après MEP | À dérouler dès qu'une version est publiée sur l'App Store : test de fumée sur l'app du store (score, compte, paywall, achat), suivi des logs backend prod et des crons, `/health`, critères de retour arrière. À écrire sous forme de checklist réutilisable. |
 | Doc du workflow dev → MEP (`.md` + graphes Mermaid) | Un seul fichier qui déroule tout le parcours : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` (`--no-ff`) → tag `vX.Y.Z` + GitHub Release → report dans `develop` → bump des refs à la racine, hotfix compris. Les règles existent déjà dans `CLAUDE.md` (« Releases ») : les mettre en schéma. |
 | Ajouter la tour Eiffel aux sommets | Sommet saisi à la main (≈ 330 m, Paris) : dépend de la colonne `source` (`seed`\|`manual`), voir « Sommets saisis à la main » plus bas. |
+
+## Hors lot — non bloquant, à caser quand on veut
+
+| Tâche | Contexte / note |
+|---|---|
 | Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
 | Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
 | Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
