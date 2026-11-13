@@ -1,14 +1,13 @@
 # TODO — Cloudbreak
 
 > Ce fichier ne contient **que ce qui reste à faire**. Pas d'historique de PR ni de journal : git, `_bmad-output/implementation-artifacts/sprint-status.yaml` et `docs/versions.md` font foi pour le reste.
-> Mis à jour le 2026-11-12. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
+> Mis à jour le 2026-11-13. Prix de référence : **4,99 € / mois, 44,99 € / an**, essai 7 jours.
 
 ## Où on en est
 
-1. **Le code est figé.** `release/1.0.0` existe dans backend, mobile et ops (créée le 2026-11-01). On n'y met que des correctifs, toujours reportés dans `develop`.
-2. **Prod montée et release testée** (reste, côté Alex, les captures App Store) : la prod est montée (vierge, vérifiée le 2026-11-10 : 0 utilisateur, 0 abonnement) et la release a été testée de bout en bout sur iPhone (QA staging + test de fumée avec le build `production` 10).
-3. **Soumission Apple en cours.** Build 1.0.0 (10) rejeté le 2026-11-12 (guideline 2.1 « Information Needed »). Réponse apportée dans les Remarques (texte en anglais : `docs/release-1.0.0/apple-review-notes.md`) + vidéo d'écran jointe, **nouvelle soumission envoyée le 2026-11-12 à 13:34, en attente de vérification** (publication automatique dès approbation). Risque connu : le plan **mensuel** plante à l'achat, Apple est invité à tester l'annuel.
-4. **Reste : Lot 3 = livrer** une fois Apple OK (merge dans `main`, tag `v1.0.0`, GitHub Release, refs racine + `docs/versions.md`).
+1. **1.0.0 livrée (2026-11-13).** Build 10 publié sur l'App Store ; `release/1.0.0` mergée dans `main`, tag `v1.0.0` et GitHub Release dans backend, mobile et ops ; `main` reporté dans `develop` ; apps Dokploy prod sur `main`.
+2. **Mais les abonnements ne marchent pas en production.** Les deux abonnements sont restés « Finaliser avant soumission » dans App Store Connect : ils n'ont pas été joints à la 1.0.0, donc StoreKit ne renvoie aucune offre et le paywall affiche « Abonnements indisponibles ». Apple impose de soumettre le premier groupe d'abonnements **avec une nouvelle version de l'app**.
+3. **En cours : hotfix 1.0.1 (mobile seul)** — voir « Lot 4 ». Backend et ops ne bougent pas.
 
 Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers/codex-briefs/`), **Claude** = API Dokploy / SSH / code, **Alex** = secrets et décisions.
 
@@ -21,7 +20,7 @@ Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
 | 2 | `NEXT_PUBLIC_APP_STORE_URL` sur ops prod | Alex + Claude | Après publication de l'app ; `NEXT_PUBLIC_*` est figé au build : rebuild d'ops nécessaire. Sans elle la page `/sommet/*` affiche « L'app arrive bientôt ». | après publication |
-| 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). À décider au moment de passer sur `main`. | à décider |
+| 5 | Webhooks GitHub d'auto-déploiement des apps prod | Claude | Optionnel : sans webhook, un push sur la branche ne redéploie pas la prod (déploiement manuel par API). Les apps prod suivent `main` depuis le 2026-11-13 ; vérifier si un webhook existe déjà (`gh api repos/.../hooks`). | à décider |
 
 Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (test de fumée du 2026-11-10).
 
@@ -31,18 +30,20 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 |---|---|---|---|---|
 | 1 | Assets App Store | Alex | Icône 1024×1024 (déjà aplatie sans alpha), captures FR/EN. Indépendant, à faire en parallèle. | à faire |
 
-## Lot 3 — Livrer
+## Lot 4 — Hotfix 1.0.1 (abonnements en production)
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Merge `release/1.0.0` → `main` (`--no-ff`), tag `v1.0.0`, GitHub Release, retour dans `develop` | Claude, sur ordre d'Alex | Dans chaque submodule, puis refs racine + `docs/versions.md`. L'app Dokploy prod bascule sur `main`. | après Lot 2 |
-| 2 | Fiche App Store Connect (page produit, captures, confidentialité, abonnements, accords fiscaux/bancaires) | Codex en brouillon (brief C), Alex valide | Prérequis : ops prod en ligne (URL de politique de confidentialité), captures prises sur une build. Codex ne soumet jamais. | après le Lot 2 |
-| 3 | Soumission App Store (review Apple) | Alex | Resoumise le 2026-11-12 à 13:34 après rejet 2.1. Review ~24-48 h. Ne pas remettre à zéro la prod ni supprimer de compte de test tant qu'Apple n'a pas répondu. | en attente d'Apple |
+| 1 | Branche `hotfix/1.0.1` depuis `main` du mobile : version 1.0.1 + correctifs paywall | Claude | Correctifs : bouton « Réessayer » qui recharge les offres StoreKit, abonnement mensuel qui plante à l'achat, rechargement après paiement (détail dans « Hors lot »). PR vers `main`, tag `v1.0.1`, report dans `develop`. | en cours |
+| 2 | Build EAS `production` depuis le hotfix + envoi à Apple | Alex (Apple ID + code) / Claude | La 1.0.0 étant approuvée, le build 10 ne peut pas être réutilisé. | à faire |
+| 3 | Version 1.0.1 dans App Store Connect avec les **deux abonnements joints** | Alex | Section « Achats intégrés et abonnements » de la page de version (ou « Ajouter pour vérification » sur chaque abonnement). Vérifier la capture d'écran de vérification de chaque abonnement et la disponibilité (annuel : 1 pays sur 175 aujourd'hui). | à faire |
+| 4 | Soumission et review Apple | Alex | ~24-48 h. Apple testera les achats : le mensuel doit fonctionner. | à faire |
 
 ## Hors lot — non bloquant, à caser quand on veut
 
 | Tâche | Contexte / note |
 |---|---|
+| « Réessayer » du paywall ne recharge pas les offres (1.0.1) | `onRetryProducts` appelle `refresh()` (relit l'abonnement backend) ; `fetchProducts` n'est lancé qu'une fois au montage (`SubscriptionContext.tsx`, `initialiseStore`). Exposer un rechargement des produits StoreKit et le brancher sur le bouton. |
 | Onboarding après suppression de compte (1.0.1) | `AsyncStorage.clear()` (`AuthContext.tsx:683`) efface le drapeau d'onboarding mais l'état mémoire reste « fait » : l'onboarding ne se rejoue qu'au prochain démarrage. Conserver le drapeau ou remettre l'état à zéro. |
 | Achat refusé : bouton en chargement sans fin (1.0.1) | Si `/subscription/verify` renvoie 400, l'app ne termine pas la transaction et la rejoue à chaque lancement ; afficher une erreur claire. |
 | « Supprimer le compte » visible en session anonyme (1.0.1) | Dans l'onglet Profil, la ligne `profile.deleteAccount` (`profile.tsx`) s'affiche aussi sans compte permanent. La masquer pour les anonymes (la purge à 30 j les couvre déjà). |
