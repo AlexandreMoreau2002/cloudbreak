@@ -7,7 +7,7 @@
 
 1. **1.0.0 livrée (2026-11-13).** Build 10 publié sur l'App Store ; `release/1.0.0` mergée dans `main`, tag `v1.0.0` et GitHub Release dans backend, mobile et ops ; `main` reporté dans `develop` ; apps Dokploy prod sur `main`.
 2. **Mais les abonnements ne marchent pas en production.** Les deux abonnements sont restés « Finaliser avant soumission » dans App Store Connect : ils n'ont pas été joints à la 1.0.0, donc StoreKit ne renvoie aucune offre et le paywall affiche « Abonnements indisponibles ». Apple impose de soumettre le premier groupe d'abonnements **avec une nouvelle version de l'app**.
-3. **Hotfix 1.0.1 (mobile seul)** : version 1.0.1 (build 11) avec les abonnements joints — voir « Lot 4 ». Les correctifs paywall restants (mensuel, rechargement après paiement) partent en **1.0.2**.
+3. **Hotfix 1.0.1 (mobile seul) en review Apple depuis le 2026-11-13 à 23:24** : version 1.0.1 (build 11) avec les abonnements joints — voir « Lot 4 ». Les correctifs paywall restants (mensuel, rechargement après paiement) partent en **1.0.2**.
 
 Légende « Qui » : **Codex** = tâche navigateur (brief dans `docs/superpowers/codex-briefs/`), **Claude** = API Dokploy / SSH / code, **Alex** = secrets et décisions.
 
@@ -32,11 +32,11 @@ Universal Links (story 3.6) : code fait, validé sur iPhone en dev et en prod (t
 
 ## Lot 4 — Hotfix 1.0.1 (abonnements en production)
 
-Fait le 2026-11-13 : hotfix mergé dans `main` du mobile (tag `v1.0.1`, GitHub Release, reporté dans `develop`), build EAS `production` 1.0.1 (11) construit et envoyé à Apple, version 1.0.1 créée dans App Store Connect, les deux abonnements et leur groupe ajoutés au brouillon de soumission.
+**Soumise à Apple le 2026-11-13 à 23:24** : version 1.0.1 (build 11) + « Premium annuel » + « Premium mensuel » + groupe « Cloudbreak Premium », dans une seule soumission (4 éléments). Hotfix mergé dans `main` du mobile (tag `v1.0.1`, GitHub Release, reporté dans `develop`). La vidéo jointe à la 1.0.0 n'a pas été reprise (facultative).
 
 | # | Tâche | Qui | Contexte / note | Statut |
 |---|---|---|---|---|
-| 1 | Review Apple de la 1.0.1 (app + abonnements) | Apple | ~24-48 h. Risque connu : le mensuel plante à l'achat (prévu en 1.0.2). | voir « Où on en est » |
+| 1 | Review Apple de la 1.0.1 (app + abonnements) | Apple | Jusqu'à 48 h, mail d'Apple à la fin. Risque connu : le mensuel plante à l'achat (prévu en 1.0.2). | en attente d'Apple |
 | 2 | Après approbation : vérifier sur iPhone (app de l'App Store) que le paywall affiche les prix et qu'un achat passe | Alex | Les offres peuvent mettre quelques heures à apparaître après l'approbation. | à faire |
 
 ## Hors lot — non bloquant, à caser quand on veut
@@ -49,6 +49,9 @@ Fait le 2026-11-13 : hotfix mergé dans `main` du mobile (tag `v1.0.1`, GitHub R
 | Plantage intermittent sur la card « Cloudbreak Pro » du Profil (1.0.2) | Observé en TestFlight (build 10, iPhone iOS 27) : toucher la card ouvre le paywall, l'app plante ou reste figée, et le même geste fonctionne parfois. Même famille que le bouton d'abonnement qui reste en chargement sans feuille Apple. À reproduire avec les logs (`idevicesyslog`) et à corriger avec le bug paywall. |
 | Abonnement mensuel : plante à chaque achat (1.0.2) | Observé en TestFlight (build 10) : le bouton mensuel reste en chargement sans feuille Apple, alors que l'annuel passe (avec relance de l'app). À reproduire avec `idevicesyslog` et corriger avec le bug paywall. |
 | Rechargement automatique après le paiement (1.0.2) | Après un achat réussi, le paywall reste en chargement et Premium n'apparaît qu'après avoir fermé et rouvert l'app à la main. Rafraîchir l'état de l'abonnement (`refresh()` / `verifyAndFinish`) et fermer le paywall dès que StoreKit confirme l'achat. |
+| Process de vérification après MEP | À dérouler dès qu'une version est publiée sur l'App Store : test de fumée sur l'app du store (score, compte, paywall, achat), suivi des logs backend prod et des crons, `/health`, critères de retour arrière. À écrire sous forme de checklist réutilisable. |
+| Doc du workflow dev → MEP (`.md` + graphes Mermaid) | Un seul fichier qui déroule tout le parcours : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` (`--no-ff`) → tag `vX.Y.Z` + GitHub Release → report dans `develop` → bump des refs à la racine, hotfix compris. Les règles existent déjà dans `CLAUDE.md` (« Releases ») : les mettre en schéma. |
+| Ajouter la tour Eiffel aux sommets | Sommet saisi à la main (≈ 330 m, Paris) : dépend de la colonne `source` (`seed`\|`manual`), voir « Sommets saisis à la main » plus bas. |
 | Vérifier le 1er run du cron notifications | `ssh vps-ovh-projets tail ~/cloudbreak-favorites.log` à 18h Paris → `http=200` (doc `docs/infra-serveur.md` §8quater). Ponctuel, indépendant des lots. |
 | Backups hors VPS + test de restauration | `/srv/backups` aujourd'hui sur la même machine, rétention 14 j. |
 | Comprendre l'image Docker backend dev disparue | Prune ? Build d'un autre projet ? Jamais investigué. |
