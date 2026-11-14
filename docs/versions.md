@@ -21,7 +21,7 @@
 
 > **Story 3.6 (Universal Links, mergée le 2026-10-12)** : ops `4ed4a91` (route AASA + page de repli `/sommet/[slug]`),
 > mobile `2e2ecf4` (#39). Variables d'env ops (Dokploy, app `cloudbreak-ops`) : `APPLE_TEAM_ID` (posée, sert à générer
-> l'AASA) et `NEXT_PUBLIC_APP_STORE_URL` (vide tant que l'app n'est pas publiée). Le lien de partage utilise l'hôte ops
+> l'AASA) et `NEXT_PUBLIC_APP_STORE_URL` (`https://apps.apple.com/app/id6816759640`, posée sur dev et prod le 2026-11-15). Le lien de partage utilise l'hôte ops
 > de l'environnement (`EXPO_PUBLIC_LEGAL_BASE_URL`), pas le domaine racine.
 
 ## 2. Base de données

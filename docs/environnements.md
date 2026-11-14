@@ -69,8 +69,8 @@
   `<hôte ops de l'env>/sommet/<slug>` (hôte lu dans `EXPO_PUBLIC_LEGAL_BASE_URL` : dev
   `dev-ops.cloudbreak-app.com`, prod `ops.cloudbreak-app.com`). Les Associated Domains sont calculés
   dans `mobile/app.config.ts` (`?mode=developer` automatique en dev). Scénario principal validé sur
-  iPhone le 2026-10-12. **Reste à faire pour la prod** : DNS `ops`, `APPLE_TEAM_ID` /
-  `NEXT_PUBLIC_APP_STORE_URL` côté Dokploy prod, `EXPO_PUBLIC_LEGAL_BASE_URL` de prod dans EAS.
+  iPhone le 2026-10-12. `NEXT_PUBLIC_APP_STORE_URL`
+  (`https://apps.apple.com/app/id6816759640`) posée sur dev et prod le 2026-11-15 : `/sommet/*` pointe vers la fiche App Store.
 
 ## 4. Auth — Supabase
 

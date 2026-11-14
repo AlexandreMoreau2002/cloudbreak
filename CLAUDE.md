@@ -313,7 +313,7 @@ Un graphe de connaissance du code est configuré (`.mcp.json`, `.codex/config.to
 
 ## Avant release 1.0.0
 
-- **Deep link partage** : l'URL est `<hôte ops de l'env>/sommet/{slug}` (hôte lu dans `EXPO_PUBLIC_LEGAL_BASE_URL` : dev `dev-ops.cloudbreak-app.com`, prod `ops.cloudbreak-app.com` par défaut ; le domaine racine n'héberge rien). Universal Links iOS : code fait et scénario principal validé sur iPhone (story 3.6 — AASA servi par `ops`, Associated Domains calculés dans `mobile/app.config.ts`, `?mode=developer` automatique en dev, route mobile `/sommet/[slug]`). Reste : DNS `ops.cloudbreak-app.com` + déploiement ops prod (`APPLE_TEAM_ID` déjà posée en dev, `NEXT_PUBLIC_APP_STORE_URL` après publication) et `EXPO_PUBLIC_LEGAL_BASE_URL` de prod dans EAS.
+- **Deep link partage** : l'URL est `<hôte ops de l'env>/sommet/{slug}` (hôte lu dans `EXPO_PUBLIC_LEGAL_BASE_URL` : dev `dev-ops.cloudbreak-app.com`, prod `ops.cloudbreak-app.com` par défaut ; le domaine racine n'héberge rien). Universal Links iOS : code fait et scénario principal validé sur iPhone (story 3.6 — AASA servi par `ops`, Associated Domains calculés dans `mobile/app.config.ts`, `?mode=developer` automatique en dev, route mobile `/sommet/[slug]`). `APPLE_TEAM_ID` et `NEXT_PUBLIC_APP_STORE_URL` (`https://apps.apple.com/app/id6816759640`) sont posées sur ops dev et prod depuis le 2026-11-15 ; les pages `/sommet/*` pointent vers la fiche App Store.
 - **Supabase « Confirm email »** : désactivé en dev, à réactiver.
 - **MountainBackground (login)** : rework visuel nécessaire.
 - **PostHog** : brancher le SDK (backend + mobile) ; avant ça, mapper `error_code` côté auth vers un enum stable (le hook censé le faire, `useAuthForm.ts`, est **introuvable** dans `mobile/src/` — à vérifier).

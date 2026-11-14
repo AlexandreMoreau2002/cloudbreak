@@ -11,10 +11,9 @@
 
 ## 1. Actions à faire pendant l'attente Apple
 
-1. Configurer `NEXT_PUBLIC_APP_STORE_URL` sur ops prod avec la fiche App Store, puis reconstruire/redéployer ops : les pages `/sommet/*` doivent ouvrir l'app au lieu d'afficher « L'app arrive bientôt ».
-2. Écrire une checklist réutilisable de post-MEP : app installée depuis le store, score, création de compte, paywall/achat, logs, crons, `/health` et critères de retour arrière.
-3. Documenter le workflow dev → MEP, avec les schémas Mermaid : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` → tag/GitHub Release → report vers `develop`, hotfix compris.
-4. Vérifier si les webhooks GitHub redéploient bien backend et ops après un push sur `main`; décider de les ajouter s'ils sont absents.
+1. Écrire une checklist réutilisable de post-MEP : app installée depuis le store, score, création de compte, paywall/achat, logs, crons, `/health` et critères de retour arrière.
+2. Documenter le workflow dev → MEP, avec les schémas Mermaid : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` → tag/GitHub Release → report vers `develop`, hotfix compris.
+3. Vérifier si les webhooks GitHub redéploient bien backend et ops après un push sur `main`; décider de les ajouter s'ils sont absents.
 
 ## 2. Valider la 1.0.1 et les abonnements
 
