@@ -36,6 +36,7 @@
 
 1. Rendre la recherche de sommets tolérante aux fautes de frappe, accents et variantes proches, sans dégrader la pertinence.
 2. Préparer les sommets saisis à la main avec une colonne `source` (`seed` ou `manual`), puis ajouter la tour Eiffel (environ 330 m, Paris).
+3. Ajouter sur ops un outil d'admin pour offrir le plan Premium à quelqu'un : un champ email + un bouton qui crée/prolonge son abonnement en base. À passer par un endpoint backend protégé (auth admin + journal d'audit), pas par du SQL direct depuis ops ; ne pas confondre avec un vrai achat Apple (`plan: "premium"`, statut et `expires_at` à définir pour un accès offert).
 
 ## 5. Observabilité et suivi (ops, PostHog, Sentry)
 
