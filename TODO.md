@@ -38,7 +38,14 @@
 1. Rendre la recherche de sommets tolérante aux fautes de frappe, accents et variantes proches, sans dégrader la pertinence.
 2. Préparer les sommets saisis à la main avec une colonne `source` (`seed` ou `manual`), puis ajouter la tour Eiffel (environ 330 m, Paris).
 
+## 5. Observabilité et suivi (ops, PostHog, Sentry)
+
+1. Avoir une vue rapide « tout fonctionne + data » : développer la partie ops et brancher PostHog et Sentry (backend + mobile).
+2. Mettre en place un check de MEP visuel : version git réellement déployée sur chaque serveur (backend, ops ; dev et prod) et réponse sans erreur de chaque service.
+3. Recevoir une notification dès qu'un service tombe (backend, Redis, Postgres, serveur, ops).
+4. Suivre le nombre d'utilisateurs : total, connectés sur le mois, etc.
+
 ## Notes à conserver
 
 - Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
-- Les sujets post-MVP (monitoring Better Stack, PostHog/Sentry, receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme.
+- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack reste une piste d'outil pour les alertes de la section 5.
