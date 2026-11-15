@@ -207,7 +207,7 @@ Les utilisateurs voient la limite gratuite (1 check/jour), rencontrent le paywal
 **FRs couverts :** FR16, FR17, FR18, FR19, FR20, FR21
 
 ### Epic 5: Notifications & Alertes
-Les utilisateurs Premium/Pro reçoivent des alertes push proactives sur leurs sommets favoris et leur région. Tous les utilisateurs reçoivent la notification GPS terrain à l'arrivée au sommet. Chaque type de notification est configurable et désactivable indépendamment.
+Les utilisateurs Premium reçoivent des alertes push proactives sur leurs sommets favoris et leur région. Tous les utilisateurs reçoivent la notification GPS terrain à l'arrivée au sommet. Chaque type de notification est configurable et désactivable indépendamment.
 **FRs couverts :** FR22, FR23, FR24, FR25
 
 ### Epic 6: Validation Terrain & Data Flywheel
@@ -217,6 +217,10 @@ Les utilisateurs peuvent confirmer ou infirmer une prévision depuis le terrain 
 ### Epic 7: Onboarding & Mode Offline
 Les nouveaux utilisateurs complètent le parcours d'onboarding narratif (storytelling Dolomites → solution → permissions). L'app gère gracieusement l'absence de réseau avec cache TTL 2-3h, bandeau d'âge des données et message d'indisponibilité clair.
 **FRs couverts :** FR30, FR31, FR32, FR33, FR34
+
+### Epic 10: Ops console
+L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés (utilisateurs, abonnements, checks/jour) sur dev et prod, puis (v1) peut offrir Premium par email avec journal d'audit. Remplace la story 1.6 et absorbe la 1.5.
+**FRs couverts :** FR35, FR36, FR37 (NFR7)
 
 ---
 
@@ -367,6 +371,8 @@ So that regressions are detected in < 5 minutes and production is always deploya
 
 ### Story 1.5: Monitoring BetterStack (Uptime) & Logs Structurés
 
+> **Absorbée par la story 10.1 (Epic 10)** — décidé le 2026-11-15. Texte conservé pour l'historique.
+
 As an administrator (Alex),
 I want uptime monitoring with < 2 min alerts and structured error logs,
 So that I can sleep without worrying about the backend going down silently.
@@ -416,36 +422,9 @@ So that I can make product decisions from real usage data and catch bugs before 
 
 ---
 
-### Story 1.6: Dashboard Ops Admin — Interface Monitoring Unifiée ⏸ post-MVP
+### Story 1.6: Dashboard Ops Admin — Interface Monitoring Unifiée — remplacée par l'Epic 10
 
-> **Scope post-MVP** — Au lancement, BetterStack (uptime/latence) + PostHog (events business) + Dokploy UI (santé services) couvrent les besoins opérationnels sans code supplémentaire. Cette story devient pertinente quand l'app tourne en prod avec des volumes réels.
-
-As an administrator (Alex),
-I want a unified ops dashboard in Cloudbreak's visual identity,
-So that I can monitor all production metrics from a single interface without switching between BetterStack, PostHog, and Dokploy.
-
-**Stack envisagée :**
-- Frontend : Next.js (ou React + Vite) déployé comme service dans Dokploy, DA Cloudbreak dark mode
-- Backend : endpoint `GET /admin/metrics` protégé (token admin, jamais exposé mobile)
-- Sources : FastAPI logs → métriques agrégées, Redis INFO (cache hits/misses), PostHog API (conversions, DAU), Traefik metrics
-
-**Acceptance Criteria:**
-
-**Given** le dashboard ops accessible sur `https://ops.{domain}`
-**When** l'administrateur s'authentifie
-**Then** il voit en temps réel : taux réponses 200/5xx, latence P50/P95/P99, requêtes/min (graphe 24h), cache météo hit rate, utilisateurs actifs, conversions Pro 7j
-
-**Given** la section Services
-**When** le dashboard se charge
-**Then** chaque service (FastAPI, PostgreSQL, Redis, Traefik, PostHog) affiche son uptime % et latence moyenne
-
-**Given** un service qui passe en erreur (uptime < 99%)
-**When** le dashboard est ouvert
-**Then** le service est mis en évidence (indicateur rouge) avec timestamp du dernier incident
-
-**Given** la section Quotas utilisateurs
-**When** l'admin consulte le dashboard
-**Then** il voit la distribution Free/Premium et le taux de dépassement de quota quotidien
+> **Remplacée par l'Epic 10 « Ops console »** (décidé le 2026-11-15). Le dashboard unifié qui recréait les écrans de BetterStack, PostHog et Dokploy (latence P50/P95/P99, req/min, Traefik, `/admin/metrics`) est abandonné : le dashboard agrège l'état et renvoie vers ces outils. Voir `docs/ops-dashboard-besoins.md`.
 
 ---
 
@@ -687,7 +666,7 @@ So that I get unlimited forecasts with native, secure payment.
 
 ## Epic 5: Notifications & Alertes
 
-Les utilisateurs Premium/Pro reçoivent des alertes push proactives sur leurs sommets favoris et leur région. Tous les utilisateurs reçoivent la notification GPS terrain. Chaque type est configurable indépendamment.
+Les utilisateurs Premium reçoivent des alertes push proactives sur leurs sommets favoris et leur région. Tous les utilisateurs reçoivent la notification GPS terrain. Chaque type est configurable indépendamment.
 
 **FRs couverts :** FR22, FR23, FR24, FR25
 
@@ -718,16 +697,16 @@ So that the app can send targeted push notifications to users.
 
 ---
 
-### Story 5.2: Alertes Push Favoris & Régionales (Premium/Pro)
+### Story 5.2: Alertes Push Favoris & Régionales (Premium)
 
-As a Premium/Pro user,
+As a Premium user,
 I want to receive push alerts when ideal sea of clouds conditions are predicted for my favorites,
 So that I never miss an opportunity without having to check the app manually.
 
 **Acceptance Criteria:**
 
 **Given** un job de vérification planifié (cron ou tâche périodique backend)
-**When** les conditions d'un sommet favori d'un utilisateur Premium/Pro passent en 🟢 (score ≥ 70%)
+**When** les conditions d'un sommet favori d'un utilisateur Premium passent en 🟢 (score ≥ 70%)
 **Then** une notification push est envoyée : "Conditions idéales prévues demain 6h sur [sommet] — 87% 🟢"
 **And** la notification n'est envoyée qu'une seule fois par sommet/fenêtre temporelle
 
@@ -1030,3 +1009,209 @@ So that Cloudbreak ranks in the top 10 for "mer de nuage" and related searches.
 ---
 
 ✅ **Epic 7 complète — 2 stories (couverture FR30–FR34)**
+
+
+---
+
+## Epic 10: Ops console
+
+L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés sur dev et prod, puis (v1) peut offrir Premium par email avec audit. Remplace la story 1.6 et absorbe la 1.5. Besoins et décisions : `docs/ops-dashboard-besoins.md`.
+
+**FRs couverts :** FR35, FR36, FR37 · **NFR :** NFR7
+
+**Principes (décidés le 2026-11-15) :** alertes d'abord, dashboard ensuite (l'uptime vient d'un service externe, jamais du VPS surveillé) ; le dashboard agrège et renvoie vers BetterStack / PostHog / Sentry, il ne recrée pas leurs écrans ; le backend reste le seul à écrire en DB ; v0 en lecture seule, écritures en v1 ; admin hébergé dans `ops/` sous `/[locale]/admin` ; auth = JWT Supabase + claim `app_metadata` + allowlist UUID ; i18n fr/en obligatoire ; pas de clé API Dokploy dans ops ; pas de Grafana.
+
+**Contraintes communes à toutes les stories :** livrées via Codex avec un prompt carré (fichiers cibles, comportement, commande de validation). **Ne pas toucher :** `backend/app/domain/score*.py`, `backend/alembic/versions/` existantes (on en ajoute), `backend/app/db/peaks_data.json`, `mobile/ios/`, `.env` et tout secret. Branche `feature/<story>` depuis `develop`, PR squash vers `develop` (aucun merge sur `main` sans accord d'Alexandre).
+
+---
+
+### Story 10.1: Alertes d'abord — uptime, heartbeats et agent serveur
+
+As an administrator (Alex),
+I want to be alerted within 2 minutes when a service, a cron, a backup or the server goes wrong,
+So that I learn about an outage before users do, with monitoring that does not depend on the VPS it watches.
+
+**Dépendances :** aucune (première story de l'epic). Absorbe la story 1.5.
+
+**Acceptance Criteria:**
+
+**Given** BetterStack configuré avec des moniteurs HTTP sur `https://api.cloudbreak-app.com/health`, `https://ops.cloudbreak-app.com/fr/privacy` et leurs équivalents `dev-api` / `dev-ops`
+**When** un service répond autrement qu'en 2xx (ou `/health` sans `database: ok` et `redis: ok`) pendant 2 vérifications consécutives
+**Then** Alex reçoit une alerte email (et SMS/push si activé) en moins de 2 minutes (NFR7)
+**And** l'alerte nomme le service et l'environnement
+
+**Given** les crons de purge anonymes (06:05 prod), alertes favoris (18:05 prod) et la sauvegarde des bases (03:00 UTC)
+**When** un script se termine
+**Then** il appelle l'URL de heartbeat BetterStack correspondante (secret dans un fichier 600, jamais en argument)
+**And** un run manquant ou en échec (code HTTP ≠ 200) déclenche une alerte dans le délai de grâce configuré
+
+**Given** l'agent serveur BetterStack installé sur le VPS
+**When** le disque dépasse 85 % ou la RAM dépasse 90 %
+**Then** Alex est alerté
+**And** la consommation RAM/CPU de l'agent a été mesurée sur le VPS (serveur 2 vCPU / 3,7 Go partagé) et notée dans `docs/infra-serveur.md` avant activation en prod ; si elle est jugée trop élevée, l'agent n'est pas activé et la décision est consignée
+
+**Given** une panne simulée (arrêt d'un service sur dev)
+**When** le délai de détection est mesuré
+**Then** il est < 2 minutes et le résultat est consigné dans `docs/infra-serveur.md`
+
+**Given** une erreur 5xx dans le backend
+**When** elle est loggée
+**Then** le log est un JSON structuré `{"level":"error","path":"...","status":500,"error":"..."}` sans `print()` ni stack trace brute en prod (reprise de l'AC de 1.5)
+
+**Fichiers cibles :** scripts VPS `~/cloudbreak-*.sh` (ajout du ping heartbeat, hors repo), `backend/app/main.py` / `backend/app/core/errors.py` (log 5xx structuré si absent), `docs/infra-serveur.md` (moniteurs, heartbeats, agent, mesure RAM). Aucun secret dans git.
+**Tests à écrire :** test backend du log 5xx structuré (`backend/tests/test_errors.py` ou fichier existant équivalent) ; la partie BetterStack/VPS se valide par une panne simulée et une checklist manuelle.
+**Validation :** `make validate` (backend) + checklist manuelle (panne simulée, heartbeat manquant). Une connexion `ssh vps-ovh-projets` à la fois, pas de build Dokploy en parallèle.
+
+---
+
+### Story 10.2: Version déployée — `GET /version` et comparaison à `main`
+
+As an administrator (Alex),
+I want to see which Git commit is actually deployed on each service and environment,
+So that I can verify a release without opening Dokploy and without storing a Dokploy API key in ops.
+
+**Dépendances :** aucune technique ; consommée par 10.4.
+
+**Acceptance Criteria:**
+
+**Given** le backend construit par le Dockerfile
+**When** `GET /version` est appelé
+**Then** il répond `200` avec `{"service":"backend","sha":"<sha du build>","built_at":"<ISO 8601 UTC>"}` sans authentification
+**And** il n'expose ni variable d'environnement ni secret
+
+**Given** ops construit par Nixpacks / Next.js
+**When** `GET /version` (route handler ops) est appelé
+**Then** il répond au même format avec `"service":"ops"`
+**And** la route est exclue du middleware d'auth admin et du sitemap, et n'affecte pas les pages légales ni l'AASA
+
+**Given** le SHA n'est pas injecté (build local)
+**When** `/version` est appelé
+**Then** `sha` vaut `"unknown"` sans erreur
+
+**Given** le SHA déployé et le `main` (prod) ou `develop` (dev) GitHub du repo
+**When** le dashboard compare les deux
+**Then** il affiche « à jour » ou « en retard de N commits » via l'API GitHub publique (sans token, ou token lecture seule en variable d'environnement ops)
+**And** aucune clé Dokploy n'est utilisée
+
+**Fichiers cibles :** `backend/Dockerfile` (ARG/ENV du SHA), `backend/app/api/v1/endpoints/` ou `backend/app/main.py` (route `/version`), `backend/tests/test_api_version.py`, `ops/app/version/route.ts` (ou équivalent App Router) + test Vitest co-localisé, config de build ops (variable de SHA), `backend/http/version.http`.
+**Tests à écrire :** nominal, SHA absent (`unknown`), absence de fuite de secret, route ops sans effet sur les pages légales.
+**Validation :** `make validate` (backend) et `npm run validate` (ops).
+
+---
+
+### Story 10.3: Backend admin en lecture seule — auth, audit, KPIs, heartbeats
+
+As an administrator (Alex),
+I want a protected read-only admin API with an audit trail,
+So that the ops dashboard can show KPIs and cron/backup status without ever writing to the database from the web app.
+
+**Dépendances :** 10.1 (URLs de heartbeat et format des signaux) ; 10.4 la consomme.
+
+**Acceptance Criteria:**
+
+**Given** un JWT Supabase valide dont `app_metadata.role == "admin"` ET dont le `sub` figure dans l'allowlist `ADMIN_USER_IDS` (variable d'env backend)
+**When** il appelle `GET /api/v1/admin/overview`
+**Then** il reçoit `200` avec : utilisateurs total, utilisateurs actifs sur 30 jours, abonnements actifs, abonnements en essai, checks par jour (7 derniers jours)
+**And** aucun email ni donnée personnelle n'est renvoyé
+
+**Given** un JWT valide mais sans claim admin, ou claim admin mais UUID hors allowlist, ou allowlist vide
+**When** l'endpoint admin est appelé
+**Then** la réponse est `403` avec `{"detail":"...","code":"ADMIN_FORBIDDEN"}`
+**And** un appel sans `Authorization` renvoie `403` (comportement `HTTPBearer`)
+
+**Given** n'importe quel appel à un endpoint admin
+**When** il est traité
+**Then** une ligne est écrite dans la table `admin_audit_log` (acteur UUID, action, ressource, horodatage UTC, résultat) créée par une **nouvelle** migration Alembic qui passe sur base vide
+**And** le journal ne contient ni email ni secret
+
+**Given** les scripts cron/sauvegarde du VPS
+**When** ils signalent leur fin (`POST /internal/heartbeats/<job>` avec `X-Cron-Secret`)
+**Then** le backend enregistre la dernière exécution (date, statut) et `GET /api/v1/admin/overview` expose l'état de chaque job (purge, favoris, sauvegarde) avec un indicateur « en retard » si dépassement du délai attendu
+**And** la route `/internal/*` reste restreinte par la règle Traefik existante
+
+**Given** le pattern « le backend est le seul à écrire en DB »
+**When** l'admin consulte l'overview
+**Then** l'endpoint est strictement en lecture (hors journal d'audit) ; aucune action d'écriture métier n'existe en v0
+
+**Fichiers cibles :** `backend/app/api/v1/endpoints/admin.py`, `backend/app/core/dependencies.py` (dépendance `require_admin`), `backend/app/core/config.py` (`ADMIN_USER_IDS`), `backend/app/models/admin_audit_log.py` + modèle du dernier heartbeat, `backend/app/schemas/admin.py`, `backend/app/services/admin_overview.py`, nouvelle migration `backend/alembic/versions/`, `backend/app/main.py` (router), `backend/http/admin.http` (nominal, sans `Authorization` → 403, non-admin → 403, payload invalide → 422), `backend/docs/security.md` (surface admin).
+**Tests à écrire :** `tests/test_api_admin.py`, `tests/test_admin_dependencies.py`, `tests/test_models_admin_audit_log.py`, `tests/test_migration_*` (base vide), flux dans `tests/features/test_admin_flow.py`, JWT valide/expiré/invalide.
+**Validation :** `make validate` (backend). Revue `cloudbreak-security` obligatoire (auth, data, API).
+
+---
+
+### Story 10.4: Dashboard ops v0 — `/[locale]/admin`
+
+As an administrator (Alex),
+I want one screen showing global status, deployed versions, KPIs, crons/backups and server health for dev and prod,
+So that I can check that everything works in a few seconds and jump to BetterStack / PostHog / Sentry for details.
+
+**Dépendances :** 10.1, 10.2, 10.3.
+
+**Acceptance Criteria:**
+
+**Given** un visiteur non connecté ou non admin
+**When** il ouvre `/fr/admin`
+**Then** il est redirigé vers la connexion ou reçoit un refus, sans qu'aucune donnée admin ne soit chargée
+**And** la page porte `noindex`, n'apparaît pas dans `sitemap.ts` et est exclue de `robots`
+
+**Given** Alex connecté (JWT Supabase avec claim admin)
+**When** le dashboard se charge
+**Then** il voit, avec l'environnement **prod par défaut** et un switch vers dev : statut global (vert/orange/rouge), versions déployées backend et ops avec écart à la branche GitHub, KPIs (utilisateurs, abonnements actifs/essai, checks/jour), état des crons et sauvegardes (dernier run, en retard ou non), état serveur (CPU/RAM/disque) avec lien vers BetterStack
+**And** chaque bloc renvoie vers l'outil source (BetterStack, PostHog, Sentry) au lieu de recréer ses écrans
+
+**Given** un bloc dont la source échoue, est lente ou ne renvoie rien
+**When** l'écran s'affiche
+**Then** ce bloc montre son propre état loading / erreur / vide (composants unifiés), sans casser les autres blocs
+
+**Given** les textes de l'écran
+**When** la locale est `fr` ou `en`
+**Then** toutes les chaînes viennent de `useTranslations()` et de `messages/fr.json` / `messages/en.json` (aucune string en dur)
+
+**Given** un déploiement ops contenant l'admin
+**When** les e2e Playwright tournent
+**Then** les pages CGU, confidentialité, `/.well-known/apple-app-site-association` et `/sommet/[slug]` répondent comme avant
+**And** aucun code admin n'est importé depuis les pages légales (isolation vérifiée par test) et un échec de l'admin ne fait pas échouer ces routes
+
+**Fichiers cibles :** `ops/app/[locale]/admin/**` (page, layout), `ops/middleware.ts` (ou proxy Next 16 équivalent : protection `/admin`), `ops/src/components/admin/**`, `ops/src/lib/admin/**` (client API, jamais d'accès direct DB/Redis), `ops/messages/fr.json` et `en.json`, tests Vitest co-localisés, `ops/e2e/admin.spec.ts` et non-régression légale, `ops/.env.example` (URL API, hôte BetterStack).
+**Tests à écrire :** garde d'accès (non connecté / non admin / admin), états loading/erreur/vide par bloc, switch d'environnement, `noindex`, parité des clés fr/en, e2e d'isolation du site légal.
+**Validation :** `npm run validate` (ops : format:check + lint + typecheck + coverage + build + e2e).
+
+---
+
+### Story 10.5 (v1): Recherche par email et offrir Premium
+
+As an administrator (Alex),
+I want to look up a user by email and grant them Premium access,
+So that I can support users and offer free access without touching the database directly.
+
+**Dépendances :** 10.3 (auth admin et journal d'audit), 10.4 (UI). **Hors v0.**
+
+**Acceptance Criteria:**
+
+**Given** un admin authentifié
+**When** il saisit un email exact dans la recherche
+**Then** le backend renvoie le compte correspondant (id, plan, statut, `expires_at`) ou `404`
+**And** il n'existe aucune liste d'utilisateurs ni recherche partielle
+
+**Given** une consultation par email
+**When** elle est traitée
+**Then** une ligne d'audit est écrite (acteur, action `user.lookup`, horodatage) sans stocker l'email en clair (hachage ou identifiant de compte)
+**And** l'email n'est jamais écrit dans les logs applicatifs
+
+**Given** un compte trouvé
+**When** l'admin demande « offrir Premium » avec une durée
+**Then** le backend crée ou prolonge l'abonnement via un endpoint protégé (`plan: "premium"`, `status` et `expires_at` définis pour un accès offert, distincts d'un achat Apple, par exemple une origine `granted`)
+**And** une ligne d'audit `subscription.grant` est écrite ; Premium actif reste défini par `status ∈ {trial, active}` ET `expires_at` futur (`app/domain/entitlement.py`)
+**And** un abonnement Apple réel n'est jamais écrasé par un octroi
+
+**Given** la règle « email jamais exposé ni loggé »
+**When** cette story est livrée
+**Then** l'exception (recherche admin seulement, audit, aucune liste) est documentée dans `backend/docs/security.md`, `CLAUDE.md` et la politique de confidentialité si nécessaire
+
+**Fichiers cibles :** `backend/app/api/v1/endpoints/admin.py` (lookup, grant), `backend/app/services/admin_users.py`, `backend/app/schemas/admin.py`, migration Alembic nouvelle si une colonne d'origine d'abonnement est ajoutée, `backend/http/admin.http`, `ops/src/components/admin/UserLookup*`, `ops/messages/*.json`, `backend/docs/security.md`.
+**Tests à écrire :** lookup (trouvé, 404, non-admin 403, email invalide 422), grant (création, prolongation, refus si abonnement Apple actif), audit à chaque appel, absence d'email dans les logs, e2e ops du parcours.
+**Validation :** `make validate` (backend) et `npm run validate` (ops). Revue `cloudbreak-security` obligatoire.
+
+---
+
+✅ **Epic 10 — 5 stories (10.1 à 10.4 en v0 lecture seule, 10.5 en v1)**

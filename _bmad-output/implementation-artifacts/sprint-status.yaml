@@ -46,12 +46,13 @@ development_status:
   # FRs: FR35, FR36, FR37
   # ─────────────────────────────────────────────────────────────
   epic-1: in-progress
-  1-1-setup-infra-vps-docker-compose-production: backlog
-  1-2-setup-backend-fastapi-squelette-complet: backlog
-  1-3-setup-mobile-expo-squelette-design-system: backlog
-  1-4-cicd-github-actions-backend-mobile: backlog
-  1-5-monitoring-betterstack-posthog-initial: backlog
+  1-1-setup-infra-vps-docker-compose-production: done
+  1-2-setup-backend-fastapi-squelette-complet: done
+  1-3-setup-mobile-expo-squelette-design-system: done
+  1-4-cicd-github-actions-backend-mobile: done
+  1-5-monitoring-betterstack-posthog-initial: backlog  # absorbée par 10-1 (Epic 10), décidé le 2026-11-15
   1-7-taxonomie-instrumentation-posthog: done
+  1-6-dashboard-ops-admin: backlog  # remplacée par l'Epic 10 (Ops console), décidé le 2026-11-15
   1-8-monitoring-avance-posthog-sentry: backlog
   epic-1-retrospective: optional
 
@@ -93,7 +94,7 @@ development_status:
   epic-4: in-progress
   4-1-quota-freemium-backend-1-check-jour: done
   4-2-paywall-mobile-conversion: done
-  4-3-abonnements-storekit-2-premium-pro: done  # clôturée 2026-10-09 : achat mensuel + essai, trial→active, webhook V2 (SUBSCRIBED/DID_RENEW → 204) prouvés en Sandbox ; scénarios restants dans TODO.md (QA manuelle)
+  4-3-abonnements-storekit-2-premium: done  # clôturée 2026-10-09 : achat mensuel + essai, trial→active, webhook V2 (SUBSCRIBED/DID_RENEW → 204) prouvés en Sandbox ; scénarios restants dans TODO.md (QA manuelle)
   4-4-conformite-apple-app-store: done
   4-5-service-web-cloudbreak-ops-pages-legales: done
   epic-4-retrospective: optional
@@ -104,7 +105,7 @@ development_status:
   # ─────────────────────────────────────────────────────────────
   epic-5: done
   5-1-infrastructure-push-notifications-expo-push: done  # mergé backend #29 + mobile #40/#42, validé sur iPhone
-  5-2-alertes-push-favoris-regionales-premium-pro: done  # favoris seulement (FR23 régional reporté en V2) ; backend #30, mobile #45/#46 ; reste : receipts Expo (PR séparée) et 1er run du cron 18:00
+  5-2-alertes-push-favoris-regionales-premium: done  # favoris seulement (FR23 régional reporté en V2) ; backend #30, mobile #45/#46 ; reste : receipts Expo (PR séparée) et 1er run du cron 18:00
   5-3-notification-gps-validation-terrain: done  # mergé mobile #41 (mode hybride), validé sur iPhone
   epic-5-retrospective: optional
 
@@ -149,6 +150,20 @@ development_status:
   9-1-landing-page-cloudbreak-fr: backlog
   9-2-optimisation-aso-app-store: backlog
   epic-9-retrospective: optional
+
+  # ─────────────────────────────────────────────────────────────
+  # EPIC 10: Ops console (remplace 1.6, absorbe 1.5)
+  # FRs: FR35, FR36, FR37 — NFR7
+  # Besoins : docs/ops-dashboard-besoins.md
+  # v0 = lecture seule (10.1–10.4) ; v1 = actions admin (10.5)
+  # ─────────────────────────────────────────────────────────────
+  epic-10: backlog
+  10-1-alertes-uptime-heartbeats-agent-serveur: backlog
+  10-2-version-deployee-get-version: backlog
+  10-3-backend-admin-lecture-seule-auth-audit-kpis: backlog
+  10-4-dashboard-ops-v0-admin: backlog
+  10-5-recherche-email-offrir-premium: backlog  # v1
+  epic-10-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────
   # MAINTENANCE: Score hebdomadaire, cache et erreurs 429

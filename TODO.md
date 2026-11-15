@@ -36,14 +36,10 @@
 
 1. Rendre la recherche de sommets tolérante aux fautes de frappe, accents et variantes proches, sans dégrader la pertinence.
 2. Préparer les sommets saisis à la main avec une colonne `source` (`seed` ou `manual`), puis ajouter la tour Eiffel (environ 330 m, Paris).
-3. Ajouter sur ops un outil d'admin pour offrir le plan Premium à quelqu'un : un champ email + un bouton qui crée/prolonge son abonnement en base. À passer par un endpoint backend protégé (auth admin + journal d'audit), pas par du SQL direct depuis ops ; ne pas confondre avec un vrai achat Apple (`plan: "premium"`, statut et `expires_at` à définir pour un accès offert).
 
-## 5. Observabilité et suivi (ops, PostHog, Sentry)
+## 5. Ops console (alertes, versions, KPIs, admin)
 
-1. Avoir une vue rapide « tout fonctionne + data » : développer la partie ops et brancher PostHog et Sentry (backend + mobile).
-2. Mettre en place un check de MEP visuel : version git réellement déployée sur chaque serveur (backend, ops ; dev et prod) et réponse sans erreur de chaque service.
-3. Recevoir une notification dès qu'un service tombe (backend, Redis, Postgres, serveur, ops).
-4. Suivre le nombre d'utilisateurs : total, connectés sur le mois, etc.
+Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Ordre : 10.1 alertes → 10.2 `/version` → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium. Branchement PostHog/Sentry : story 1.8.
 
 ## Notes à conserver
 

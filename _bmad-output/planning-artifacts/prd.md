@@ -134,7 +134,7 @@ Ce tableau positionne le projet dans son contexte technique et stratégique — 
 - Résumé météo général enrichi hors-saison
 - Amélioration algo par régression logistique sur données terrain
 - Android
-- **Dashboard Ops Admin web** : interface admin unifiée (Next.js, DA Cloudbreak dark) déployée comme service dans Dokploy — métriques temps réel (réponses 200/5xx, latence P50/P95/P99, requêtes/min, cache météo hits/misses, quotas utilisateurs), statut services (FastAPI, PostgreSQL, Redis, Traefik), conversions Pro et utilisateurs actifs via PostHog API. Données exposées par un endpoint `/admin/metrics` protégé côté backend. BetterStack + PostHog natifs suffisent au MVP — ce dashboard est pertinent quand l'app a des volumes réels à visualiser.
+- **Dashboard Ops Admin web** (remplacé par l'Epic 10 « Ops console », voir `docs/ops-dashboard-besoins.md`) : interface admin unifiée (Next.js, DA Cloudbreak dark) déployée comme service dans Dokploy — métriques temps réel (réponses 200/5xx, latence P50/P95/P99, requêtes/min, cache météo hits/misses, quotas utilisateurs), statut services (FastAPI, PostgreSQL, Redis, Traefik), conversions Premium et utilisateurs actifs via PostHog API. Données exposées par un endpoint `/admin/metrics` protégé côté backend. BetterStack + PostHog natifs suffisent au MVP — ce dashboard est pertinent quand l'app a des volumes réels à visualiser.
 - **Contribution utilisateur de spots** : l'user soumet coordonnées GPS + nom depuis l'app → LLM (Claude Haiku) normalise (slug, capitalisation, déduplication probable) → altitude via Open-Meteo Elevation → insertion en DB avec modération légère
 - **Cron mensuel de sync OSM** : relancer `generate_peaks.py` automatiquement 1x/mois pour récupérer les nouveaux sommets/viewpoints ajoutés dans OpenStreetMap et mettre à jour `peaks_data.json`
 - **Refonte visuelle FavoritesGrid** : la grille de favoris sur l'écran d'accueil (état vide et avec sommet) est fonctionnelle mais minimaliste — remplacer par un design plus riche (score du jour visible sur chaque carte, score coloré, massif affiché, style cohérent avec la ScoreCard) aligné sur la proposition Claude Design
@@ -174,7 +174,7 @@ Marc part en vacances dans les Vosges. Il checke le Champ du Feu — **"Ça peut
 
 ### Journey 3 — Alex, administrateur (parcours ops)
 
-3h du matin. L'API Weatherbit tombe. En 2 minutes, alerte BetterStack : *"Service météo indisponible — backend Cloudbreak dégradé"*. Les users voient "Service momentanément indisponible — nos équipes sont sur le coup". Le cache offline protège ceux qui ont leur prévision en cache. Fix poussé, CI/CD valide en 4 minutes. Aucun avis négatif.
+3h du matin. L'API Open-Meteo tombe. En 2 minutes, alerte BetterStack : *"Service météo indisponible — backend Cloudbreak dégradé"*. Les users voient "Service momentanément indisponible — nos équipes sont sur le coup". Le cache offline protège ceux qui ont leur prévision en cache. Fix poussé, CI/CD valide en 4 minutes. Aucun avis négatif.
 
 **Capabilities :** monitoring temps réel, alertes SMS/push admin, message dégradé gracieux, cache offline, CI/CD rapide.
 
@@ -209,7 +209,7 @@ Juillet. Thomas checke le Mont Blanc. L'app : **"Pas de mer de nuage prévue —
 ### Décisions MVP Structurantes
 
 - **Plateforme MVP : iOS uniquement** — Android reporté en V2. Une seule conformité store à gérer au lancement.
-- **API météo MVP : tier gratuit** — OpenWeather free tier ou Weatherbit free. Migration vers provider payant si le volume le justifie.
+- **API météo MVP : tier gratuit** — Open-Meteo (gratuit, sans clé, implémenté), Météo-France prévu en secondaire. Migration vers provider payant si le volume le justifie.
 
 ### Conformité App Store Apple
 
@@ -326,13 +326,13 @@ Pas d'accès galerie photo — l'utilisateur prend sa photo avec l'appareil nati
 - FR17 : L'utilisateur voit un paywall naturel au 2e check quotidien avec message de conversion
 - FR18 : L'utilisateur peut s'abonner en Premium mensuel (4,99 €/mois) via StoreKit 2
 - FR19 : L'utilisateur peut s'abonner en Premium annuel (44,99 €/an) via StoreKit 2
-- FR20 : L'utilisateur Premium/Pro peut effectuer des consultations illimitées
+- FR20 : L'utilisateur Premium peut effectuer des consultations illimitées
 - FR21 : L'utilisateur peut démarrer une période d'essai gratuit avant de s'abonner
 
 ### Notifications & Alertes
 
-- FR22 : L'utilisateur Premium/Pro reçoit des alertes push proactives sur ses sommets favoris quand les conditions sont idéales
-- FR23 : L'utilisateur Premium/Pro reçoit des alertes push régionales quand une mer de nuage est prévue dans sa région
+- FR22 : L'utilisateur Premium reçoit des alertes push proactives sur ses sommets favoris quand les conditions sont idéales
+- FR23 : L'utilisateur Premium reçoit des alertes push régionales quand une mer de nuage est prévue dans sa région
 - FR24 : L'utilisateur reçoit une notification GPS à l'arrivée à proximité d'un sommet consulté
 - FR25 : L'utilisateur peut configurer ou désactiver chaque type de notification indépendamment
 
