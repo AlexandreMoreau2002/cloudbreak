@@ -211,7 +211,7 @@ réseau ; `GET /health` répondait **502** (Traefik sans backend derrière).
    était à **0/1**. Retrouver le nom : `sudo grep -rl 'dev-api.cloudbreak' /etc/dokploy/traefik/dynamic`.
 2. `sudo docker service ps <service> --no-trunc` → `Rejected … No such image: <service>:latest`.
    **L'image Docker avait disparu du VPS** (cause non établie : prune d'images ou build d'un autre
-   projet sur ce serveur partagé, pas de swap, peu de disque). `docker ps` seul ne montre rien : un
+   projet sur ce serveur partagé, swap déjà entamé (4 Go), peu de disque). `docker ps` seul ne montre rien : un
    service Swarm sans tâche vivante n'a pas de conteneur.
 3. Redeploy par API (méthode standard, voir section 2) : `application.deploy` avec l'`applicationId`
    du backend → le build repasse, l'image est recréée.

@@ -46,7 +46,7 @@
 
 **Détail complet, accès, apps, CI/CD : voir [`docs/infra-serveur.md`](infra-serveur.md).** Résumé :
 
-- 1 VPS OVH (`51.178.37.35`), **partagé** avec Quest et Snoroc — 2 vCPU / 3.7 Go RAM, pas de swap.
+- 1 VPS OVH (`51.178.37.35`), **partagé** avec Quest et Snoroc — 2 vCPU / 3.7 Go RAM, 4 Go de swap.
 - Projet Dokploy `cloudbreak` — **un seul environnement pour l'instant, nommé `dev`**.
   - Backend → `dev-api.cloudbreak-app.com` (Dockerfile, webhook GitHub actif, Postgres + Redis Dokploy dédiés)
   - Ops (pages légales) → `dev-ops.cloudbreak-app.com` (Nixpacks/Next.js, webhook GitHub actif)
