@@ -1092,6 +1092,11 @@ So that I can verify a release without opening Dokploy and without storing a Dok
 **Then** il répond au même format avec `"service":"ops"`
 **And** la route est exclue du middleware d'auth admin et du sitemap, et n'affecte pas les pages légales ni l'AASA
 
+**Given** les services en production
+**When** `GET /version` est appelé sur le backend et sur ops
+**Then** la réponse contient aussi `"version"` (version du `package.json` pour ops, version applicative du backend) et `"tag"` (tag Git `vX.Y.Z` si le SHA déployé est exactement un tag, sinon `null`)
+**And** pour le mobile, qui n'a pas de serveur, le dashboard affiche la version publiée sur l'App Store (API publique iTunes Lookup de l'app `id6816759640`, sans clé) ; le numéro de build n'est pas disponible par cette API et n'est pas affiché
+
 **Given** le SHA n'est pas injecté (build local)
 **When** `/version` est appelé
 **Then** `sha` vaut `"unknown"` sans erreur
@@ -1121,6 +1126,11 @@ So that the ops dashboard can show KPIs and cron/backup status without ever writ
 **When** il appelle `GET /api/v1/admin/overview`
 **Then** il reçoit `200` avec : utilisateurs total, utilisateurs actifs sur 30 jours, abonnements actifs, abonnements en essai, checks par jour (7 derniers jours)
 **And** aucun email ni donnée personnelle n'est renvoyé
+
+**Given** le même admin authentifié
+**When** il appelle `GET /api/v1/admin/overview`
+**Then** la réponse contient aussi une série quotidienne sur 90 jours : nombre cumulé d'utilisateurs (calculé depuis `users.created_at`, avec la répartition anonymes / permanents) et nombre de checks par jour (depuis `predictions.created_at`)
+**And** la limite est documentée : un compte supprimé ou purgé disparaît de l'historique cumulé ; si ce biais devient gênant, une table de snapshots quotidiens (nouvelle migration) remplacera le calcul
 
 **Given** un JWT valide mais sans claim admin, ou claim admin mais UUID hors allowlist, ou allowlist vide
 **When** l'endpoint admin est appelé

@@ -41,10 +41,21 @@ Couleurs de statut (reprises des scores) : **OK** `#5C9E6E` · **Attention** `#D
 - **Source** : BetterStack (API de statut), lue par le backend, jamais par le navigateur. Le détail `database: ok / redis: ok` vient de `/health`.
 - **Lien** : vers le moniteur BetterStack concerné.
 
+### 3.0 Accueil (page d'ouverture, ajouté le 2026-11-16)
+
+L'accueil répond à « tout va bien ? » en quelques secondes, mobile comme desktop :
+1. **Check rapide** : bannière de statut global (Tout fonctionne / Dégradé / Problème / Inconnu) suivie de quatre pastilles (Services, Crons et sauvegardes, Serveur, Versions) avec un statut chacune, chacune renvoyant vers sa page de détail.
+2. **Nombre d'utilisateurs** : chiffre total en grand (avec anonymes / permanents et variation sur 7 jours).
+3. **Graphique de progression** : courbe du nombre cumulé d'utilisateurs sur 90 jours, avec un second onglet « Usage » (checks par jour). Sélecteur de période 30 / 90 jours. État vide : « Pas encore assez de données ».
+4. **Versions en prod** : une ligne par service avec sa version (voir 3.3).
+5. Liste « À surveiller » seulement s'il y a quelque chose.
+Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6 pour les statuts.
+
 ### 3.3 Versions déployées
 
-- **Contenu** : tableau Backend / Ops pour l'environnement choisi : SHA court déployé, SHA de `main` (ou de `develop` en Dev), écart (« à jour », « en retard de N commits », « en avance »), date du build.
+- **Contenu** : tableau **Backend / Ops / Mobile** pour l'environnement choisi : version (numéro `package.json` ou version applicative), tag Git (`v1.0.0`) s'il existe, SHA court déployé, SHA de `main` (ou de `develop` en Dev), écart (« à jour », « en retard de N commits », « en avance »), date du build.
 - **Source** : `GET /version` du backend et d'ops (story 10.2), comparé à l'API GitHub publique (branche `main` en Prod, `develop` en Dev). Aucune clé Dokploy.
+- **Mobile** : pas de serveur, donc pas de SHA ni de comparaison à `main` ; on affiche la version publiée sur l'App Store (API iTunes Lookup) et, en Dev, rien (« non applicable »). Le build n'est pas disponible.
 - **Cas particulier** : une version Prod différente de `main` n'est pas forcément une erreur (release en cours) ; afficher un état Attention, jamais Problème.
 
 ### 3.4 KPIs
@@ -105,7 +116,8 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 | 3 | Switch Prod / Dev + bannière Dev | En-tête | 10.4 | v0 | Choix local |
 | 4 | Statut global | 3.1 | 10.4 | v0 | Synthèse des blocs |
 | 5 | Services (uptime 24 h / 30 j, dernier incident) | 3.2 | 10.1, 10.4 | v0 | BetterStack + `/health` |
-| 6 | Versions déployées vs `main` / `develop` | 3.3 | 10.2, 10.4 | v0 | `GET /version` + API GitHub |
+| 6 | Versions déployées par service (version, tag Git, SHA) vs `main` / `develop`, mobile via App Store | 3.3 | 10.2, 10.4 | v0 | `GET /version` + API GitHub + iTunes Lookup |
+| 7a | Accueil : check rapide + nombre d'utilisateurs + courbe de progression (utilisateurs / usage) | 3.0 | 10.3, 10.4 | v0 | `GET /admin/overview` (séries 90 j) |
 | 7 | KPIs : utilisateurs, actifs 30 j, anonymes/permanents, abonnés, essais, checks/jour | 3.4 | 10.3, 10.4 | v0 | `GET /admin/overview` (SQL) |
 | 8 | Crons et sauvegardes (dernier passage, retard) | 3.5 | 10.1, 10.3, 10.4 | v0 | Heartbeats |
 | 9 | Serveur : CPU / RAM / disque / swap | 3.6 | 10.1, 10.4 | v0 | Agent BetterStack |
