@@ -1165,6 +1165,10 @@ So that I can check that everything works in a few seconds and jump to BetterSta
 
 **Dépendances :** 10.1, 10.2, 10.3.
 
+**Découpage pour la livraison (2026-11-16) :** cette story se livre en sept parties, 10.4a à 10.4g (socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales). Le périmètre de chaque partie et les maquettes associées (identifiants `HOME-*`, `SAN-*`, `DEP-*`, `USR-*`, `ACC-*`, `NAV-*`, `TST-*`, `ERR-*`, `LEG-*`) sont dans `docs/ops-console-stories.md`. Les critères ci-dessous valent pour l'ensemble.
+
+**Sources (décision du 2026-11-16) :** les chiffres et l'état des crons viennent du backend (`/admin/overview`). L'état des services, les métriques serveur (BetterStack) et les versions (`/version`, GitHub, App Store) sont lus par le **serveur ops**, jamais par le navigateur, pour que la console reste lisible quand l'API est en panne. Le serveur ops valide lui-même la session admin (JWKS, claim, allowlist) avant de répondre.
+
 **Acceptance Criteria:**
 
 **Given** un visiteur non connecté ou non admin
@@ -1180,6 +1184,9 @@ So that I can check that everything works in a few seconds and jump to BetterSta
 **Given** un bloc dont la source échoue, est lente ou ne renvoie rien
 **When** l'écran s'affiche
 **Then** ce bloc montre son propre état loading / erreur / vide (composants unifiés), sans casser les autres blocs
+**And** le chargement est un squelette aux dimensions finales du bloc (aucun saut de mise en page, aucun spinner plein écran), annoncé aux lecteurs d'écran, sans animation si `prefers-reduced-motion` est actif
+**And** une source injoignable affiche « Source indisponible », le nom de la source, l'heure de la dernière donnée connue et « Réessayer » ; ce n'est jamais un état « en panne »
+**And** la connexion gère « en cours », « identifiants incorrects » et « service injoignable » ; la console a une page d'erreur inattendue, une page introuvable et un bandeau « hors connexion »
 
 **Given** Alex connecté
 **When** il consulte l'accueil

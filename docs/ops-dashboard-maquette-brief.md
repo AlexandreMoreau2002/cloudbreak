@@ -38,7 +38,7 @@ Couleurs de statut (reprises des scores) : **OK** `#5C9E6E` · **Attention** `#D
 ### 3.2 Services (uptime)
 
 - **Contenu** : une ligne par service de l'environnement choisi : API (`/health` avec Postgres et Redis) et Ops (site). Pour chacun : statut, disponibilité sur 24 h et 30 j, dernier incident (date et durée).
-- **Source** : BetterStack (API de statut), lue par le backend, jamais par le navigateur. Le détail `database: ok / redis: ok` vient de `/health`.
+- **Source** : BetterStack (API de statut), lue par le **serveur ops** (décision du 2026-11-16, voir `docs/ops-console-stories.md` §2), jamais par le navigateur. Le détail `database: ok / redis: ok` vient de `/health`.
 - **Lien** : vers le moniteur BetterStack concerné.
 
 ### 3.0 Accueil (page d'ouverture, ajouté le 2026-11-16)
@@ -73,7 +73,7 @@ Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6
 ### 3.6 Serveur (CPU / RAM / disque)
 
 - **Contenu** : trois jauges (CPU, RAM, disque) avec valeur actuelle, seuil d'alerte et petite tendance sur 24 h. Une mention du swap utilisé si l'agent le remonte.
-- **Source** : agent BetterStack sur le VPS (story 10.1), lu par le backend. Le VPS est partagé avec le dev et d'autres projets : le bloc porte la mention « Serveur partagé avec d'autres projets ».
+- **Source** : agent BetterStack sur le VPS (story 10.1), lu par le serveur ops. Le VPS est partagé avec le dev et d'autres projets : le bloc porte la mention « Serveur partagé avec d'autres projets ».
 - **Lien** : « Ouvrir BetterStack ».
 
 ### 3.7 Plus tard (v1) : Actions admin — offrir Premium
