@@ -75,11 +75,7 @@
 
 | Information | Source | Mécanisme |
 |---|---|---|
-<<<<<<< ours
-| Uptime backend / ops (prod + dev) | BetterStack (externe) | Moniteurs HTTP sur `/health` et `/version` ; le dashboard lit l'état via l'API BetterStack, jamais depuis le VPS. |
-=======
-| Uptime backend / ops (prod) | BetterStack (externe) | **Actif** : moniteur HTTP prod sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, e-mail. **À faire** : ops et `/version`. Le dashboard lira l'état via l'API BetterStack, jamais depuis le VPS. |
->>>>>>> theirs
+| Uptime backend / ops (prod) | BetterStack (externe) | Moniteurs HTTP sur `/health` et `/version` ; le dashboard lit l'état via l'API BetterStack, jamais depuis le VPS. |
 | Crons purge / favoris / sauvegarde | Heartbeats BetterStack | Chaque script du VPS ping une URL de heartbeat en fin d'exécution réussie ; BetterStack alerte s'il manque un ping. |
 | CPU / RAM / disque du VPS | Agent BetterStack | Seuils d'alerte (par ex. disque > 85 %, RAM > 90 %), à valider après mesure. |
 | Version déployée | `GET /version` backend + ops | SHA du build injecté au build ; comparé à `main` sur GitHub (API publique, lecture). |
