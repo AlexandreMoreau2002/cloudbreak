@@ -32,7 +32,7 @@
 
 1. **Utilisateurs** : Alex seul, un rôle admin unique.
 2. **Emails** : alertes natives BetterStack / Sentry. Digest hebdo des KPIs plus tard. Aucun email vers les utilisateurs depuis ops.
-3. **Environnements** : dev + prod avec un switch, **prod par défaut**.
+3. **Environnements** : **prod uniquement** (décision d'Alex du 2026-11-16, qui remplace « dev + prod avec un switch »). Le dev n'est ni surveillé ni affiché : pas de moniteur, pas de switch, pas de bandeau.
 4. **Emails utilisateurs** : recherche par email seulement, pas de liste, audit de chaque consultation (v1, story 10.5).
 5. **Périmètre v0** : santé, versions, KPIs issus de la DB (utilisateurs, abonnements actifs/essai, checks/jour), crons et sauvegardes via heartbeats, métriques serveur.
 
@@ -49,13 +49,15 @@
 
 | Besoin | v0 | Story |
 |---|---|---|
-| Être alerté (SMS/email) quand l'API ou ops prod/dev est injoignable, en moins de 2 min | ✅ | 10.1 |
+| Être alerté (SMS/email) quand l'API ou ops **de prod** est injoignable, en moins de 2 min | ✅ | 10.1 |
 | Être alerté quand un cron (purge, favoris) ou la sauvegarde ne s'est pas exécuté | ✅ | 10.1 |
 | Être alerté quand le disque / la RAM / le CPU du VPS dépasse un seuil | ✅ | 10.1 |
 | Voir la version (SHA) déployée sur chaque service et chaque environnement, et si elle est en retard sur `main` | ✅ | 10.2 |
 | Voir les KPIs : utilisateurs (total, actifs sur 30 jours), abonnements actifs / en essai, checks par jour | ✅ | 10.3, 10.4 |
 | Voir l'état des crons et de la sauvegarde (dernier passage, résultat) | ✅ | 10.3, 10.4 |
-| Une page unique « tout va bien ? » avec statut global, switch dev/prod | ✅ | 10.4 |
+| Une page d'accueil « tout va bien ? » avec statut global (prod) | ✅ | 10.4 |
+| Accéder en un clic aux outils externes : BetterStack, Sentry, PostHog, Supabase, OVH, Brevo | ✅ | 10.4 |
+| Passer de la console aux pages CGU / confidentialité, et en revenir par un bouton visible seulement avec une session admin valide | ✅ | 10.4 |
 | Chercher un utilisateur par email et lui offrir Premium (avec audit) | ❌ (v1) | 10.5 |
 
 ## 5. Hors périmètre
@@ -73,7 +75,11 @@
 
 | Information | Source | Mécanisme |
 |---|---|---|
+<<<<<<< ours
 | Uptime backend / ops (prod + dev) | BetterStack (externe) | Moniteurs HTTP sur `/health` et `/version` ; le dashboard lit l'état via l'API BetterStack, jamais depuis le VPS. |
+=======
+| Uptime backend / ops (prod) | BetterStack (externe) | **Actif** : moniteur HTTP prod sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, e-mail. **À faire** : ops et `/version`. Le dashboard lira l'état via l'API BetterStack, jamais depuis le VPS. |
+>>>>>>> theirs
 | Crons purge / favoris / sauvegarde | Heartbeats BetterStack | Chaque script du VPS ping une URL de heartbeat en fin d'exécution réussie ; BetterStack alerte s'il manque un ping. |
 | CPU / RAM / disque du VPS | Agent BetterStack | Seuils d'alerte (par ex. disque > 85 %, RAM > 90 %), à valider après mesure. |
 | Version déployée | `GET /version` backend + ops | SHA du build injecté au build ; comparé à `main` sur GitHub (API publique, lecture). |
@@ -103,10 +109,10 @@ Dépendances : 10.1 est indépendante et passe en premier. 10.2 et 10.3 sont ind
 
 | Story | Titre | Résumé |
 |---|---|---|
-| **10.1** | Alertes d'abord | BetterStack uptime (api et ops, prod et dev), heartbeats des crons purge / favoris / sauvegarde, agent serveur CPU/RAM/disque avec seuils. **Absorbe la story 1.5.** |
+| **10.1** | Alertes d'abord | BetterStack uptime (api et ops, prod uniquement), heartbeats des crons purge / favoris / sauvegarde, agent serveur CPU/RAM/disque avec seuils. **Absorbe la story 1.5.** |
 | **10.2** | `GET /version` | SHA du build exposé par backend et ops, comparaison au `main` GitHub. Pas de clé Dokploy. |
 | **10.3** | Backend admin lecture seule | Auth JWT Supabase + claim `app_metadata` + allowlist UUID, table d'audit, `GET /admin/overview` (utilisateurs, abonnements actifs / essai, checks/jour, heartbeats reçus). |
-| **10.4** | UI ops `/[locale]/admin` v0 | Écrans du brief, switch d'environnement, i18n fr/en, `noindex`, middleware, e2e. |
+| **10.4** | UI ops `/[locale]/admin` v0 | Écrans du brief (prod uniquement), liens vers les outils externes et les pages légales, toasts, i18n fr/en, `noindex`, middleware, e2e. |
 | **10.5** | (v1) Actions admin | Recherche par email + offrir Premium, audit de chaque consultation et action. |
 
 La story **1.6 est remplacée** par cet Epic. La story **1.8** (PostHog réel + Sentry) reste séparée : le dashboard renvoie vers eux, il ne les remplace pas.

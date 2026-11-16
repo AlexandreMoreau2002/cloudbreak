@@ -7,7 +7,7 @@
 - **URL** : `/[locale]/admin` dans l'app ops (`/fr/admin`, `/en/admin`). Route `noindex` (meta + `robots`), protégée par un middleware ; aucun lien depuis le site légal.
 - **i18n** : fr et en, toutes les chaînes via `useTranslations()` et `messages/fr.json` / `en.json`. Dates et nombres localisés.
 - **Accès** : si pas de session admin valide → écran de connexion Supabase (pas de contenu admin dans le HTML). Si connecté sans droit admin → page « Accès refusé » neutre.
-- **Switch d'environnement** : **Prod** (par défaut) / **Dev**, dans l'en-tête. Le choix est mémorisé localement (par navigateur), une bannière colorée distincte rappelle qu'on est en Dev. Les données Prod et Dev ne sont jamais mélangées dans un même bloc.
+- **Environnement** : **prod uniquement** (décision du 2026-11-16). Pas de switch Prod / Dev, pas de bandeau Dev : le dev n'est ni surveillé ni affiché.
 - **Rafraîchissement** : bouton « Actualiser » et rafraîchissement automatique toutes les 60 s ; chaque bloc affiche l'heure de sa dernière donnée (« mis à jour il y a 2 min »).
 - **Mobile et desktop** : consultation principalement sur iPhone. Mobile (375 pt minimum) : une colonne, blocs empilés, statut global en premier. Desktop : grille 2 colonnes (3 au-delà de 1280 px). Aucun tableau à défilement horizontal : les lignes se transforment en cartes sur mobile.
 - **Aucune donnée personnelle** : aucun email, nom ni identifiant utilisateur dans aucun écran de la v0 (agrégats uniquement).
@@ -54,8 +54,8 @@ Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6
 ### 3.3 Versions déployées
 
 - **Contenu** : tableau **Backend / Ops / Mobile** pour l'environnement choisi : version (numéro `package.json` ou version applicative), tag Git (`v1.0.0`) s'il existe, SHA court déployé, SHA de `main` (ou de `develop` en Dev), écart (« à jour », « en retard de N commits », « en avance »), date du build.
-- **Source** : `GET /version` du backend et d'ops (story 10.2), comparé à l'API GitHub publique (branche `main` en Prod, `develop` en Dev). Aucune clé Dokploy.
-- **Mobile** : pas de serveur, donc pas de SHA ni de comparaison à `main` ; on affiche la version publiée sur l'App Store (API iTunes Lookup) et, en Dev, rien (« non applicable »). Le build n'est pas disponible.
+- **Source** : `GET /version` du backend et d'ops (story 10.2), comparé à l'API GitHub publique (branche `main`). Aucune clé Dokploy.
+- **Mobile** : pas de serveur, donc pas de SHA ni de comparaison à `main` ; on affiche la version publiée sur l'App Store (API iTunes Lookup) . Le build n'est pas disponible.
 - **Cas particulier** : une version Prod différente de `main` n'est pas forcément une erreur (release en cours) ; afficher un état Attention, jamais Problème.
 
 ### 3.4 KPIs
@@ -73,7 +73,7 @@ Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6
 ### 3.6 Serveur (CPU / RAM / disque)
 
 - **Contenu** : trois jauges (CPU, RAM, disque) avec valeur actuelle, seuil d'alerte et petite tendance sur 24 h. Une mention du swap utilisé si l'agent le remonte.
-- **Source** : agent BetterStack sur le VPS (story 10.1), lu par le backend. Le VPS est **partagé entre dev et prod** : ce bloc est identique dans les deux environnements, avec la mention « Serveur partagé dev + prod ».
+- **Source** : agent BetterStack sur le VPS (story 10.1), lu par le backend. Le VPS est partagé avec le dev et d'autres projets : le bloc porte la mention « Serveur partagé avec d'autres projets ».
 - **Lien** : « Ouvrir BetterStack ».
 
 ### 3.7 Plus tard (v1) : Actions admin — offrir Premium
@@ -104,7 +104,7 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 - Les 6 blocs de la v0 et l'emplacement réservé de la v1, en clair et en sombre.
 - Mobile (375 pt) et desktop (≥ 1280 px).
 - Pour chaque bloc : chargement, succès, vide, source injoignable, panne, dégradé.
-- Écrans annexes : connexion, accès refusé, switch Prod / Dev (bannière Dev).
+- Écrans annexes : connexion, session expirée, accès refusé, toasts (succès, erreur, info), pages légales avec et sans bouton « Retour à la console ».
 - Spécification des composants réutilisables (carte de statut, jauge, ligne de service, ligne de cron, carte KPI).
 
 ## 7. Catalogue des features (vue d'ensemble pour la maquette)
@@ -113,10 +113,10 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 |---|---|---|---|---|---|
 | 1 | Connexion admin (Supabase) | Écran de connexion | 10.3 / 10.4 | v0 | Supabase Auth, claim de rôle |
 | 2 | Accès refusé | Page neutre | 10.4 | v0 | Claim + allowlist UUID |
-| 3 | Switch Prod / Dev + bannière Dev | En-tête | 10.4 | v0 | Choix local |
+| 3 | ~~Switch Prod / Dev + bannière Dev~~ **retiré le 2026-11-16** (prod uniquement) | — | — | — | — |
 | 4 | Statut global | 3.1 | 10.4 | v0 | Synthèse des blocs |
 | 5 | Services (uptime 24 h / 30 j, dernier incident) | 3.2 | 10.1, 10.4 | v0 | BetterStack + `/health` |
-| 6 | Versions déployées par service (version, tag Git, SHA) vs `main` / `develop`, mobile via App Store | 3.3 | 10.2, 10.4 | v0 | `GET /version` + API GitHub + iTunes Lookup |
+| 6 | Versions déployées par service (version, tag Git, SHA) vs `main`, mobile via App Store | 3.3 | 10.2, 10.4 | v0 | `GET /version` + API GitHub + iTunes Lookup |
 | 7a | Accueil : check rapide + nombre d'utilisateurs + courbe de progression (utilisateurs / usage) | 3.0 | 10.3, 10.4 | v0 | `GET /admin/overview` (séries 90 j) |
 | 7 | KPIs : utilisateurs, actifs 30 j, anonymes/permanents, abonnés, essais, checks/jour | 3.4 | 10.3, 10.4 | v0 | `GET /admin/overview` (SQL) |
 | 8 | Crons et sauvegardes (dernier passage, retard) | 3.5 | 10.1, 10.3, 10.4 | v0 | Heartbeats |
@@ -130,3 +130,8 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 | 16 | Journal d'audit des actions | Bloc « Offrir Premium » | 10.5 | v1 | Table d'audit |
 | 17 | Funnels et rétention PostHog, erreurs Sentry | Liens | 1.8 | Après branchement | PostHog / Sentry |
 | 18 | Digest hebdo des KPIs | — | — | Plus tard | À cadrer |
+| 19 | Carte « Outils » : liens vers BetterStack, Sentry, PostHog (« bientôt »), Supabase, OVH, Brevo | Accueil | 10.4 | v0 | URLs en configuration (`.env`), aucune clé |
+| 20 | Liens CGU / Confidentialité depuis la console et l'écran de connexion | Barre latérale, Préférences (mobile), connexion | 10.4 | v0 | — |
+| 21 | Bouton « Retour à la console » sur les pages légales, visible seulement avec une session admin valide | Pages CGU / confidentialité | 10.4 | v0 | Session Supabase côté navigateur |
+| 22 | Toasts : succès (connexion, données mises à jour), erreur (source toujours injoignable), info (déconnexion) | Global | 10.4 | v0 | — |
+| 23 | Déconnexion (barre latérale, Préférences sur mobile) | Global | 10.4 | v0 | Supabase Auth |
