@@ -95,3 +95,26 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 - Pour chaque bloc : chargement, succès, vide, source injoignable, panne, dégradé.
 - Écrans annexes : connexion, accès refusé, switch Prod / Dev (bannière Dev).
 - Spécification des composants réutilisables (carte de statut, jauge, ligne de service, ligne de cron, carte KPI).
+
+## 7. Catalogue des features (vue d'ensemble pour la maquette)
+
+| # | Feature | Écran / bloc | Story | Version | Source de données |
+|---|---|---|---|---|---|
+| 1 | Connexion admin (Supabase) | Écran de connexion | 10.3 / 10.4 | v0 | Supabase Auth, claim de rôle |
+| 2 | Accès refusé | Page neutre | 10.4 | v0 | Claim + allowlist UUID |
+| 3 | Switch Prod / Dev + bannière Dev | En-tête | 10.4 | v0 | Choix local |
+| 4 | Statut global | 3.1 | 10.4 | v0 | Synthèse des blocs |
+| 5 | Services (uptime 24 h / 30 j, dernier incident) | 3.2 | 10.1, 10.4 | v0 | BetterStack + `/health` |
+| 6 | Versions déployées vs `main` / `develop` | 3.3 | 10.2, 10.4 | v0 | `GET /version` + API GitHub |
+| 7 | KPIs : utilisateurs, actifs 30 j, anonymes/permanents, abonnés, essais, checks/jour | 3.4 | 10.3, 10.4 | v0 | `GET /admin/overview` (SQL) |
+| 8 | Crons et sauvegardes (dernier passage, retard) | 3.5 | 10.1, 10.3, 10.4 | v0 | Heartbeats |
+| 9 | Serveur : CPU / RAM / disque / swap | 3.6 | 10.1, 10.4 | v0 | Agent BetterStack |
+| 10 | Rafraîchissement auto 60 s + « Actualiser » | Global | 10.4 | v0 | — |
+| 11 | Liens sortants BetterStack / PostHog / Sentry | Dans les blocs | 10.4 | v0 (PostHog/Sentry « bientôt ») | — |
+| 12 | Thème clair/sombre, fr/en | Global | 10.4 | v0 | `ThemeToggle`, `messages/*.json` |
+| 13 | Alertes email/SMS (hors écran) | — | 10.1 | v0 | BetterStack |
+| 14 | Recherche utilisateur par email | Bloc « Offrir Premium » | 10.5 | v1 | Endpoint admin protégé |
+| 15 | Offrir Premium (avec confirmation) | Bloc « Offrir Premium » | 10.5 | v1 | Endpoint admin protégé |
+| 16 | Journal d'audit des actions | Bloc « Offrir Premium » | 10.5 | v1 | Table d'audit |
+| 17 | Funnels et rétention PostHog, erreurs Sentry | Liens | 1.8 | Après branchement | PostHog / Sentry |
+| 18 | Digest hebdo des KPIs | — | — | Plus tard | À cadrer |
