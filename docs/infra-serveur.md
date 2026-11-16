@@ -352,6 +352,9 @@ Le backend attend **une seule clé JWK** (`{"kty":"EC","alg":"ES256",…}`), com
 - [x] ~~Migrer les URLs `nip.io` vers `cloudbreak-app.com`~~ — fait le 2026-08-09, voir section 4bis.
 - [x] ~~Renommer l'environnement Dokploy mal nommé "production"~~ — fait le 2026-08-09, renommé `dev`.
 - [x] ~~Migrer le token GitHub perso de `cloudbreak-ops` vers un fine-grained PAT ou une deploy key scopés au repo~~ — fait le 2026-08-08, voir section 6.
-- [ ] Monitoring (Better Stack / PostHog infra) toujours pas branché.
+- [x] ~~Monitoring Better Stack non branché~~ — premier moniteur créé le 2026-11-16 : `Cloudbreak API production`, `GET https://api.cloudbreak-app.com/health`, toutes les 3 min, vérification SSL active et alertes e-mail. Premier contrôle : `Up`.
+- [ ] Étendre le monitoring : API/ops dev, ops prod, heartbeats des crons et métriques VPS.
+- [ ] **Sentry backend** : poser `SENTRY_DSN` dans l’environnement Dokploy ciblé, relire la valeur dans l’interface sans la copier dans les logs, redéployer puis vérifier un événement contrôlé uniquement en développement. Les projets Sentry et le code sont prêts ; cette variable est le dernier branchement serveur.
+- [ ] **PostHog** : reste un stub sans trafic réseau ; créer le compte et les clés avant d’envisager son déploiement. Il n’est pas une dépendance du monitor Better Stack.
 - [ ] Créer un vrai environnement de prod Dokploy séparé, quand une vraie prod existera (domaines
   `api.cloudbreak-app.com` / `ops.cloudbreak-app.com` déjà réservés dans le schéma de nommage, voir section 4bis).

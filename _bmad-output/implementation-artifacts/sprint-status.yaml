@@ -53,7 +53,7 @@ development_status:
   1-5-monitoring-betterstack-posthog-initial: backlog  # absorbée par 10-1 (Epic 10), décidé le 2026-11-15
   1-7-taxonomie-instrumentation-posthog: done
   1-6-dashboard-ops-admin: backlog  # remplacée par l'Epic 10 (Ops console), décidé le 2026-11-15
-  1-8-monitoring-avance-posthog-sentry: backlog
+  1-8-monitoring-avance-posthog-sentry: in-progress  # Sentry code/projets prêts ; variables de déploiement, TestFlight et PostHog réel restent à faire
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

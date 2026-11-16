@@ -1,0 +1,5 @@
+@apiUrl = https://api.cloudbreak-app.com
+
+### Sentry n'ajoute aucun endpoint HTTP.
+### Ce contrôle sert uniquement à vérifier la disponibilité de l'API avant/après un déploiement.
+GET {{apiUrl}}/health

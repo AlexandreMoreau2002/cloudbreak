@@ -41,7 +41,13 @@
 
 Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Ordre : 10.1 alertes → 10.2 `/version` → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium. Branchement PostHog/Sentry : story 1.8.
 
+- [x] **Better Stack — premier monitor prod actif** (2026-11-16) : `Cloudbreak API production` surveille `https://api.cloudbreak-app.com/health` toutes les 3 minutes et alerte par e-mail. Premier check : `Up`.
+- [ ] Étendre Better Stack : ops prod, environnements dev, heartbeats des crons et métriques VPS (agent/seuils). Le monitor API seul ne couvre pas ces pannes.
+- [x] **Sentry — code et projets prêts** (2026-11-16) : `cloudbreak-backend` et `cloudbreak-mobile` existent ; les SDKs sont en mode erreurs seulement, sans PII, tracing, logs ni replay. Les revues sécurité ont validé le filtrage et le blocage de la propagation de trace.
+- [ ] **Sentry — branchement dev/TestFlight** : poser `SENTRY_DSN` dans Dokploy et `EXPO_PUBLIC_SENTRY_DSN` + secret `SENTRY_AUTH_TOKEN` dans EAS, puis tester une build iOS dev/TestFlight. Ne pas créer de route de debug ni envoyer d’événement de test sur la production publique.
+- [ ] **PostHog — à préparer pour la même version iOS** : compte, clés, SDKs mobile/backend et correction de `auth_submitted` avant activation ; l’instrumentation actuelle est un stub sans réseau.
+
 ## Notes à conserver
 
 - Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
-- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack reste une piste d'outil pour les alertes de la section 5.
+- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack est maintenant utilisé pour le premier contrôle externe de l'API prod ; la couverture complète de la section 5 reste à faire. Sentry est prêt côté code mais n’est pas encore actif tant que les variables de déploiement et la build TestFlight dev ne sont pas en place.

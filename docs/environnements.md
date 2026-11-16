@@ -18,13 +18,13 @@
 | Cache (Redis) | ✅ en place | ❌ pas créée | idem |
 | Auth (Supabase) | ✅ en place | 🟡 même projet que dev | pas de split dev/prod, à décider |
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
-| Build mobile (EAS) | ✅ configuré | 🟡 build de soumission à faire | projet EAS et credentials actifs ; build native requise pour StoreKit |
+| Build mobile (EAS) | ✅ configuré | 🟡 prochaine build à faire | Sentry et le futur PostHog seront testés ensemble sur une build native dev/TestFlight |
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
 | App Store Connect | ✅ app + abonnements configurés | 🟡 non soumis | première version et abonnements restent à soumettre après tests |
 | TestFlight | ❌ | ❌ | première build à téléverser |
-| Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, SDK jamais branché |
-| Error tracking (Sentry) | ❌ | ❌ | post-MVP décidé |
-| Uptime (BetterStack) | ❌ | ❌ | compte pas créé |
+| Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, compte/clés et SDKs réels encore absents |
+| Error tracking (Sentry) | 🟡 code prêt | 🟡 variables à poser | projets backend/mobile créés ; DSN Dokploy/EAS et build TestFlight dev encore requis |
+| Uptime (BetterStack) | ❌ | ✅ API | Compte créé le 2026-11-16 ; monitor `Cloudbreak API production` sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, alertes e-mail. Ops, dev et crons restent à couvrir. |
 | Support par e-mail | — | ✅ opérationnel | `contact@cloudbreak-app.com` : réception ImprovMX → Gmail, réponses Gmail → Brevo |
 | Email transactionnel applicatif | 🟡 Supabase Auth + Brevo | ❌ séparé du support | reset/password et autres e-mails applicatifs : décision d’intégration distincte |
 
@@ -125,8 +125,8 @@ encore été soumise à App Store Connect.**
 | Outil | Rôle | État |
 |---|---|---|
 | **PostHog** | Analytics produit (funnels, rétention) | Taxonomie (~31 events) définie et câblée en **stub DEBUG-only** (story 1.7) des deux côtés (`analytics.py` / `analytics.ts`). Aucune donnée ne part réellement. Compte PostHog pas créé, `POSTHOG_API_KEY` vide partout. Branchement réel = story 1.8, **post-MVP**. |
-| **Sentry** | Crash/error tracking | Rien fait. Décidé le 2026-08-08, story 1.8, **post-MVP**. |
-| **BetterStack** | Alertes uptime (SMS/email) | Compte pas créé. Story 1.5 (MVP), pas commencée. |
+| **Sentry** | Crash/error tracking | Projets `cloudbreak-backend` et `cloudbreak-mobile` créés le 2026-11-16 ; code backend/mobile prêt en mode erreurs seulement. Reste à poser `SENTRY_DSN` dans Dokploy, `EXPO_PUBLIC_SENTRY_DSN` et le secret EAS `SENTRY_AUTH_TOKEN`, puis tester sur une build iOS dev/TestFlight. |
+| **BetterStack** | Alertes uptime | Compte créé le 2026-11-16. Le monitor `Cloudbreak API production` vérifie `https://api.cloudbreak-app.com/health` toutes les 3 min et alerte par e-mail ; premier check `Up`. SMS, ops, dev, heartbeats et métriques VPS ne sont pas encore configurés. |
 | **Logs FastAPI** | Erreurs 5xx en JSON structuré | Logger conditionnel en place dans le code (`logger.debug/info/error`), mais pas d'agrégation/alerting externe branché dessus. |
 
 Décision actée : **pas de Grafana** — le VPS partagé (2 vCPU/3.7 Go, déjà eu un incident de
@@ -185,7 +185,7 @@ réutiliser les secrets du flux de support.
 ### Peut se faire maintenant (aucun blocage externe)
 - [ ] Créer un Sandbox Tester Apple et effectuer le test StoreKit sur appareil réel avec une build
   native ; ne pas utiliser Expo Go
-- [ ] Créer le compte BetterStack + brancher les alertes (story 1.5)
+- [x] ~~Créer le compte BetterStack + brancher les alertes (story 1.5)~~ — fait le 2026-11-16 pour l'API de production (`/health`, e-mail, toutes les 3 min). Couverture complémentaire à planifier dans l'Epic 10.
 - [ ] Décider : split Supabase dev/prod, ou un seul projet pour le MVP (solo dev, probablement OK
   de garder un seul projet au lancement)
 
@@ -198,9 +198,9 @@ réutiliser les secrets du flux de support.
 - [ ] **Créer un vrai environnement Dokploy `production`** — quand une vraie prod est décidée
   (pas de date, dépend du lancement)
 
-### Post-MVP (décidé, pas à commencer)
-- [ ] PostHog réel (SDK mobile + backend) — story 1.8
-- [ ] Sentry (mobile + backend) — story 1.8
+### Observabilité — prochain lot iOS/TestFlight
+- [ ] **Sentry** : poser les variables Dokploy/EAS, générer une build native dev/TestFlight et contrôler un événement filtré sur les deux projets.
+- [ ] **PostHog réel** : créer le compte, définir les clés/environnements, intégrer les SDKs et corriger l’event `auth_submitted` avant tout envoi réseau. Le tester dans la même build iOS que Sentry.
 
 ---
 

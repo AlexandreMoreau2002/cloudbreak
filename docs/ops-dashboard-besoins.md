@@ -5,7 +5,7 @@
 ## 1. Pourquoi
 
 - La prod est **publique depuis le 2026-11-13** (backend `api.cloudbreak-app.com`, ops `ops.cloudbreak-app.com`, Supabase `cloudbreak-prod`). Mobile 1.0.0 en ligne, 1.0.1 en review Apple.
-- **Aucun monitoring ni alerte n'existe** : la story 1.5 (BetterStack) n'a jamais été faite. Si l'API tombe à 3 h du matin, personne ne le sait avant qu'un utilisateur se plaigne (le PRD, FR35 et NFR7, exige une alerte en moins de 2 minutes).
+- **Le premier contrôle externe est en place** : depuis le 2026-11-16, Better Stack vérifie `https://api.cloudbreak-app.com/health` toutes les 3 minutes et envoie les alertes par e-mail. La couverture reste incomplète : ops, dev, crons, sauvegardes et métriques VPS ne sont pas encore surveillés. Le PRD (FR35/NFR7) vise une alerte en moins de 2 minutes ; le plan gratuit actuel est donc un filet utile, mais ne satisfait pas encore cet objectif.
 - Les crons (purge des anonymes 06:05, alertes favoris 18:05, sauvegarde 03:00 UTC) peuvent échouer en silence. Les seuls signaux sont des fichiers de log sur le VPS.
 - Alex n'a aucune vue « tout fonctionne » ni « quelle version tourne sur quel serveur » ni « combien d'utilisateurs / d'abonnés » sans SSH ou SQL.
 
@@ -73,7 +73,7 @@
 
 | Information | Source | Mécanisme |
 |---|---|---|
-| Uptime backend / ops (prod + dev) | BetterStack (externe) | Moniteurs HTTP sur `/health` et `/version` ; le dashboard lit l'état via l'API BetterStack, jamais depuis le VPS. |
+| Uptime backend / ops (prod + dev) | BetterStack (externe) | **Actif** : moniteur HTTP prod sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, e-mail. **À faire** : ops, dev et `/version`. Le dashboard lira l'état via l'API BetterStack, jamais depuis le VPS. |
 | Crons purge / favoris / sauvegarde | Heartbeats BetterStack | Chaque script du VPS ping une URL de heartbeat en fin d'exécution réussie ; BetterStack alerte s'il manque un ping. |
 | CPU / RAM / disque du VPS | Agent BetterStack | Seuils d'alerte (par ex. disque > 85 %, RAM > 90 %), à valider après mesure. |
 | Version déployée | `GET /version` backend + ops | SHA du build injecté au build ; comparé à `main` sur GitHub (API publique, lecture). |
