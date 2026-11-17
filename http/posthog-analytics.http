@@ -1,0 +1,6 @@
+@devApiUrl = https://dev-api.cloudbreak-app.com
+
+### Vérifier l'API dev avant la recette PostHog
+# PostHog n'expose pas d'endpoint Cloudbreak à appeler : les événements sont envoyés par les
+# adaptateurs backend/mobile après configuration Dokploy/EAS. Ne placer aucune clé ici.
+GET {{devApiUrl}}/health

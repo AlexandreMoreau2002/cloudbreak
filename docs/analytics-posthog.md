@@ -1,32 +1,58 @@
 # PostHog — analytics produit
 
-Date : 2026-07-21 (story 1.7)
+Date : 2026-11-16 (story 1.8)
 
 ## État actuel
 
-- Story 1.7 (taxonomie & instrumentation events, stub) mergee sur develop backend + mobile.
-- La taxonomie complète (~31 événements) est définie et câblée : `app/services/analytics.py` (backend) et `src/services/analytics.ts` (mobile).
-- `track()` reste un stub qui logge en DEBUG uniquement — **aucun appel réseau, aucun compte ni clé PostHog configurés**.
-- Le vrai branchement SDK (`posthog-node` / `posthog-react-native`) n'est pas encore implémenté. Il doit être livré dans la prochaine version iOS avec Sentry, d'abord en TestFlight avec l'environnement dev.
-- Dashboard ops (`cloudbreak-ops`) : story 1.6 remplacee par l'Epic 10 « Ops console » (alertes, versions, KPIs ; renvoie vers PostHog/BetterStack/Sentry sans recreer leurs ecrans).
+- Le projet PostHog **Product Analytics** existant est réservé à la validation **dev/TestFlight**.
+  Il ne représente pas la production publique.
+- L'adaptateur backend est prêt (commit `26ca893`) et l'adaptateur mobile est prêt (commit
+  `4d54c37`). Ils conservent les appels existants et n'envoient que la taxonomie explicite.
+- Les clés ne sont pas encore renseignées dans Dokploy ni dans EAS : tant qu'elles restent
+  absentes, il n'y a **aucun appel réseau PostHog** et l'application/API continuent de démarrer.
+- Aucun projet ni aucune clé de production n'existe. Il est interdit d'activer PostHog pour le
+  trafic public avant de créer ce projet séparé et de refaire la validation adaptée.
 
-## Principe d'architecture (story 1.7)
+Le détail opérationnel est dans
+[`posthog-analytics/fonctionnement.md`](posthog-analytics/fonctionnement.md) et la recette
+manuelle dans [`posthog-analytics/guide-test.md`](posthog-analytics/guide-test.md).
 
-Un seul proprietaire par event :
-- Backend = verite metier persistee (`score_calculated`, `quota_bypassed`, `quota_exceeded`, `favorite_added/removed`, `account_deleted`)
-- Mobile = UI pure (tout le reste : onboarding, auth, navigation, paywall, profil, session app)
+## Principe d'architecture
 
-Voir `docs/superpowers/specs/2026-07-21-story-1-7-posthog-taxonomy-design.md` pour la taxonomie complete et `backend/docs/story-1-7-analytics-taxonomy.md` / `mobile/docs/story-1-7-analytics-taxonomy.md` pour le detail par fichier.
+Un seul propriétaire par événement :
 
-## Ce qui reste à faire avant le branchement réel
+- Backend = vérité métier persistée (`score_calculated`, `quota_bypassed`, `quota_exceeded`,
+  `favorite_added`, `favorite_removed`, `account_deleted`).
+- Mobile = interactions UI (onboarding, navigation, recherche, paywall, profil et cycle de vie
+  explicitement instrumenté).
 
-1. Créer le compte PostHog et définir les projets/environnements dev puis production.
-2. Mettre les clés d'ingestion dans les variables de déploiement adaptées, jamais dans Git.
-3. Installer les SDKs (`posthog-node` backend, `posthog-react-native` mobile)
-4. Remplacer le corps de `track()` par le vrai appel SDK — aucun site d'appel à modifier.
-5. Corriger `mobile/src/hooks/useAuthForm.ts:36` : `error_code` envoie actuellement `error.message` brut de Supabase (texte libre), à mapper vers un enum stable avant d'envoyer à un tiers.
-6. Déclarer les données d'usage dans App Store Connect / privacy avant toute soumission iOS.
+Les deux adaptateurs filtrent le nom d'événement et chaque propriété avant capture. Les données
+libres ou sensibles sont rejetées ; `auth_submitted` est expressément exclu tant que son
+`error_code` n'est pas un enum stable. Aucun e-mail, jeton, message d'erreur brut, position
+précise, payload HTTP ou profil de personne n'est ajouté.
 
-## Limite de périmètre
+## Ce qui est volontairement désactivé
 
-PostHog ne doit pas être annoncé comme actif tant que son compte, ses clés, les SDKs et les tests TestFlight ne sont pas prêts. Better Stack est déjà actif pour l'uptime et Sentry est prêt côté code, mais PostHog reste volontairement sans trafic réseau.
+PostHog est limité aux événements produit explicites : ni autocapture, ni Session Replay, ni
+error tracking, ni logs, ni feature flags, ni person profiles, ni rage clicks. Les erreurs vont à
+Sentry et la disponibilité de l'API à Better Stack ; PostHog ne remplace aucun de ces outils.
+
+## Variables de déploiement
+
+Ne jamais mettre une valeur dans Git, cette documentation, un ticket ou les logs.
+
+| Cible | Variables à renseigner | Usage |
+|---|---|---|
+| Backend dev Dokploy | `POSTHOG_API_KEY`, `POSTHOG_HOST` | capture des événements métier de la validation dev |
+| Build EAS dev/TestFlight | `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST` | capture des événements UI de la build native |
+
+L'hôte est celui donné par le projet PostHog dev (instance UE actuellement). Une variable vide ou
+absente désactive proprement le client concerné.
+
+## Suite avant activation publique
+
+1. Poser uniquement les variables du projet dev dans Dokploy et EAS, puis générer une build
+   native dev/TestFlight.
+2. Réaliser la recette sans aucun trafic de production publique.
+3. Créer un projet PostHog et une clé **de production séparés**, décider les réglages de
+   confidentialité et refaire une recette dédiée avant toute activation publique.

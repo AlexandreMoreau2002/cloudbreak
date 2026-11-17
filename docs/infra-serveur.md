@@ -355,6 +355,12 @@ Le backend attend **une seule clé JWK** (`{"kty":"EC","alg":"ES256",…}`), com
 - [x] ~~Monitoring Better Stack non branché~~ — premier moniteur créé le 2026-11-16 : `Cloudbreak API production`, `GET https://api.cloudbreak-app.com/health`, toutes les 3 min, vérification SSL active et alertes e-mail. Premier contrôle : `Up`.
 - [ ] Étendre le monitoring : API/ops dev, ops prod, heartbeats des crons et métriques VPS.
 - [ ] **Sentry backend** : poser `SENTRY_DSN` dans l’environnement Dokploy ciblé, relire la valeur dans l’interface sans la copier dans les logs, redéployer puis vérifier un événement contrôlé uniquement en développement. Les projets Sentry et le code sont prêts ; cette variable est le dernier branchement serveur.
-- [ ] **PostHog** : reste un stub sans trafic réseau ; créer le compte et les clés avant d’envisager son déploiement. Il n’est pas une dépendance du monitor Better Stack.
+- [ ] **PostHog dev/TestFlight** : le projet Product Analytics et le code filtré sont prêts ; poser
+  `POSTHOG_API_KEY` et `POSTHOG_HOST` uniquement dans Dokploy dev, relire sans les copier dans les
+  logs, redéployer puis valider avec la build EAS dev/TestFlight. Ne jamais envoyer de trafic
+  public vers ce projet.
+- [ ] **PostHog production** : créer un projet et une clé séparés, décider les réglages de
+  confidentialité et refaire la recette avant toute activation publique. PostHog n'est pas une
+  dépendance du monitor Better Stack.
 - [ ] Créer un vrai environnement de prod Dokploy séparé, quand une vraie prod existera (domaines
   `api.cloudbreak-app.com` / `ops.cloudbreak-app.com` déjà réservés dans le schéma de nommage, voir section 4bis).

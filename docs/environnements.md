@@ -22,7 +22,7 @@
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
 | App Store Connect | ✅ app + abonnements configurés | 🟡 non soumis | première version et abonnements restent à soumettre après tests |
 | TestFlight | ❌ | ❌ | première build à téléverser |
-| Analytics (PostHog) | 🟡 stub DEBUG-only | ❌ | taxonomie câblée, compte/clés et SDKs réels encore absents |
+| Analytics (PostHog) | 🟡 code prêt, activation à tester | ❌ projet dédié absent | projet Product Analytics actuel réservé au dev/TestFlight ; variables Dokploy/EAS encore vides |
 | Error tracking (Sentry) | 🟡 code prêt | 🟡 variables à poser | projets backend/mobile créés ; DSN Dokploy/EAS et build TestFlight dev encore requis |
 | Uptime (BetterStack) | ❌ | ✅ API | Compte créé le 2026-11-16 ; monitor `Cloudbreak API production` sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, alertes e-mail. Ops, dev et crons restent à couvrir. |
 | Support par e-mail | — | ✅ opérationnel | `contact@cloudbreak-app.com` : réception ImprovMX → Gmail, réponses Gmail → Brevo |
@@ -124,7 +124,7 @@ encore été soumise à App Store Connect.**
 
 | Outil | Rôle | État |
 |---|---|---|
-| **PostHog** | Analytics produit (funnels, rétention) | Taxonomie (~31 events) définie et câblée en **stub DEBUG-only** (story 1.7) des deux côtés (`analytics.py` / `analytics.ts`). Aucune donnée ne part réellement. Compte PostHog pas créé, `POSTHOG_API_KEY` vide partout. Branchement réel = story 1.8, **post-MVP**. |
+| **PostHog** | Analytics produit (funnels, rétention) | Projet Product Analytics existant réservé au **dev/TestFlight** ; adaptateurs backend (`26ca893`) et mobile (`4d54c37`) prêts, filtrage explicite uniquement. `POSTHOG_API_KEY`/`POSTHOG_HOST` (Dokploy) et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` (EAS) restent à poser, donc aucun trafic à ce stade. Autocapture, replay, erreurs, logs, flags, profils et rage clicks sont désactivés. Un projet/une clé de production séparés sont obligatoires avant activation publique. Voir `docs/posthog-analytics/`. |
 | **Sentry** | Crash/error tracking | Projets `cloudbreak-backend` et `cloudbreak-mobile` créés le 2026-11-16 ; code backend/mobile prêt en mode erreurs seulement. Reste à poser `SENTRY_DSN` dans Dokploy, `EXPO_PUBLIC_SENTRY_DSN` et le secret EAS `SENTRY_AUTH_TOKEN`, puis tester sur une build iOS dev/TestFlight. |
 | **BetterStack** | Alertes uptime | Compte créé le 2026-11-16. Le monitor `Cloudbreak API production` vérifie `https://api.cloudbreak-app.com/health` toutes les 3 min et alerte par e-mail ; premier check `Up`. SMS, ops, dev, heartbeats et métriques VPS ne sont pas encore configurés. |
 | **Logs FastAPI** | Erreurs 5xx en JSON structuré | Logger conditionnel en place dans le code (`logger.debug/info/error`), mais pas d'agrégation/alerting externe branché dessus. |
@@ -176,6 +176,8 @@ réutiliser les secrets du flux de support.
   - Page Notion "🖥️ Serveur OVH" — tokens Dokploy, mots de passe DB, refreshTokens webhooks
   - `.env` locaux (non commités) — `backend/.env`, `mobile/.env`
   - Variables d'environnement Dokploy (UI/API) pour le serveur
+  - Variables EAS de l'environnement de build pour l'app mobile, y compris les variables
+    `EXPO_PUBLIC_*` de PostHog ; elles ne doivent pas être copiées dans `app.json` ou dans Git
   - `.vscode/settings.json` (non commité) — tokens de test Supabase
 
 ---
@@ -200,7 +202,8 @@ réutiliser les secrets du flux de support.
 
 ### Observabilité — prochain lot iOS/TestFlight
 - [ ] **Sentry** : poser les variables Dokploy/EAS, générer une build native dev/TestFlight et contrôler un événement filtré sur les deux projets.
-- [ ] **PostHog réel** : créer le compte, définir les clés/environnements, intégrer les SDKs et corriger l’event `auth_submitted` avant tout envoi réseau. Le tester dans la même build iOS que Sentry.
+- [ ] **PostHog dev/TestFlight** : poser les variables `POSTHOG_API_KEY`/`POSTHOG_HOST` dans Dokploy dev et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` dans EAS, puis valider les événements filtrés dans la même build native que Sentry. Le compte, le projet dev/TestFlight et les SDKs sont déjà prêts.
+- [ ] **PostHog — dette de taxonomie** : conserver `auth_submitted` exclu jusqu'à ce que son `error_code` soit remplacé par un enum stable ; ne jamais envoyer son texte libre actuel.
 
 ---
 

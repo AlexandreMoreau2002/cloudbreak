@@ -45,7 +45,15 @@ Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entr
 - [ ] Étendre Better Stack : ops prod, environnements dev, heartbeats des crons et métriques VPS (agent/seuils). Le monitor API seul ne couvre pas ces pannes.
 - [x] **Sentry — code et projets prêts** (2026-11-16) : `cloudbreak-backend` et `cloudbreak-mobile` existent ; les SDKs sont en mode erreurs seulement, sans PII, tracing, logs ni replay. Les revues sécurité ont validé le filtrage et le blocage de la propagation de trace.
 - [ ] **Sentry — branchement dev/TestFlight** : poser `SENTRY_DSN` dans Dokploy et `EXPO_PUBLIC_SENTRY_DSN` + secret `SENTRY_AUTH_TOKEN` dans EAS, puis tester une build iOS dev/TestFlight. Ne pas créer de route de debug ni envoyer d’événement de test sur la production publique.
-- [ ] **PostHog — à préparer pour la même version iOS** : compte, clés, SDKs mobile/backend et correction de `auth_submitted` avant activation ; l’instrumentation actuelle est un stub sans réseau.
+- [x] **PostHog — code et projet dev/TestFlight prêts** (2026-11-16) : projet Product Analytics
+  réservé au dev/TestFlight ; adaptateurs backend (`26ca893`) et mobile (`4d54c37`) actifs seulement
+  si leurs variables sont présentes. Taxonomie explicite, sans autocapture, replay, erreurs, logs,
+  flags, profils ni rage clicks ; `auth_submitted` reste exclu car son `error_code` est libre.
+- [ ] **PostHog — branchement dev/TestFlight** : poser `POSTHOG_API_KEY`/`POSTHOG_HOST` dans Dokploy
+  dev et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` dans EAS dev, puis tester dans la même
+  build native que Sentry. Aucun trafic de production publique.
+- [ ] **PostHog — prérequis production** : créer un projet et une clé de production séparés, décider
+  la confidentialité et rejouer la recette avant toute activation publique.
 
 ## Notes à conserver
 
