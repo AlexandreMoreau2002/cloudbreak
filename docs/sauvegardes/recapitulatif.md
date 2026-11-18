@@ -5,6 +5,38 @@ expliqué simplement) et `guide-test.md` (les procédures de test et de restaura
 
 ---
 
+## 0. Pourquoi on a fait tout ça (en clair)
+
+Tu m'as fait faire beaucoup de choses d'un coup ; voici ce que chacune protège, en une phrase.
+
+| Ce qu'on a fait | Le problème que ça règle | Si on ne l'avait pas fait |
+|---|---|---|
+| Sauvegarder la **base de prod** | Le vieux script ne sauvegardait que la base **dev**. La prod (les vrais comptes, abonnements, favoris) n'avait aucune copie. | Une fausse manip ou une panne de disque = tout perdu, sans retour possible. |
+| Sauvegarder **toutes** les bases (script « qui découvre ») | Le script avait une liste écrite à la main : on oubliait une base dès qu'on en ajoutait une. | Une nouvelle app avec sa base ne serait jamais sauvegardée sans qu'on le sache. |
+| **Tester une restauration** | Une sauvegarde jamais restaurée peut être vide ou cassée sans qu'on le voie. | On découvre qu'elle est inutilisable le jour où on en a besoin. |
+| **Copie hors site chiffrée** (OVH) | Les copies étaient sur le même disque que les bases. | Si le serveur (ou son disque) disparaît, bases **et** sauvegardes partent ensemble. |
+| **Export Supabase** | Les comptes (emails, mots de passe) ne vivent que chez Supabase, en plan Free **sans aucune sauvegarde**. | Sans eux, même avec notre base restaurée, personne ne pourrait se reconnecter. |
+| **Alerte de coût OVH** | Le stockage OVH est facturé à l'usage et ta carte est branchée. | Une dérive ne se verrait qu'à la facture. |
+| **Heartbeats BetterStack** | Un cron qui plante **ne fait pas de bruit** : seuls des fichiers de log sur le serveur le disent. | Une sauvegarde peut s'arrêter pendant des semaines sans que personne le sache. |
+
+Le fil rouge : **« une sauvegarde qui ne prévient pas quand elle casse, ou qui est sur la même machine, ne protège pas vraiment ».**
+
+### Comment marchent les heartbeats (le principe)
+Un heartbeat, c'est comme un **réveil à l'envers** : chaque job envoie un petit signal (« j'ai fini, tout va bien ») à BetterStack. Si le signal
+n'arrive pas dans le délai prévu (1 jour + 2 h de marge), BetterStack t'envoie un e-mail. Si le job échoue, il envoie `/fail` et l'alerte est immédiate.
+
+| Heartbeat BetterStack | Job surveillé | Horaire | Signal envoyé par |
+|---|---|---|---|
+| Sauvegarde des bases (VPS) | sauvegarde de toutes les bases + copie OVH | 03:00 UTC | `/srv/scripts/backup-databases.sh` (URL dans `/srv/scripts/backup.env`) |
+| Purge des comptes anonymes (prod) | suppression des comptes anonymes inactifs 30 j | 06:05 Paris | `~/cloudbreak-purge-anonymous-prod.sh` (URL dans `~/.cloudbreak-prod/heartbeat-purge.url`) |
+| Alertes favoris (prod) | notifications push des favoris | 18:05 Paris | `~/cloudbreak-run-favorites-prod.sh` (URL dans `~/.cloudbreak-prod/heartbeat-favorites.url`) |
+
+Pour les deux crons Cloudbreak : le script appelle le backend ; si la réponse est **200** il ping le heartbeat, sinon il ping `/fail`. Le mode `dry` de la purge
+ne ping pas. Les anciennes versions des scripts sont gardées en `*.bak-20261118` sur le VPS. Page des heartbeats :
+`https://incidents.betterstack.com/team/t635958/heartbeats`.
+
+---
+
 ## 1. En bref
 
 - **Avant** : un script ne sauvegardait que 3 bases, dont la base Cloudbreak **dev**. La **prod Cloudbreak n'avait aucune sauvegarde**.
@@ -81,6 +113,7 @@ perdables).
 | `/srv/scripts/backup.env` | `OFFSITE_CMD` et `HEARTBEAT_URL` (heartbeat BetterStack, 600) |
 | `/srv/scripts/expected-databases.txt` | noms des bases qui **doivent** exister |
 | `/srv/backups/` | copies locales (`*.sql.gz`), `manifest-*.txt`, `LAST_SUCCESS`, `backup.log` |
+| `~/.cloudbreak-prod/heartbeat-purge.url`, `heartbeat-favorites.url` | URLs des heartbeats BetterStack des crons purge et favoris (600) |
 | `/root/.restic/s3.env` | clés S3 OVH + adresse du dépôt (600) |
 | `/root/.restic/password` | **clé de chiffrement restic** (600) |
 | `/root/.restic/supabase.env` | mot de passe de la base Supabase prod (600) |
@@ -153,7 +186,7 @@ Voir ce qui sera trouvé sans rien écrire : `... backup-databases.sh --dry-run`
 Plus rien d'obligatoire. Décisions d'Alex du 2026-11-18 : on **reste en Supabase Free** (0 utilisateur, pause automatique après une semaine
 sans activité à surveiller) et on **ne tourne pas** les mots de passe Postgres/Redis de prod pour l'instant.
 
-Faits le 2026-11-18 : alerte de consommation OVH (5 €/mois, e-mail), heartbeat BetterStack de la sauvegarde (marge 2 h).
+Faits le 2026-11-18 : alerte de consommation OVH (5 €/mois, e-mail), heartbeats BetterStack de la sauvegarde, de la purge des anonymes et des alertes favoris (marge 2 h).
 
 À savoir (non bloquant) : la **clé de chiffrement restic** (`/root/.restic/password` sur le VPS) n'existe qu'à cet endroit. Elle ne sert
 que si le VPS est perdu ; une copie dans un gestionnaire de mots de passe protège ce cas :

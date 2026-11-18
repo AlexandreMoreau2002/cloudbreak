@@ -1042,7 +1042,7 @@ So that I learn about an outage before users do, with monitoring that does not d
 
 **Given** les crons de purge anonymes (06:05 prod), alertes favoris (18:05 prod) et la sauvegarde des bases (03:00 UTC)
 **When** un script se termine
-**Then** il appelle l'URL de heartbeat BetterStack correspondante (secret dans un fichier 600, jamais en argument)
+**Then** il appelle l'URL de heartbeat BetterStack correspondante (secret dans un fichier 600, jamais en argument) — **fait le 2026-11-18 pour les trois jobs** (sauvegarde, purge prod, favoris prod ; marge 2 h, alerte e-mail)
 **And** un run manquant ou en échec (code HTTP ≠ 200) déclenche une alerte dans le délai de grâce configuré
 
 **Given** l'agent serveur BetterStack installé sur le VPS

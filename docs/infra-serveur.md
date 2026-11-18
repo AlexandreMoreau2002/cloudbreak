@@ -148,6 +148,7 @@ Refonte du 2026-11-18 (détail : `docs/sauvegardes/fonctionnement.md`, tests : `
 - Copie hors site : `/srv/scripts/offsite-backup.sh` (restic chiffré → bucket OVH S3 `vps-db-backups-7f3a9c2e`, Gravelines 1-AZ, projet
   Public Cloud « Project 2026-11-18 », utilisateur `restic-vps-backups`). Rétention 14 j / 8 sem. / 6 mois, garde-fou 2 Go. Clés dans
   `/root/.restic/` (600) ; **clé de chiffrement à garder aussi dans le gestionnaire de mots de passe**.
+- **Heartbeats BetterStack (2026-11-18)** : 3 heartbeats « attendu chaque jour, marge 2 h, alerte e-mail » : sauvegarde des bases (`HEARTBEAT_URL` dans `/srv/scripts/backup.env`), purge des anonymes prod et alertes favoris prod (URLs dans `~/.cloudbreak-prod/heartbeat-{purge,favorites}.url`, 600). Les scripts `~/cloudbreak-purge-anonymous-prod.sh` et `~/cloudbreak-run-favorites-prod.sh` pingent si le backend répond 200, `/fail` sinon (pas de ping en mode `dry`). Anciennes versions : `*.bak-20261118`. Pourquoi et mode d'emploi : `docs/sauvegardes/recapitulatif.md` §0.
 - **Supabase prod (`cloudbreak-prod`, plan Free, sans sauvegarde automatique)** : le script exporte `auth` + `public` chaque nuit via le
   pooler session (`aws-0-eu-west-2.pooler.supabase.com:5432`), mot de passe de base dédié dans `/root/.restic/supabase.env` (réinitialisé
   le 2026-11-18, utilisé nulle part ailleurs). Restauration testée (14 comptes).

@@ -4,7 +4,7 @@
 
 ## 0. Urgent — sauvegardes (à traiter avant les alertes)
 
-Fait le 2026-11-18 (heartbeat BetterStack et alerte de coût OVH compris) : toutes les bases du VPS (dont la prod Cloudbreak et Dokploy) sont sauvegardées par un script qui les découvre seul, restauration testée (locale et depuis OVH), copie hors site chiffrée (restic → OVH S3). Détail : `docs/sauvegardes/`. Reste :
+Fait le 2026-11-18 (heartbeats BetterStack sauvegarde + purge + favoris, et alerte de coût OVH, compris) : toutes les bases du VPS (dont la prod Cloudbreak et Dokploy) sont sauvegardées par un script qui les découvre seul, restauration testée (locale et depuis OVH), copie hors site chiffrée (restic → OVH S3). Détail : `docs/sauvegardes/`. Reste :
 
 1. **Supabase prod** : export nocturne de `auth` + `public` en place (plan Free, sans sauvegarde automatique), restauration testée. On reste en Free (décision d'Alex) ; à surveiller : pause automatique des projets Free après une semaine d'inactivité.
 
