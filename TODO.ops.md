@@ -7,10 +7,9 @@
 Fait le 2026-11-18 : toutes les bases du VPS (dont la prod Cloudbreak et Dokploy) sont sauvegardées par un script qui les découvre seul, restauration testée (locale et depuis OVH), copie hors site chiffrée (restic → OVH S3). Détail : `docs/sauvegardes/`. Reste :
 
 1. **Supabase prod** : export nocturne de `auth` + `public` en place (plan Free, sans sauvegarde automatique), restauration testée. À surveiller : pause automatique des projets Free après une semaine d'inactivité ; décider si on passe en Pro avant la mise en prod réelle.
-2. **Alerte de consommation OVH** sur le projet Public Cloud « Project 2026-11-18 » (non trouvée dans l'interface ; coût attendu : quelques centimes par mois).
-3. **Mot de passe restic** (`/root/.restic/password` sur le VPS) à copier dans le gestionnaire de mots de passe.
-4. **Alerte de fraîcheur** : renseigner `HEARTBEAT_URL` dans `/srv/scripts/backup.env` une fois BetterStack en place (story 10.1) ; fichier de plus de 26 h = alerte.
-5. Tourner les mots de passe Postgres/Redis de prod (affichés par erreur dans une conversation le 2026-11-16) ; ça redémarre la prod, à faire hors heures de pointe.
+2. **Mot de passe restic** (`/root/.restic/password` sur le VPS) à copier dans le gestionnaire de mots de passe.
+3. **Alerte de fraîcheur** : renseigner `HEARTBEAT_URL` dans `/srv/scripts/backup.env` une fois BetterStack en place (story 10.1) ; fichier de plus de 26 h = alerte.
+4. Tourner les mots de passe Postgres/Redis de prod (affichés par erreur dans une conversation le 2026-11-16) ; ça redémarre la prod, à faire hors heures de pointe.
 
 ## 1. Mesures à faire sur le VPS (une seule connexion SSH à la fois)
 

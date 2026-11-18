@@ -97,5 +97,5 @@ Supabase (`psql` sur sa base), puis pointer `SUPABASE_URL`, les clés et le JWKS
 - [ ] Scénario 4 : restauration depuis OVH OK, empreinte identique
 - [ ] Scénario 5 : échec détecté
 - [ ] Mot de passe restic enregistré dans ton gestionnaire de mots de passe
-- [ ] Alerte de consommation OVH posée
+- [x] Alerte de consommation OVH posée (2026-11-18, seuil 5 €/mois)
 - [ ] Heartbeat BetterStack branché (`HEARTBEAT_URL`)

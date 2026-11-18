@@ -97,7 +97,7 @@ Pas sauvegardé : Redis (cache météo et compteurs de quota, perdables).
 
 - **Supabase** : si la région ou l'hôte du pooler change, mettre à jour `SUPABASE_POOLER` dans le script ; si le mot de passe de la base
   est réinitialisé, mettre à jour `/root/.restic/supabase.env`. Le projet Free se met en pause après une semaine sans activité.
-- **Alerte de consommation OVH** : à poser dans la console (je n'ai pas réussi à la trouver dans l'interface).
+- **Alerte de consommation OVH : posée le 2026-11-18** (projet « Project 2026-11-18 », seuil mensuel 5 €, e-mail du compte OVH, un rappel maximum par jour ; id `cfccf6e5-68f7-4ad5-9266-b367068c7a9d`). Visible/modifiable par l'API OVH `/cloud/project/{id}/alerting`, pas dans la console.
 - **Alerte de fraîcheur** : heartbeat BetterStack (story 10.1) pour être prévenu si le cron ne tourne pas. Le script sait déjà
   l'appeler : il suffit de renseigner `HEARTBEAT_URL` dans `backup.env`.
 - Mettre le mot de passe restic dans ton gestionnaire de mots de passe.

@@ -155,7 +155,7 @@ Voir ce qui sera trouvé sans rien écrire : `... backup-databases.sh --dry-run`
    ```bash
    ssh vps-ovh-projets 'sudo cat /root/.restic/password'
    ```
-2. **Alerte de consommation OVH** : à poser dans la console (je n'ai pas trouvé l'écran).
+2. ~~Alerte de consommation OVH~~ — **fait** : posée le 2026-11-18** (projet « Project 2026-11-18 », seuil mensuel 5 €, e-mail du compte OVH, un rappel maximum par jour ; id `cfccf6e5-68f7-4ad5-9266-b367068c7a9d`). Visible/modifiable par l'API OVH `/cloud/project/{id}/alerting`, pas dans la console.
 3. **Heartbeat BetterStack** (story 10.1) : mettre l'URL dans `HEARTBEAT_URL` de `/srv/scripts/backup.env`. Le script appelle l'URL en
    cas de succès, et `<URL>/fail` en cas d'échec ; configurer côté BetterStack une alerte « pas de signal sous 26 h ».
 4. **Plan Supabase** : le plan Free met le projet en pause après une semaine sans activité. À trancher avant le vrai lancement
