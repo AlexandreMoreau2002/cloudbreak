@@ -1015,7 +1015,7 @@ So that Cloudbreak ranks in the top 10 for "mer de nuage" and related searches.
 
 ## Epic 10: Ops console
 
-L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés sur dev et prod, puis (v1) peut offrir Premium par email avec audit. Remplace la story 1.6 et absorbe la 1.5. Besoins et décisions : `docs/ops-dashboard-besoins.md`.
+L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés de la prod, puis (v1) peut offrir Premium par email avec audit. Remplace la story 1.6 et absorbe la 1.5. Besoins et décisions : `docs/ops-dashboard-besoins.md`.
 
 **FRs couverts :** FR35, FR36, FR37 · **NFR :** NFR7
 
@@ -1035,7 +1035,7 @@ So that I learn about an outage before users do, with monitoring that does not d
 
 **Acceptance Criteria:**
 
-**Given** BetterStack configuré avec des moniteurs HTTP sur `https://api.cloudbreak-app.com/health`, `https://ops.cloudbreak-app.com/fr/privacy` et leurs équivalents `dev-api` / `dev-ops`
+**Given** BetterStack configuré avec des moniteurs HTTP sur `https://api.cloudbreak-app.com/health`, `https://ops.cloudbreak-app.com/fr/privacy` (prod uniquement : le dev n'est pas surveillé, décision du 2026-11-16)
 **When** un service répond autrement qu'en 2xx (ou `/health` sans `database: ok` et `redis: ok`) pendant 2 vérifications consécutives
 **Then** Alex reçoit une alerte email (et SMS/push si activé) en moins de 2 minutes (NFR7)
 **And** l'alerte nomme le service et l'environnement
@@ -1101,7 +1101,7 @@ So that I can verify a release without opening Dokploy and without storing a Dok
 **When** `/version` est appelé
 **Then** `sha` vaut `"unknown"` sans erreur
 
-**Given** le SHA déployé et le `main` (prod) ou `develop` (dev) GitHub du repo
+**Given** le SHA déployé en prod et le `main` GitHub du repo
 **When** le dashboard compare les deux
 **Then** il affiche « à jour » ou « en retard de N commits » via l'API GitHub publique (sans token, ou token lecture seule en variable d'environnement ops)
 **And** aucune clé Dokploy n'est utilisée
@@ -1160,10 +1160,14 @@ So that the ops dashboard can show KPIs and cron/backup status without ever writ
 ### Story 10.4: Dashboard ops v0 — `/[locale]/admin`
 
 As an administrator (Alex),
-I want one screen showing global status, deployed versions, KPIs, crons/backups and server health for dev and prod,
+I want one screen showing global status, deployed versions, KPIs, crons/backups and server health for production,
 So that I can check that everything works in a few seconds and jump to BetterStack / PostHog / Sentry for details.
 
 **Dépendances :** 10.1, 10.2, 10.3.
+
+**Découpage pour la livraison (2026-11-16) :** cette story se livre en sept parties, 10.4a à 10.4g (socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales). Le périmètre de chaque partie et les maquettes associées (identifiants `HOME-*`, `SAN-*`, `DEP-*`, `USR-*`, `ACC-*`, `NAV-*`, `TST-*`, `ERR-*`, `LEG-*`) sont dans `docs/ops-console-stories.md`. Les critères ci-dessous valent pour l'ensemble.
+
+**Sources (décision du 2026-11-16) :** les chiffres et l'état des crons viennent du backend (`/admin/overview`). L'état des services, les métriques serveur (BetterStack) et les versions (`/version`, GitHub, App Store) sont lus par le **serveur ops**, jamais par le navigateur, pour que la console reste lisible quand l'API est en panne. Le serveur ops valide lui-même la session admin (JWKS, claim, allowlist) avant de répondre.
 
 **Acceptance Criteria:**
 
@@ -1174,12 +1178,29 @@ So that I can check that everything works in a few seconds and jump to BetterSta
 
 **Given** Alex connecté (JWT Supabase avec claim admin)
 **When** le dashboard se charge
-**Then** il voit, avec l'environnement **prod par défaut** et un switch vers dev : statut global (vert/orange/rouge), versions déployées backend et ops avec écart à la branche GitHub, KPIs (utilisateurs, abonnements actifs/essai, checks/jour), état des crons et sauvegardes (dernier run, en retard ou non), état serveur (CPU/RAM/disque) avec lien vers BetterStack
+**Then** il voit, pour la **prod uniquement** (pas de switch d'environnement) : statut global (vert/orange/rouge), versions déployées backend et ops avec écart à la branche GitHub, KPIs (utilisateurs, abonnements actifs/essai, checks/jour), état des crons et sauvegardes (dernier run, en retard ou non), état serveur (CPU/RAM/disque) avec lien vers BetterStack
 **And** chaque bloc renvoie vers l'outil source (BetterStack, PostHog, Sentry) au lieu de recréer ses écrans
 
 **Given** un bloc dont la source échoue, est lente ou ne renvoie rien
 **When** l'écran s'affiche
 **Then** ce bloc montre son propre état loading / erreur / vide (composants unifiés), sans casser les autres blocs
+**And** le chargement est un squelette aux dimensions finales du bloc (aucun saut de mise en page, aucun spinner plein écran), annoncé aux lecteurs d'écran, sans animation si `prefers-reduced-motion` est actif
+**And** une source injoignable affiche « Source indisponible », le nom de la source, l'heure de la dernière donnée connue et « Réessayer » ; ce n'est jamais un état « en panne »
+**And** la connexion gère « en cours », « identifiants incorrects » et « service injoignable » ; la console a une page d'erreur inattendue, une page introuvable et un bandeau « hors connexion »
+
+**Given** Alex connecté
+**When** il consulte l'accueil
+**Then** une carte « Outils » propose un lien (nouvel onglet, `rel="noopener"`) vers BetterStack, Sentry, PostHog, Supabase, OVH et Brevo ; les URLs viennent de la configuration (`.env`), aucune clé n'est exposée ; un outil non encore branché (PostHog) est affiché « bientôt », inactif
+**And** la console propose une déconnexion et des liens vers les pages CGU et confidentialité
+
+**Given** une page CGU ou confidentialité
+**When** le visiteur a une session admin valide dans son navigateur
+**Then** un bouton « Retour à la console » apparaît dans l'en-tête ; sans session valide, rien n'est affiché et la page est strictement identique à aujourd'hui
+**And** ce bouton est un petit composant client isolé, chargé après le rendu : s'il échoue, la page légale s'affiche quand même (c'est la seule exception à la règle d'isolation ci-dessous)
+
+**Given** une action de l'administrateur (connexion, actualisation, nouvel essai sur une source, déconnexion)
+**When** elle aboutit ou échoue
+**Then** un toast l'annonce (succès, erreur ou info), avec icône et texte, annoncé aux lecteurs d'écran, sans masquer la navigation
 
 **Given** les textes de l'écran
 **When** la locale est `fr` ou `en`
@@ -1191,7 +1212,7 @@ So that I can check that everything works in a few seconds and jump to BetterSta
 **And** aucun code admin n'est importé depuis les pages légales (isolation vérifiée par test) et un échec de l'admin ne fait pas échouer ces routes
 
 **Fichiers cibles :** `ops/app/[locale]/admin/**` (page, layout), `ops/middleware.ts` (ou proxy Next 16 équivalent : protection `/admin`), `ops/src/components/admin/**`, `ops/src/lib/admin/**` (client API, jamais d'accès direct DB/Redis), `ops/messages/fr.json` et `en.json`, tests Vitest co-localisés, `ops/e2e/admin.spec.ts` et non-régression légale, `ops/.env.example` (URL API, hôte BetterStack).
-**Tests à écrire :** garde d'accès (non connecté / non admin / admin), états loading/erreur/vide par bloc, switch d'environnement, `noindex`, parité des clés fr/en, e2e d'isolation du site légal.
+**Tests à écrire :** garde d'accès (non connecté / non admin / admin), états loading/erreur/vide par bloc, toasts, liens externes, bouton de retour sur les pages légales (présent avec session admin, absent sinon), `noindex`, parité des clés fr/en, e2e d'isolation du site légal.
 **Validation :** `npm run validate` (ops : format:check + lint + typecheck + coverage + build + e2e).
 
 ---
