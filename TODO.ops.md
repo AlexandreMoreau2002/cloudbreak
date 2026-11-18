@@ -4,11 +4,13 @@
 
 ## 0. Urgent — sauvegardes (à traiter avant les alertes)
 
-1. **Sauvegarde de la base Postgres de PROD.** `/srv/scripts/backup-databases.sh` ne sauvegarde qu'un seul conteneur Postgres Cloudbreak, codé en dur (`postgres-navigate-virtual-matrix-c3rtpt`). Établir si c'est la base dev ou la prod (UI Dokploy : à quelle app appartient ce Postgres ?). Si c'est la dev, **la prod n'a aucune sauvegarde** : ajouter le conteneur prod au script, lancer un dump à la main, vérifier le fichier.
-2. **Test de restauration** d'un dump prod sur une base jetable (un dump jamais restauré ne prouve rien).
-3. **Sauvegarde côté Supabase prod (`cloudbreak-prod`).** Les comptes (`auth.users` : emails, mots de passe hachés, identités) vivent chez Supabase et ne sont **pas** dans notre `pg_dump` : sans eux, une restauration de notre base laisserait les utilisateurs incapables de se connecter. À faire : vérifier ce que le plan Supabase inclut comme sauvegarde et sa rétention, et planifier un export régulier de `auth.users` (par exemple dump de la base Supabase) stocké hors du VPS.
-4. **Copie hors site** des sauvegardes (aujourd'hui `/srv/backups` est sur le même disque que les bases, rétention 14 jours).
-5. Rendre le script de sauvegarde **fiable** : sortie non nulle si un conteneur est introuvable (aujourd'hui il sort en succès), un fichier de sauvegarde de plus de 26 h déclenche une alerte.
+Fait le 2026-11-18 : toutes les bases du VPS (dont la prod Cloudbreak et Dokploy) sont sauvegardées par un script qui les découvre seul, restauration testée (locale et depuis OVH), copie hors site chiffrée (restic → OVH S3). Détail : `docs/sauvegardes/`. Reste :
+
+1. **Supabase prod** : export nocturne de `auth` + `public` en place (plan Free, sans sauvegarde automatique), restauration testée. À surveiller : pause automatique des projets Free après une semaine d'inactivité ; décider si on passe en Pro avant la mise en prod réelle.
+2. **Alerte de consommation OVH** sur le projet Public Cloud « Project 2026-11-18 » (non trouvée dans l'interface ; coût attendu : quelques centimes par mois).
+3. **Mot de passe restic** (`/root/.restic/password` sur le VPS) à copier dans le gestionnaire de mots de passe.
+4. **Alerte de fraîcheur** : renseigner `HEARTBEAT_URL` dans `/srv/scripts/backup.env` une fois BetterStack en place (story 10.1) ; fichier de plus de 26 h = alerte.
+5. Tourner les mots de passe Postgres/Redis de prod (affichés par erreur dans une conversation le 2026-11-16) ; ça redémarre la prod, à faire hors heures de pointe.
 
 ## 1. Mesures à faire sur le VPS (une seule connexion SSH à la fois)
 
