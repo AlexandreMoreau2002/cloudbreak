@@ -138,9 +138,19 @@ L'ancien token GitHub personnel classique (scope `repo`) a été **révoqué** c
 
 ## 7. Sauvegardes
 
-- Répertoire : `/srv/backups/`
-- Fréquence : cron quotidien à 3h
-- Script : `/srv/scripts/backup-databases.sh` (mysqldump + pg_dump, gzip, rétention 14 jours)
+Refonte du 2026-11-18 (détail : `docs/sauvegardes/fonctionnement.md`, tests : `docs/sauvegardes/guide-test.md`).
+
+- Répertoire : `/srv/backups/` (700, fichiers 600), rétention locale 14 jours
+- Fréquence : cron `ubuntu` `0 3 * * * sudo /srv/scripts/backup-databases.sh >> /srv/backups/backup.log` (03:00 UTC)
+- Script : `/srv/scripts/backup-databases.sh` (source : `infra/backup-databases.sh`). **Découvre toutes les bases** (Postgres/MySQL)
+  par l'env des conteneurs, sans mot de passe en dur ; échoue si une base listée dans `expected-databases.txt` manque ; manifeste SHA-256.
+  La **prod Cloudbreak** (`postgres-parse-redundant-feed-hgevt8`) et `dokploy-postgres` sont couverts (avant : seule la dev l'était).
+- Copie hors site : `/srv/scripts/offsite-backup.sh` (restic chiffré → bucket OVH S3 `vps-db-backups-7f3a9c2e`, Gravelines 1-AZ, projet
+  Public Cloud « Project 2026-11-18 », utilisateur `restic-vps-backups`). Rétention 14 j / 8 sem. / 6 mois, garde-fou 2 Go. Clés dans
+  `/root/.restic/` (600) ; **clé de chiffrement à garder aussi dans le gestionnaire de mots de passe**.
+- **Supabase prod (`cloudbreak-prod`, plan Free, sans sauvegarde automatique)** : le script exporte `auth` + `public` chaque nuit via le
+  pooler session (`aws-0-eu-west-2.pooler.supabase.com:5432`), mot de passe de base dédié dans `/root/.restic/supabase.env` (réinitialisé
+  le 2026-11-18, utilisé nulle part ailleurs). Restauration testée (14 comptes).
 
 ## 8. Logs de déploiement
 
