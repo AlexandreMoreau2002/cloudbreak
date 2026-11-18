@@ -78,7 +78,7 @@ perdables).
 |---|---|
 | `/srv/scripts/backup-databases.sh` | script principal (cron `0 3 * * *`, via `sudo`) |
 | `/srv/scripts/offsite-backup.sh` | copie hors site |
-| `/srv/scripts/backup.env` | `OFFSITE_CMD` (et `HEARTBEAT_URL` plus tard) |
+| `/srv/scripts/backup.env` | `OFFSITE_CMD` et `HEARTBEAT_URL` (heartbeat BetterStack, 600) |
 | `/srv/scripts/expected-databases.txt` | noms des bases qui **doivent** exister |
 | `/srv/backups/` | copies locales (`*.sql.gz`), `manifest-*.txt`, `LAST_SUCCESS`, `backup.log` |
 | `/root/.restic/s3.env` | clés S3 OVH + adresse du dépôt (600) |
@@ -100,7 +100,7 @@ Organisation `cloudbreak` → projet `cloudbreak-prod` (région eu-west-2, plan 
 ssh vps-ovh-projets 'sudo ls -l /srv/backups/LAST_SUCCESS; sudo tail -12 /srv/backups/backup.log'
 ```
 Attendu : `LAST_SUCCESS` daté de la nuit (03:00 UTC), et dans le log « OK » pour chaque base, `[offsite] terminé`, `terminé : N dumps`.
-Alerte automatique : pas encore (il faut brancher le heartbeat BetterStack, story 10.1, voir §8).
+Alerte automatique : **heartbeat BetterStack « Sauvegarde des bases (VPS) »** (attendu chaque jour, marge 2 h, alerte e-mail). Il est vert si la sauvegarde et la copie hors site ont réussi ; un échec envoie `/fail` (alerte immédiate), un silence de plus de 26 h aussi. Page : `https://incidents.betterstack.com/team/t635958/heartbeats/535606`.
 
 ### Chaque semaine
 - Le dimanche, le script vérifie 10 % des données du dépôt hors site (`restic check`). Une erreur fait échouer la sauvegarde : elle
@@ -150,17 +150,16 @@ Voir ce qui sera trouvé sans rien écrire : `... backup-databases.sh --dry-run`
 
 ## 8. Ce qu'il reste à faire
 
-1. **Copier la clé de chiffrement restic** dans ton gestionnaire de mots de passe (sans elle, la copie OVH est illisible si le VPS
-   disparaît) :
-   ```bash
-   ssh vps-ovh-projets 'sudo cat /root/.restic/password'
-   ```
-2. ~~Alerte de consommation OVH~~ — **fait** : posée le 2026-11-18** (projet « Project 2026-11-18 », seuil mensuel 5 €, e-mail du compte OVH, un rappel maximum par jour ; id `cfccf6e5-68f7-4ad5-9266-b367068c7a9d`). Visible/modifiable par l'API OVH `/cloud/project/{id}/alerting`, pas dans la console.
-3. **Heartbeat BetterStack** (story 10.1) : mettre l'URL dans `HEARTBEAT_URL` de `/srv/scripts/backup.env`. Le script appelle l'URL en
-   cas de succès, et `<URL>/fail` en cas d'échec ; configurer côté BetterStack une alerte « pas de signal sous 26 h ».
-4. **Plan Supabase** : le plan Free met le projet en pause après une semaine sans activité. À trancher avant le vrai lancement
-   (passer en Pro ?).
-5. **Rotation des secrets exposés** (voir §9), hors heures de pointe.
+Plus rien d'obligatoire. Décisions d'Alex du 2026-11-18 : on **reste en Supabase Free** (0 utilisateur, pause automatique après une semaine
+sans activité à surveiller) et on **ne tourne pas** les mots de passe Postgres/Redis de prod pour l'instant.
+
+Faits le 2026-11-18 : alerte de consommation OVH (5 €/mois, e-mail), heartbeat BetterStack de la sauvegarde (marge 2 h).
+
+À savoir (non bloquant) : la **clé de chiffrement restic** (`/root/.restic/password` sur le VPS) n'existe qu'à cet endroit. Elle ne sert
+que si le VPS est perdu ; une copie dans un gestionnaire de mots de passe protège ce cas :
+```bash
+ssh vps-ovh-projets 'sudo cat /root/.restic/password'
+```
 
 ## 9. Secrets et points d'attention
 

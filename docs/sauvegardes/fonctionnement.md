@@ -88,7 +88,7 @@ Pas sauvegardé : Redis (cache météo et compteurs de quota, perdables).
 | Repo | `infra/offsite-backup.sh` | source du script hors site |
 | VPS | `/srv/scripts/backup-databases.sh` | script installé (cron `0 3 * * *`, via `sudo`) |
 | VPS | `/srv/scripts/offsite-backup.sh` | copie hors site |
-| VPS | `/srv/scripts/backup.env` | `OFFSITE_CMD`, (plus tard) URL de heartbeat |
+| VPS | `/srv/scripts/backup.env` | `OFFSITE_CMD`, `HEARTBEAT_URL` (BetterStack) |
 | VPS | `/srv/scripts/expected-databases.txt` | bases qui doivent exister |
 | VPS | `/root/.restic/s3.env`, `/root/.restic/password` | accès S3 et clé de chiffrement |
 | VPS | `/srv/backups/` | copies locales + `manifest-*.txt` + `LAST_SUCCESS` |
@@ -98,6 +98,5 @@ Pas sauvegardé : Redis (cache météo et compteurs de quota, perdables).
 - **Supabase** : si la région ou l'hôte du pooler change, mettre à jour `SUPABASE_POOLER` dans le script ; si le mot de passe de la base
   est réinitialisé, mettre à jour `/root/.restic/supabase.env`. Le projet Free se met en pause après une semaine sans activité.
 - **Alerte de consommation OVH : posée le 2026-11-18** (projet « Project 2026-11-18 », seuil mensuel 5 €, e-mail du compte OVH, un rappel maximum par jour ; id `cfccf6e5-68f7-4ad5-9266-b367068c7a9d`). Visible/modifiable par l'API OVH `/cloud/project/{id}/alerting`, pas dans la console.
-- **Alerte de fraîcheur** : heartbeat BetterStack (story 10.1) pour être prévenu si le cron ne tourne pas. Le script sait déjà
-  l'appeler : il suffit de renseigner `HEARTBEAT_URL` dans `backup.env`.
+- **Alerte de fraîcheur : en place** (2026-11-18). Heartbeat BetterStack « Sauvegarde des bases (VPS) » : attendu chaque jour, marge 2 h, alerte e-mail. Le script le ping en cas de succès (dumps + copie hors site) et ping `/fail` en cas d'échec.
 - Mettre le mot de passe restic dans ton gestionnaire de mots de passe.
