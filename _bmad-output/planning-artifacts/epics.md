@@ -1052,9 +1052,14 @@ So that I learn about an outage before users do, with monitoring that does not d
 
 **Given** le script `/srv/scripts/backup-databases.sh` (cron 03:00 UTC)
 **When** il se termine
-**Then** le heartbeat n'est envoyé **que si les trois bases (snoroc MySQL, quest Postgres, cloudbreak Postgres) ont été sauvegardées** : le script actuel ne fait qu'un `echo` sur stderr et sort en succès quand un conteneur est introuvable, donc un `exit` non nul ou un ping conditionnel est à ajouter
-**And** la base de **chaque environnement Cloudbreak à protéger (au minimum la prod)** est couverte : le script cible un seul conteneur Postgres Cloudbreak, codé en dur (`postgres-navigate-virtual-matrix-c3rtpt`), et il faut établir si c'est la base dev ou prod avant toute activation (voir « Point bloquant » ci-dessous)
-**And** un fichier de sauvegarde datant de plus de 26 h déclenche l'alerte (garde-fou en plus du heartbeat)
+**Then** le heartbeat n'est envoyé **que si toutes les bases ont été sauvegardées et la copie hors site réussie** (le script refondu le 2026-11-18 sort déjà en code non nul à la moindre erreur ; il reste à renseigner `HEARTBEAT_URL` dans `/srv/scripts/backup.env`, le script appelle l'URL en cas de succès et `<URL>/fail` en cas d'échec)
+**And** la base de chaque environnement Cloudbreak, **prod comprise**, est couverte (fait le 2026-11-18 : découverte automatique des 6 bases du VPS + export Supabase prod ; détail dans `docs/sauvegardes/`)
+**And** un fichier de sauvegarde datant de plus de 26 h déclenche l'alerte (garde-fou en plus du heartbeat : alerte BetterStack « pas de signal sous 26 h »)
+
+**Given** le projet OVH Public Cloud qui héberge la copie hors site chiffrée des sauvegardes (bucket S3 `vps-db-backups-7f3a9c2e`)
+**When** la consommation mensuelle dépasse le seuil fixé (5 € par défaut, quelques centimes attendus) **ou** que le dépôt dépasse 2 Go (garde-fou du script)
+**Then** Alex reçoit une alerte e-mail (alerte de consommation OVH, ou échec de la sauvegarde)
+**And** aucune clé OVH n'est stockée dans l'application ou dans le navigateur (la carte « Outils » du dashboard renvoie seulement vers la console de facturation OVH)
 
 **Given** une panne simulée (arrêt d'un service sur dev)
 **When** le délai de détection est mesuré
@@ -1064,7 +1069,7 @@ So that I learn about an outage before users do, with monitoring that does not d
 **When** elle est loggée
 **Then** le log est un JSON structuré `{"level":"error","path":"...","status":500,"error":"..."}` sans `print()` ni stack trace brute en prod (reprise de l'AC de 1.5)
 
-**Point bloquant (à lever avant de coder) :** `/srv/backups` ne contient qu'une série `cloudbreak-postgres-*` (15 fichiers, ~1,2 Mo, une par nuit). Si elle vient de la base dev, **la prod n'est pas sauvegardée**. Vérification à faire par Alex ou avec son accord explicite (comparer le nombre d'utilisateurs de la base sauvegardée avec la prod, ou lire l'app Dokploy de chaque Postgres). Une session Claude ne doit pas requêter la base prod sans accord.
+**Point bloquant : levé le 2026-11-18.** La série `cloudbreak-postgres-*` historique venait de la base **dev** ; la prod n'était pas sauvegardée. Le script a été refondu (découverte automatique de toutes les bases, échec bruyant, export Supabase prod, copie hors site chiffrée vers OVH S3), la restauration testée (prod, Supabase, depuis OVH). Voir `docs/sauvegardes/recapitulatif.md`.
 
 **Fichiers cibles :** scripts VPS `~/cloudbreak-*.sh` et `/srv/scripts/backup-databases.sh` (ajout du ping heartbeat et de l'`exit` non nul, hors repo), `backend/app/main.py` / `backend/app/core/errors.py` (log 5xx structuré si absent), `docs/infra-serveur.md` (moniteurs, heartbeats, agent, mesure RAM). Aucun secret dans git.
 **Tests à écrire :** test backend du log 5xx structuré (`backend/tests/test_errors.py` ou fichier existant équivalent) ; la partie BetterStack/VPS se valide par une panne simulée et une checklist manuelle.

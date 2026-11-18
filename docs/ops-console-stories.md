@@ -51,7 +51,8 @@ Conséquences :
 
 ### 10.1 — Alertes d'abord
 - **Périmètre** : moniteurs BetterStack sur l'API et le site ops **de prod**, heartbeats des trois crons, agent serveur avec seuils (disque 85 %, RAM disponible 10 %, swap 75 %), log 5xx structuré côté backend.
-- **À lever avant** : la sauvegarde de la base de prod (`TODO.ops.md` §0) et la mesure de la RAM de l'agent.
+- **Sauvegardes (levé le 2026-11-18)** : toutes les bases (prod comprise) + Supabase prod sont sauvegardées, copie hors site chiffrée en place (`docs/sauvegardes/`). Reste à brancher le heartbeat de sauvegarde (`HEARTBEAT_URL`) et à poser l'**alerte de consommation OVH** (seuil mensuel, e-mail).
+- **À lever avant** : la mesure de la RAM de l'agent.
 - **À vérifier pour les maquettes** : BetterStack fournit-il la disponibilité jour par jour sur 30 jours (barres de `SAN-01`) et une série 24 h des métriques serveur (mini-courbes des jauges) ? Sinon, ces deux éléments sont retirés en 10.4d.
 - **AC** : `epics.md`, story 10.1.
 

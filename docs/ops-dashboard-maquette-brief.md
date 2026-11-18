@@ -69,6 +69,7 @@ Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6
 - **Contenu** : une ligne par job : purge des anonymes (06:05 Paris), alertes favoris (18:05 Paris), sauvegarde des bases (03:00 UTC). Chaque ligne : dernier passage, résultat (OK / échec), prochain passage attendu, et en cas de retard la durée de retard.
 - **Source** : heartbeats (reçus par BetterStack, et par le backend pour le dernier passage exposé dans `/admin/overview`). Aucun contenu de log ni résumé JSON du job dans le navigateur.
 - **Règle** : un job est « en retard » s'il n'a pas pingué dans sa fenêtre attendue plus une marge (par ex. 30 min).
+- **Sauvegardes** : la ligne « sauvegarde des bases » précise « copie hors site comprise » (le heartbeat n'est envoyé qu'après la copie hors site). Une ligne secondaire « Copie hors site (OVH) » affiche le dernier envoi et la taille du dépôt (≈ 30 Mo, plafond d'alerte 2 Go). Le **coût OVH** n'est pas lu par le dashboard : l'alerte de consommation OVH prévient par e-mail, et la carte « Outils » renvoie vers la facturation OVH.
 
 ### 3.6 Serveur (CPU / RAM / disque)
 
