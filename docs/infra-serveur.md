@@ -15,6 +15,12 @@
   Ressources limitées : **2 vCPU / 3.7 Go RAM, 4 Go de swap (`/swapfile`, ~1,9 Go utilisés au 2026-11-15)**. Un incident (2026-07-31) a fait grimper le
   load average à 100+ en lançant plusieurs builds Dokploy en parallèle sur différents projets.
   → Éviter de déclencher un build/deploy pendant que d'autres projets buildent en même temps.
+- **Relevé SSH du `2026-11-21T22:56:05+00:00` (23 h 56 CET)** — RAM disponible 1 474 / 3 819 MiB (38,6 %, soit 1,44 GiB),
+  swap utilisé 1 929 / 4 095 MiB (47,1 %), disque `/` à 57 %, charge moyenne 0,35 / 0,30 / 0,25, Dokploy à 759,1 MiB de RAM.
+  **NO-GO pour le collecteur Better Stack** sur ce VPS (2 vCPU, 3,7 GiB). Les prérequis officiels sont de 4 GiB de RAM disponible et 4 vCPU avec eBPF par défaut,
+  ou de 2 GiB de RAM disponible et 2 vCPU sans traçage. Au relevé, il manquait 574 MiB de RAM disponible pour atteindre ce minimum.
+  Faute de plafond RSS publié garantissant la limite de 100 Mo, Vector reste non validé. Aucune installation effectuée.
+  Les seuils restent à disque > 85 %, RAM disponible < 10 % (≈ 382 MiB) et swap > 75 % (≈ 3,0 GiB). Aucun n'est franchi sur ce relevé.
 - Firewall : ports ouverts 22 (SSH), 80/443 (HTTP/HTTPS), 3000 (UI Dokploy)
 
 ## 2. Accès

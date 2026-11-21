@@ -1,0 +1,4 @@
+# Évaluation de Better Stack sur le VPS Cloudbreak
+# Aucun endpoint HTTP ni jeton ne s’applique à cette évaluation.
+# Le relevé est effectué en lecture seule par SSH avec l’accès existant.
+# Consulter docs/betterstack-agent-vps/guide-test.md pour reproduire le relevé.

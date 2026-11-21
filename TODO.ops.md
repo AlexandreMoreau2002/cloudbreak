@@ -1,7 +1,7 @@
 # TODO ops — Cloudbreak
 
 Chantier **Ops console** et fiabilité de l'infra. Ce fichier ne garde que ce qui reste à faire : on retire ce qui est fini (l'historique est dans git).
-Dernière mise à jour : 2026-11-21.
+Dernière mise à jour : 2026-11-22.
 
 Documents de référence :
 - Besoins et décisions : `docs/ops-dashboard-besoins.md`
@@ -10,19 +10,11 @@ Documents de référence :
 
 ## Prochaine action
 
-**Étape 1 : mesurer l'agent Better Stack sur le VPS** (voir étape 1 ci-dessous). Rien d'autre ne bloque le démarrage de la story 10.1.
+**Étape 2 — Réunir les éléments à fournir avant de coder** (voir la liste ci-dessous).
 
-Ordre conseillé : 1 → 2 → 3 → 4. Les étapes 1 à 3 sont de la préparation, l'étape 4 est le vrai développement.
+Ordre conseillé : 2 → 3 → 4. Les étapes 2 et 3 préparent le développement de l'étape 4.
 
 ---
-
-## Étape 1 — Mesures sur le VPS
-
-Une seule connexion SSH à la fois (`ssh vps-ovh-projets`, utilisateur `ubuntu`, jamais de mot de passe).
-
-- [ ] Mesurer la RAM et le CPU de l'agent Better Stack avant de l'activer en prod. Règle : l'abandonner s'il dépasse environ 100 Mo.
-  Référence du 2026-11-15 : 1,75 Go de RAM disponibles, swap 1,9 / 4 Go, disque 56 %, Dokploy ≈ 780 Mo.
-- [ ] Valider les seuils d'alerte : disque > 85 %, RAM disponible < 10 %, swap > 75 %.
 
 ## Étape 2 — À fournir avant de coder
 
