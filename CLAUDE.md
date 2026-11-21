@@ -258,7 +258,7 @@ Après chaque tâche, lancer les tests sans attendre qu'on le demande, corriger 
   - `.env` et tout secret (gitignored, ne jamais recopier une valeur).
 - **Dossiers générés/ignorés** : `mobile/node_modules/`, `mobile/dist/`, `mobile/coverage/`, `ops/coverage/`, `ops/test-results/`, `ops/node_modules/`, `backend/.venv/`, `.code-review-graph/`, `.agents/`, `_bmad/`, `docs/superpowers/`.
 - **Tests à privilégier** : le test co-localisé du fichier modifié, puis la suite du domaine (`test_score*.py` pour l'algo, `tests/features/` pour les flux).
-- **Git** : ne jamais committer sur `develop` ni `main` ; ne pas ajouter de `Co-Authored-By`.
+- **Git** : dans les submodules, ne jamais committer sur `develop` ni `main` (toujours via PR) ; **le repo racine fait exception : commit direct sur `main`, sans PR** ; ne pas ajouter de `Co-Authored-By`.
 
 ## Git Workflow
 
