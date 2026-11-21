@@ -1,44 +1,66 @@
 # TODO ops — Cloudbreak
 
-> Tâches du chantier **Ops console** et de la fiabilité de l'infra. Cadrage : `docs/ops-dashboard-besoins.md`. Stories, maquettes et ordre de livraison : `docs/ops-console-stories.md` (Epic 10 dans `_bmad-output/planning-artifacts/epics.md`). Dernière mise à jour : 2026-11-21. Pas d'historique : on retire ce qui est fait.
+Chantier **Ops console** et fiabilité de l'infra. Ce fichier ne garde que ce qui reste à faire : on retire ce qui est fini (l'historique est dans git).
+Dernière mise à jour : 2026-11-21.
 
-## 1. Mesures à faire sur le VPS (une seule connexion SSH à la fois)
+Documents de référence :
+- Besoins et décisions : `docs/ops-dashboard-besoins.md`
+- Stories, maquettes, ordre de livraison : `docs/ops-console-stories.md` (Epic 10 dans `_bmad-output/planning-artifacts/epics.md`)
+- Maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB)
 
-1. Mesurer la RAM et le CPU de l'agent BetterStack avant activation en prod (référence 2026-11-15 : 1,75 Go de RAM disponibles, swap 1,9 / 4 Go, disque 56 %, Dokploy ≈ 780 Mo). Abandonner l'agent s'il dépasse ~100 Mo.
-2. Valider les seuils d'alerte : disque > 85 %, RAM disponible < 10 %, swap > 75 %.
+## Prochaine action
 
-## 2. Epic 10 — Ops console
+**Étape 1 : mesurer l'agent Better Stack sur le VPS** (voir étape 1 ci-dessous). Rien d'autre ne bloque le démarrage de la story 10.1.
 
-Prod uniquement, lecture seule. Ordre et dépendances : `docs/ops-console-stories.md`. Une story = une branche `feature/` du submodule concerné, PR vers `develop`.
+Ordre conseillé : 1 → 2 → 3 → 4. Les étapes 1 à 3 sont de la préparation, l'étape 4 est le vrai développement.
 
-| Story | Contenu | Version |
-|---|---|---|
-| **10.1** | Alertes : moniteur ops, `/version`, agent serveur, log 5xx (API, heartbeats et sauvegardes déjà faits) | v0 |
-| **10.2** | `GET /version` backend + ops | v0 |
-| **10.3** | Backend admin en lecture seule : auth, audit, `GET /admin/overview` | v0 |
-| **10.4a à 10.4g** | Console `/[locale]/admin` : socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales | v0 |
-| **10.5** | Recherche par email + offrir Premium, avec audit | v1 |
+---
 
-Maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB), frames identifiées (`HOME-01`, `SAN-04`…).
+## Étape 1 — Mesures sur le VPS
 
-## 3. À fournir avant de lancer
+Une seule connexion SSH à la fois (`ssh vps-ovh-projets`, utilisateur `ubuntu`, jamais de mot de passe).
 
-1. Compte admin dans Supabase prod avec `app_metadata.role = "admin"`, et son UUID pour `ADMIN_USER_IDS` (10.3, 10.4a).
-2. Jeton BetterStack en lecture seule pour ops (10.4b) : décision prise, jeton à créer.
-3. URLs des six outils externes : BetterStack, Sentry, PostHog, Supabase, OVH, Brevo (10.4f).
+- [ ] Mesurer la RAM et le CPU de l'agent Better Stack avant de l'activer en prod. Règle : l'abandonner s'il dépasse environ 100 Mo.
+  Référence du 2026-11-15 : 1,75 Go de RAM disponibles, swap 1,9 / 4 Go, disque 56 %, Dokploy ≈ 780 Mo.
+- [ ] Valider les seuils d'alerte : disque > 85 %, RAM disponible < 10 %, swap > 75 %.
 
-## 4. Décisions à prendre
+## Étape 2 — À fournir avant de coder
 
-1. Alerte CPU : aucun seuil dans l'AC 10.1 (disque, RAM disponible et swap seulement). La maquette affiche « pas d'alerte configurée ». Recommandation : ne pas alerter, chaque build Dokploy fait monter le CPU.
-2. Ligne mobile « 1.0.1 dans `main`, en attente de l'App Store » : exige de lire la version du mobile sur `main` (hors AC 10.2). Sans décision, seule la version publiée est affichée.
-3. KPIs : comptes anonymes contre permanents et tendance 14 jours (ajouts du brief) : à confirmer dans la 10.3.
-4. Barres de disponibilité 30 jours et mini-courbes 24 h : à vérifier dans l'API BetterStack (10.1), sinon retirées de la maquette.
-5. v1 (10.5) : audit par hachage ou identifiant de compte plutôt que l'email en clair ; valeur de l'origine de l'abonnement offert (`granted` proposé), `status` et `expires_at`.
+- [ ] **Compte admin Supabase prod** avec `app_metadata.role = "admin"`, et son UUID pour la variable `ADMIN_USER_IDS` (stories 10.3 et 10.4a).
+- [ ] **Jeton Better Stack en lecture seule** pour la console ops (10.4b). La décision est prise, il reste à créer le jeton.
+- [ ] **URLs des six outils externes** : Better Stack, Sentry, PostHog, Supabase, OVH, Brevo (10.4f).
 
-## 5. Nettoyage de docs et de dépôts
+## Étape 3 — Décisions à prendre avec Alex
 
-1. Compte de test `pro@cloudbreak.app` : à renommer côté Supabase dev (le plan s'appelle Premium).
-2. `_bmad-output/planning-artifacts/architecture.md` ligne ~507 : exemple de log avec `"provider": "openweather"`.
-3. `docs/infra-serveur.md` §8sexies : le titre dit « non déployé » alors que la prod est en ligne depuis le 2026-11-13.
-4. `backend/.coverage 2` est **suivi par git** dans le backend (copie iCloud d'un fichier de couverture, commitée par erreur en 2.5/2.6/2.8) : à retirer par une PR backend, avec le `.coverage` suivi à côté.
-5. Digest hebdo des KPIs par email (plus tard, hors Epic 10).
+À trancher avant de lancer la 10.1 et la 10.3.
+
+- [ ] **Alerte CPU** : aucun seuil dans les critères de la 10.1 (disque, RAM disponible et swap seulement). La maquette affiche « pas d'alerte configurée ». Recommandation : ne pas alerter, car chaque build Dokploy fait monter le CPU.
+- [ ] **Ligne mobile « 1.0.1 dans `main`, en attente de l'App Store »** : exige de lire la version du mobile sur `main`, hors périmètre de la 10.2. Sans décision, seule la version publiée est affichée.
+- [ ] **KPIs** : comptes anonymes contre permanents, et tendance sur 14 jours (ajouts du brief). À confirmer dans la 10.3.
+- [ ] **Barres de disponibilité 30 jours et mini-courbes 24 h** : à vérifier dans l'API Better Stack (10.1), sinon on les retire de la maquette.
+- [ ] **v1 (10.5)** : audit par hachage ou identifiant de compte plutôt que l'email en clair ; valeur de l'origine de l'abonnement offert (`granted` proposé), `status` et `expires_at`.
+
+## Étape 4 — Epic 10 : la console ops
+
+Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash).
+
+| Ordre | Story | Contenu | Version |
+|---|---|---|---|
+| 1 | **10.1** | Alertes : moniteur ops, `/version`, agent serveur, log 5xx (API, heartbeats et sauvegardes sont déjà faits) | v0 |
+| 2 | **10.2** | `GET /version` côté backend et ops | v0 |
+| 3 | **10.3** | Backend admin en lecture seule : auth, audit, `GET /admin/overview` | v0 |
+| 4 | **10.4a à 10.4g** | Console `/[locale]/admin` : socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales | v0 |
+| 5 | **10.5** | Recherche par email et offrir Premium, avec audit | v1 |
+
+---
+
+## Nettoyage (à tout moment, sans ordre)
+
+- [ ] Renommer le compte de test `pro@cloudbreak.app` côté Supabase dev (le plan s'appelle Premium).
+- [ ] `_bmad-output/planning-artifacts/architecture.md` ligne ~507 : exemple de log avec `"provider": "openweather"`.
+- [ ] `docs/infra-serveur.md` §8sexies : le titre dit « non déployé » alors que la prod est en ligne depuis le 2026-11-13.
+- [ ] Backend : `backend/.coverage 2` est suivi par git (copie iCloud commitée par erreur en 2.5/2.6/2.8). À retirer par une PR backend, avec le `.coverage` suivi à côté.
+
+## Plus tard (hors Epic 10)
+
+- Digest hebdomadaire des KPIs par email.
