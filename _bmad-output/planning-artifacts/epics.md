@@ -396,7 +396,7 @@ So that I can sleep without worrying about the backend going down silently.
 
 ---
 
-### Story 1.8: Monitoring avancé — PostHog réel & Sentry ⏸ post-MVP
+### Story 1.8: Monitoring avancé — PostHog réel & Sentry ✅ (clos le 2026-11-21 : code sur develop, variables de production posées, actif à la prochaine release)
 
 > **Scope post-MVP** — décidé le 2026-08-08. Au lancement, BetterStack (uptime) + PostHog en stub DEBUG-only (story 1.7) + logs FastAPI suffisent. Cette story devient prioritaire juste après la sortie MVP, pour comprendre l'usage réel (funnels, rétention) et capter les crashs en prod.
 

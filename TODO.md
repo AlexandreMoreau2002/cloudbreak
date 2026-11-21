@@ -39,15 +39,10 @@
 
 ## 5. Ops console (alertes, versions, KPIs, admin)
 
-Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Ordre : 10.1 alertes → 10.2 `/version` → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium. Branchement PostHog/Sentry : story 1.8.
-
-- [x] **Better Stack — premier monitor prod actif** (2026-11-16) : `Cloudbreak API production` surveille `https://api.cloudbreak-app.com/health` toutes les 3 minutes et alerte par e-mail. Premier check : `Up`.
-- [ ] Étendre Better Stack : ops prod, environnements dev, heartbeats des crons et métriques VPS (agent/seuils). Le monitor API seul ne couvre pas ces pannes.
-- [x] **Sentry — code et projets prêts** (2026-11-16) : `cloudbreak-backend` et `cloudbreak-mobile` existent ; les SDKs sont en mode erreurs seulement, sans PII, tracing, logs ni replay. Les revues sécurité ont validé le filtrage et le blocage de la propagation de trace.
-- [x] **Sentry + PostHog — variables de production posées** (2026-11-21, décision : branchement prod uniquement, pas de dev/TestFlight) : Dokploy `cloudbreak-backend-prod` (`SENTRY_DSN`, `POSTHOG_API_KEY`, `POSTHOG_HOST`, sans redéploiement) et EAS `production` (`EXPO_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` secret, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST`). Le projet PostHog unique (plan gratuit = 1 projet) est renommé « Cloudbreak Production ».
-- [ ] **Sentry + PostHog — activation à la prochaine release** : le code est sur `develop` seulement. À la prochaine `release/X.Y.Z` → `main`, le backend prod redéploie avec les variables ; l'app ne les embarque qu'avec un nouveau build `production`. Vérifier alors les événements dans Sentry (2 projets) et PostHog (Live events), puis créer les funnels (`onboarding_step_viewed` → `onboarding_complete` → `paywall_opened` → `plan_selected`).
+Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Ordre : 10.1 alertes → 10.2 `/version` → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium.
 
 ## Notes à conserver
 
 - Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
-- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack est maintenant utilisé pour le premier contrôle externe de l'API prod ; la couverture complète de la section 5 reste à faire. Sentry et PostHog sont prêts côté code et variables de production ; ils s'activent à la prochaine release.
+- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme.
+- Après la prochaine release (code Sentry/PostHog sur `main` + build `production`) : vérifier les événements dans Sentry et PostHog (Live events) et créer les funnels.

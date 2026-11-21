@@ -1,3 +1,5 @@
+> **Obsolète (2026-11-21)** : la décision a changé, Sentry et PostHog sont branchés directement en production (variables posées dans Dokploy prod et EAS `production`), sans recette dev/TestFlight. Ce handoff est gardé pour mémoire.
+
 # Handoff agent — configuration et recette Observabilité (dev/TestFlight)
 
 ## But et état actuel

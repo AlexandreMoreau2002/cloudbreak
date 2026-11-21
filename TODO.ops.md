@@ -2,12 +2,6 @@
 
 > Tâches du chantier **Ops console** et de la fiabilité de l'infra. Cadrage : `docs/ops-dashboard-besoins.md`. Stories, maquettes et ordre de livraison : `docs/ops-console-stories.md` (Epic 10 dans `_bmad-output/planning-artifacts/epics.md`). Dernière mise à jour : 2026-11-21. Pas d'historique : on retire ce qui est fait.
 
-## 0. Sauvegardes
-
-Fait le 2026-11-18 (heartbeats sauvegarde, purge et favoris, alerte de coût OVH et copie hors site chiffrée compris) : toutes les bases du VPS, prod Cloudbreak et Dokploy comprises, sont sauvegardées, restauration testée. Détail : `docs/sauvegardes/`. Reste :
-
-1. **Supabase prod** : export nocturne de `auth` + `public` en place (plan Free, sans sauvegarde automatique), restauration testée. On reste en Free (décision d'Alex) ; à surveiller : pause automatique des projets Free après une semaine d'inactivité.
-
 ## 1. Mesures à faire sur le VPS (une seule connexion SSH à la fois)
 
 1. Mesurer la RAM et le CPU de l'agent BetterStack avant activation en prod (référence 2026-11-15 : 1,75 Go de RAM disponibles, swap 1,9 / 4 Go, disque 56 %, Dokploy ≈ 780 Mo). Abandonner l'agent s'il dépasse ~100 Mo.
