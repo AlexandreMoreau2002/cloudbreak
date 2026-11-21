@@ -6,25 +6,28 @@
 > CI/CD) ; `docs/versions.md` détaille les versions de dépendances par submodule. Ce fichier
 > répond à "qu'est-ce qu'on a comme environnement, et qu'est-ce qu'il manque pour releaser ?".
 >
-> Dernière mise à jour : 2026-10-03.
+> Dernière mise à jour : 2026-11-21. La **prod est en ligne depuis le 2026-11-13** (1.0.0) ; la console Ops ne surveille que la prod (décision du 2026-11-16, voir `docs/ops-console-stories.md`).
 
 ## Vue d'ensemble — statut par catégorie
 
 | Catégorie | Dev | Prod | Notes |
 |---|---|---|---|
-| Serveur (VPS Dokploy) | ✅ en place | ❌ pas créé | même VPS, 2e environnement Dokploy à créer |
-| Domaine & DNS | ✅ en place | 🟡 réservé, pas pointé prod | `cloudbreak-app.com` acheté |
-| Base de données (Postgres) | ✅ en place | ❌ pas créée | instance Dokploy dédiée dev uniquement |
-| Cache (Redis) | ✅ en place | ❌ pas créée | idem |
-| Auth (Supabase) | ✅ en place | 🟡 même projet que dev | pas de split dev/prod, à décider |
+| Serveur (VPS Dokploy) | ✅ en place | ✅ en ligne (2026-11-13) | même VPS, environnement Dokploy `prod` ; backend et ops suivent `main` |
+| Domaine & DNS | ✅ `dev-api`, `dev-ops` | ✅ `api`, `ops` | `cloudbreak-app.com` (OVH) |
+| Base de données (Postgres) | ✅ en place | ✅ `cloudbreak-postgres-prod` | instance dédiée par environnement |
+| Cache (Redis) | ✅ en place | ✅ `cloudbreak-redis-prod` | idem |
+| Auth (Supabase) | ✅ projet dev | ✅ projet séparé `cloudbreak-prod` | prod vierge : aucun compte de test |
+| Sauvegardes | ✅ | ✅ | script nocturne de toutes les bases du VPS + export Supabase prod, copie hors site chiffrée (OVH S3), restauration testée (2026-11-18) ; détail `docs/sauvegardes/` |
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
-| Build mobile (EAS) | ✅ configuré | 🟡 prochaine build à faire | Sentry et le futur PostHog seront testés ensemble sur une build native dev/TestFlight |
+| Build mobile (EAS) | ✅ profil `staging` (vise dev) | ✅ profil `production` | Sentry et le futur PostHog seront testés ensemble sur une build native dev/TestFlight |
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
-| App Store Connect | ✅ app + abonnements configurés | 🟡 non soumis | première version et abonnements restent à soumettre après tests |
-| TestFlight | ❌ | ❌ | première build à téléverser |
+| App Store Connect | ✅ app + abonnements configurés | ✅ 1.0.0 publiée | 1.0.1 en revue Apple au 2026-11-15 (à confirmer) |
+| TestFlight | ✅ QA avec le profil `staging` | — | la prod reste vierge : un seul test de fumée avant soumission |
 | Analytics (PostHog) | 🟡 code prêt, activation à tester | ❌ projet dédié absent | projet Product Analytics actuel réservé au dev/TestFlight ; variables Dokploy/EAS encore vides |
 | Error tracking (Sentry) | 🟡 code prêt | 🟡 variables à poser | projets backend/mobile créés ; DSN Dokploy/EAS et build TestFlight dev encore requis |
-| Uptime (BetterStack) | ❌ | ✅ API | Compte créé le 2026-11-16 ; monitor `Cloudbreak API production` sur `https://api.cloudbreak-app.com/health`, toutes les 3 min, alertes e-mail. Ops, dev et crons restent à couvrir. |
+| Uptime et heartbeats (BetterStack) | ❌ (non surveillé, voulu) | ✅ API + 3 heartbeats | Compte créé le 2026-11-16 ; monitor `Cloudbreak API production` (`/health`, toutes les 3 min, e-mail) ; heartbeats sauvegarde, purge prod et favoris prod posés le 2026-11-18. Reste : moniteur ops, `/version`, agent serveur (Epic 10, story 10.1). |
+| Alerte de coût OVH | — | ✅ 5 €/mois | stockage hors site des sauvegardes (projet Public Cloud) ; alerte e-mail OVH |
+| Console Ops (Epic 10) | ❌ non surveillé, pas de switch | 🟡 cadrée, non codée | maquettes dans l'artifact « Cloudbreak Ops » ; stories : `docs/ops-console-stories.md` |
 | Support par e-mail | — | ✅ opérationnel | `contact@cloudbreak-app.com` : réception ImprovMX → Gmail, réponses Gmail → Brevo |
 | Email transactionnel applicatif | 🟡 Supabase Auth + Brevo | ❌ séparé du support | reset/password et autres e-mails applicatifs : décision d’intégration distincte |
 
@@ -46,13 +49,11 @@
 
 **Détail complet, accès, apps, CI/CD : voir [`docs/infra-serveur.md`](infra-serveur.md).** Résumé :
 
-- 1 VPS OVH (`51.178.37.35`), **partagé** avec Quest et Snoroc — 2 vCPU / 3.7 Go RAM, 4 Go de swap.
-- Projet Dokploy `cloudbreak` — **un seul environnement pour l'instant, nommé `dev`**.
-  - Backend → `dev-api.cloudbreak-app.com` (Dockerfile, webhook GitHub actif, Postgres + Redis Dokploy dédiés)
-  - Ops (pages légales) → `dev-ops.cloudbreak-app.com` (Nixpacks/Next.js, webhook GitHub actif)
-- **Pas de vrai environnement `production` Dokploy.** Quand il sera créé : domaines
-  `api.cloudbreak-app.com` / `ops.cloudbreak-app.com` déjà réservés dans le schéma de nommage
-  (calqué sur Snoroc, qui a lui une vraie séparation dev/prod).
+- 1 VPS OVH (`51.178.37.35`), **partagé** avec Quest, Snoroc, ESTER et Portfolio — 2 vCPU / 3.7 Go RAM, 4 Go de swap (déjà entamé : surveiller).
+- Projet Dokploy `cloudbreak`, **deux environnements** :
+  - `dev` : backend → `dev-api.cloudbreak-app.com` (Dockerfile, webhook GitHub actif, Postgres + Redis dédiés), ops → `dev-ops.cloudbreak-app.com` (Nixpacks/Next.js). Pendant une release, le dev suit `release/X.Y.Z` et sert d'environnement de test.
+  - `prod` (le nom `production` est refusé par Dokploy) : backend → `api.cloudbreak-app.com`, ops → `ops.cloudbreak-app.com`, Postgres et Redis dédiés. Les deux apps suivent **`main`** depuis le 2026-11-13 : tout push sur `main` du backend ou d'ops redéploie la prod.
+- Détail de la prod (variables, règles Traefik, crons, piège JWKS) : `docs/infra-serveur.md` §8sexies. Sauvegardes : `docs/sauvegardes/`.
 - Mobile : **jamais hébergé sur ce VPS** (app native, pas de serveur à déployer pour elle).
 
 ## 3. Domaine & DNS
@@ -61,8 +62,8 @@
   confirmé par l'utilisateur (2026-08-31) : tout est dessus (API, pages légales, future landing,
   deep links). Les hypothèses `cloudbreak.fr` et `merdenua.ge` sont abandonnées et nettoyées
   du code/de la doc vivante.
-- DNS : 2 enregistrements A créés (`dev-api`, `dev-ops` → `51.178.37.35`). Les enregistrements
-  prod (`api`, `ops`, racine pour la landing) ne sont **pas encore créés**.
+- DNS : enregistrements A `dev-api`, `dev-ops`, `api` et `ops` → `51.178.37.35`. La racine
+  (future landing) n'héberge rien.
 - Universal Links iOS (story 3.6) : code fait. Le fichier `.well-known/apple-app-site-association`
   est servi par `ops` (route Next.js, `APPLE_TEAM_ID` en variable d'env ops, déjà posée dans Dokploy
   sur `cloudbreak-ops`). Le domaine racine n'est pas utilisé : le lien de partage est
@@ -74,8 +75,11 @@
 
 ## 4. Auth — Supabase
 
-- Projet Supabase : `https://yggehvcwxiqrkhsoxrxe.supabase.co` (**un seul projet**, sert de dev —
-  pas de projet séparé pour une future prod, décision à prendre le moment venu).
+- **Dev** : projet `https://yggehvcwxiqrkhsoxrxe.supabase.co`, avec les comptes de test.
+- **Prod** : projet **séparé** `cloudbreak-prod` (décidé pour la release 1.0.0). Plan Free, donc
+  sans sauvegarde automatique : un export nocturne de `auth` + `public` est en place et sa
+  restauration a été testée (`docs/sauvegardes/`). À surveiller : pause automatique des projets
+  Free après une semaine d'inactivité. Aucun compte de test n'existe sur la prod.
 - JWT ECC P-256, validé **localement** côté backend via JWKS (`backend/app/core/security.py` +
   `dependencies.py`) — pas d'appel réseau à Supabase à chaque requête.
 - **"Confirm email" désactivé en dev** → dette technique, à réactiver avant release 1.0.0.
@@ -92,8 +96,9 @@
 
 ## 5. Mobile — build & distribution (Apple)
 
-**État : l'identité Apple, EAS et les abonnements Story 4.3 sont configurés ; aucune build n'a
-encore été soumise à App Store Connect.**
+**État (2026-11-21) : l'app 1.0.0 est publiée sur l'App Store ; la 1.0.1 était en revue Apple
+au 2026-11-15. Les builds de QA TestFlight utilisent le profil EAS `staging` (vise dev), les
+builds de production le profil `production` (vise la prod).**
 
 - **Identité app** (`mobile/app.json`) :
   - `bundleIdentifier` iOS : `com.alexandremoreau.cloudbreak` — **confirmé définitif le 2026-09-27**
@@ -112,7 +117,7 @@ encore été soumise à App Store Connect.**
     provider OAuth réel + la vraie distribution en dépendent
   - Push notifications (certificats APNs, Epic 5)
   - StoreKit 2 réel (story 4.3)
-  - Universal Links (story 3.6) — code fait, validé sur iPhone en dev (2026-10-12), reste le DNS/déploiement ops prod
+  - Universal Links (story 3.6) — code fait, validé sur iPhone en dev (2026-10-12) ; ops prod déployé le 2026-11-13
 - **App Store Connect / StoreKit** : app créée ; groupe `Cloudbreak Premium`, produits mensuel
   (4,99 €) et annuel (44,99 €), essais Apple de 7 jours, France et achats individuels configurés
   le 2026-10-03. Voir
@@ -126,7 +131,7 @@ encore été soumise à App Store Connect.**
 |---|---|---|
 | **PostHog** | Analytics produit (funnels, rétention) | Projet Product Analytics existant réservé au **dev/TestFlight** ; adaptateurs backend (`26ca893`) et mobile (`4d54c37`) prêts, filtrage explicite uniquement. `POSTHOG_API_KEY`/`POSTHOG_HOST` (Dokploy) et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` (EAS) restent à poser, donc aucun trafic à ce stade. Autocapture, replay, erreurs, logs, flags, profils et rage clicks sont désactivés. Un projet/une clé de production séparés sont obligatoires avant activation publique. Voir `docs/posthog-analytics/`. |
 | **Sentry** | Crash/error tracking | Projets `cloudbreak-backend` et `cloudbreak-mobile` créés le 2026-11-16 ; code backend/mobile prêt en mode erreurs seulement. Reste à poser `SENTRY_DSN` dans Dokploy, `EXPO_PUBLIC_SENTRY_DSN` et le secret EAS `SENTRY_AUTH_TOKEN`, puis tester sur une build iOS dev/TestFlight. |
-| **BetterStack** | Alertes uptime | Compte créé le 2026-11-16. Le monitor `Cloudbreak API production` vérifie `https://api.cloudbreak-app.com/health` toutes les 3 min et alerte par e-mail ; premier check `Up`. SMS, ops, dev, heartbeats et métriques VPS ne sont pas encore configurés. |
+| **BetterStack** | Alertes uptime | Compte créé le 2026-11-16. Le monitor `Cloudbreak API production` vérifie `https://api.cloudbreak-app.com/health` toutes les 3 min et alerte par e-mail. Heartbeats posés le 2026-11-18 (sauvegarde, purge prod, favoris prod ; marge 2 h pour la sauvegarde). Le dev n'est volontairement pas surveillé. Restent : moniteur ops, `/version`, agent serveur, SMS (story 10.1). |
 | **Logs FastAPI** | Erreurs 5xx en JSON structuré | Logger conditionnel en place dans le code (`logger.debug/info/error`), mais pas d'agrégation/alerting externe branché dessus. |
 
 Décision actée : **pas de Grafana** — le VPS partagé (2 vCPU/3.7 Go, déjà eu un incident de
@@ -188,8 +193,7 @@ réutiliser les secrets du flux de support.
 - [ ] Créer un Sandbox Tester Apple et effectuer le test StoreKit sur appareil réel avec une build
   native ; ne pas utiliser Expo Go
 - [x] ~~Créer le compte BetterStack + brancher les alertes (story 1.5)~~ — fait le 2026-11-16 pour l'API de production (`/health`, e-mail, toutes les 3 min). Couverture complémentaire à planifier dans l'Epic 10.
-- [ ] Décider : split Supabase dev/prod, ou un seul projet pour le MVP (solo dev, probablement OK
-  de garder un seul projet au lancement)
+- [x] ~~Décider : split Supabase dev/prod~~ — fait : projet `cloudbreak-prod` séparé.
 
 ### Bloqué sur une décision/action de l'utilisateur
 - [x] **Licence Apple Developer (99 $/an)** — acheté 2026-09-26, **validé par Apple le 2026-09-27** ; débloque bundle id définitif,
@@ -197,8 +201,7 @@ réutiliser les secrets du flux de support.
 - [ ] **Tester le serveur mail perso** → trancher SMTP custom vs Supabase générique (story 2.7)
 - [x] **Adresse support choisie et vérifiée** : `contact@cloudbreak-app.com` (réception et
   réponse manuelle vérifiées le 2026-09-12)
-- [ ] **Créer un vrai environnement Dokploy `production`** — quand une vraie prod est décidée
-  (pas de date, dépend du lancement)
+- [x] ~~Créer un vrai environnement Dokploy de prod~~ — fait : environnement `prod`, en ligne le 2026-11-13.
 
 ### Observabilité — prochain lot iOS/TestFlight
 - [ ] **Sentry** : poser les variables Dokploy/EAS, générer une build native dev/TestFlight et contrôler un événement filtré sur les deux projets.
@@ -211,5 +214,6 @@ réutiliser les secrets du flux de support.
 
 - [`docs/infra-serveur.md`](infra-serveur.md) — détail VPS/Dokploy (accès, apps, CI/CD, sécurité)
 - [`docs/versions.md`](versions.md) — versions déployées par submodule
-- [`TODO.md`](../TODO.md) — chantiers en cours, dette technique
 - [`TODO.md`](../TODO.md) — features urgentes, fixes et notes produit avant la release
+- [`TODO.ops.md`](../TODO.ops.md) et [`docs/ops-console-stories.md`](ops-console-stories.md) — chantier Ops console
+- [`docs/sauvegardes/`](sauvegardes/) — sauvegardes, copie hors site, restauration

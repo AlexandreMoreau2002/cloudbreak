@@ -51,7 +51,7 @@ Conséquences :
 
 ### 10.1 — Alertes d'abord
 - **Périmètre** : moniteurs BetterStack sur l'API et le site ops **de prod**, heartbeats des trois crons, agent serveur avec seuils (disque 85 %, RAM disponible 10 %, swap 75 %), log 5xx structuré côté backend.
-- **Sauvegardes (levé le 2026-11-18)** : toutes les bases (prod comprise) + Supabase prod sont sauvegardées, copie hors site chiffrée en place (`docs/sauvegardes/`). Reste à brancher le heartbeat de sauvegarde (`HEARTBEAT_URL`) et à poser l'**alerte de consommation OVH** (seuil mensuel, e-mail).
+- **Sauvegardes (levé le 2026-11-18)** : toutes les bases (prod comprise) + Supabase prod sont sauvegardées, copie hors site chiffrée en place (`docs/sauvegardes/`). Heartbeats des trois crons (sauvegarde, purge prod, favoris prod) et **alerte de consommation OVH** (5 €/mois) posés le même jour.
 - **À lever avant** : la mesure de la RAM de l'agent.
 - **À vérifier pour les maquettes** : BetterStack fournit-il la disponibilité jour par jour sur 30 jours (barres de `SAN-01`) et une série 24 h des métriques serveur (mini-courbes des jauges) ? Sinon, ces deux éléments sont retirés en 10.4d.
 - **AC** : `epics.md`, story 10.1.
@@ -106,7 +106,6 @@ Conséquences :
 
 | Élément | Pour |
 |---|---|
-| Réponse sur la sauvegarde de la base de prod (`TODO.ops.md` §0) | 10.1 |
 | Jeton BetterStack en lecture seule | 10.4b |
 | Compte admin dans Supabase prod avec `app_metadata.role = "admin"`, et son UUID pour `ADMIN_USER_IDS` | 10.3, 10.4a |
 | URLs des tableaux de bord externes (BetterStack, Sentry, PostHog, Supabase, OVH, Brevo) | 10.4f |
@@ -120,6 +119,6 @@ Conséquences :
 | 2 | 10.2 (partie backend), 10.1 (log 5xx) | 10.4a (fin), 10.4b |
 | 3 | 10.1 (heartbeats, moniteurs, agent : en partie manuel) | 10.4c, 10.4d |
 | 4 | — | 10.4e, 10.4f |
-| 5 | — | 10.4g, recette sur dev, puis prod |
+| 5 | — | 10.4g, déploiement sur `dev-ops` d'abord, puis prod |
 
-Backend et ops avancent en parallèle, mais un seul build Dokploy à la fois sur le VPS. La v0 tient dans la semaine seulement si le point bloquant de 10.1 (sauvegarde) et les éléments de la section 5 sont réglés le premier jour.
+Backend et ops avancent en parallèle, mais un seul build Dokploy à la fois sur le VPS. La v0 tient dans la semaine si les éléments de la section 5 sont réglés le premier jour ; le point bloquant des sauvegardes est levé (2026-11-18).
