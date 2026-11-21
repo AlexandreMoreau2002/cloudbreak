@@ -44,18 +44,10 @@ Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entr
 - [x] **Better Stack — premier monitor prod actif** (2026-11-16) : `Cloudbreak API production` surveille `https://api.cloudbreak-app.com/health` toutes les 3 minutes et alerte par e-mail. Premier check : `Up`.
 - [ ] Étendre Better Stack : ops prod, environnements dev, heartbeats des crons et métriques VPS (agent/seuils). Le monitor API seul ne couvre pas ces pannes.
 - [x] **Sentry — code et projets prêts** (2026-11-16) : `cloudbreak-backend` et `cloudbreak-mobile` existent ; les SDKs sont en mode erreurs seulement, sans PII, tracing, logs ni replay. Les revues sécurité ont validé le filtrage et le blocage de la propagation de trace.
-- [ ] **Sentry — branchement dev/TestFlight** : poser `SENTRY_DSN` dans Dokploy et `EXPO_PUBLIC_SENTRY_DSN` + secret `SENTRY_AUTH_TOKEN` dans EAS, puis tester une build iOS dev/TestFlight. Ne pas créer de route de debug ni envoyer d’événement de test sur la production publique.
-- [x] **PostHog — code et projet dev/TestFlight prêts** (2026-11-16) : projet Product Analytics
-  réservé au dev/TestFlight ; adaptateurs backend (`26ca893`) et mobile (`4d54c37`) actifs seulement
-  si leurs variables sont présentes. Taxonomie explicite, sans autocapture, replay, erreurs, logs,
-  flags, profils ni rage clicks ; `auth_submitted` reste exclu car son `error_code` est libre.
-- [ ] **PostHog — branchement dev/TestFlight** : poser `POSTHOG_API_KEY`/`POSTHOG_HOST` dans Dokploy
-  dev et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` dans EAS dev, puis tester dans la même
-  build native que Sentry. Aucun trafic de production publique.
-- [ ] **PostHog — prérequis production** : créer un projet et une clé de production séparés, décider
-  la confidentialité et rejouer la recette avant toute activation publique.
+- [x] **Sentry + PostHog — variables de production posées** (2026-11-21, décision : branchement prod uniquement, pas de dev/TestFlight) : Dokploy `cloudbreak-backend-prod` (`SENTRY_DSN`, `POSTHOG_API_KEY`, `POSTHOG_HOST`, sans redéploiement) et EAS `production` (`EXPO_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` secret, `EXPO_PUBLIC_POSTHOG_KEY`, `EXPO_PUBLIC_POSTHOG_HOST`). Le projet PostHog unique (plan gratuit = 1 projet) est renommé « Cloudbreak Production ».
+- [ ] **Sentry + PostHog — activation à la prochaine release** : le code est sur `develop` seulement. À la prochaine `release/X.Y.Z` → `main`, le backend prod redéploie avec les variables ; l'app ne les embarque qu'avec un nouveau build `production`. Vérifier alors les événements dans Sentry (2 projets) et PostHog (Live events), puis créer les funnels (`onboarding_step_viewed` → `onboarding_complete` → `paywall_opened` → `plan_selected`).
 
 ## Notes à conserver
 
 - Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
-- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack est maintenant utilisé pour le premier contrôle externe de l'API prod ; la couverture complète de la section 5 reste à faire. Sentry est prêt côté code mais n’est pas encore actif tant que les variables de déploiement et la build TestFlight dev ne sont pas en place.
+- Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme. Better Stack est maintenant utilisé pour le premier contrôle externe de l'API prod ; la couverture complète de la section 5 reste à faire. Sentry et PostHog sont prêts côté code et variables de production ; ils s'activent à la prochaine release.
