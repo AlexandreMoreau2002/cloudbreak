@@ -10,39 +10,37 @@ Documents de référence :
 
 ## Prochaine action
 
-**Étape 2 — Réunir les éléments à fournir avant de coder** (voir la liste ci-dessous).
+**10.2 — `GET /version`** : aucune dépendance, on peut coder tout de suite. Ensuite 10.1, puis 10.3 et 10.4.
 
-Ordre conseillé : 2 → 3 → 4. Les étapes 2 et 3 préparent le développement de l'étape 4.
+Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Chaque prérequis ci-dessous est rattaché à la story qui en a besoin : rien ne bloque les stories précédentes.
 
 ---
 
-## Étape 2 — À fournir avant de coder
+## Epic 10 — la console ops, dans l'ordre
 
-- [ ] **Compte admin Supabase prod** avec `app_metadata.role = "admin"`, et son UUID pour la variable `ADMIN_USER_IDS` (stories 10.3 et 10.4a).
+### 10.2 — `GET /version` (backend et ops) · v0
+Rien à fournir.
+- [ ] **Ligne mobile « 1.0.1 dans `main`, en attente de l'App Store »** : hors périmètre (il faudrait lire la version du mobile sur `main`). Par défaut, seule la version publiée est affichée.
+
+### 10.1 — Alertes · v0
+Moniteur ops, `/version`, log 5xx et script de métriques serveur. API, heartbeats et sauvegardes sont déjà faits.
+- **Pas d'agent Better Stack** (décision du 2026-11-22, voir `docs/infra-serveur.md`) : un script cron sur le VPS, sur le modèle des crons favoris et purge, alerte sur disque > 85 %, RAM disponible < 10 % et swap > 75 %.
+- [ ] **Alerte CPU** : par défaut aucune (chaque build Dokploy fait monter le CPU). À changer seulement sur demande.
+- [ ] **Barres de disponibilité 30 jours et mini-courbes 24 h** : à vérifier dans l'API Better Stack, sinon on les retire de la maquette.
+
+### 10.3 — Backend admin en lecture seule · v0
+Auth, audit, `GET /admin/overview`.
+- [ ] **Compte admin Supabase prod** avec `app_metadata.role = "admin"`, et son UUID pour la variable `ADMIN_USER_IDS` (aussi pour la 10.4a).
+- [ ] **KPIs** : comptes anonymes contre permanents, et tendance sur 14 jours (ajouts du brief). À confirmer.
+
+### 10.4a à 10.4g — Console `/[locale]/admin` · v0
+Socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales.
 - [ ] **Jeton Better Stack en lecture seule** pour la console ops (10.4b). La décision est prise, il reste à créer le jeton.
 - [ ] **URLs des six outils externes** : Better Stack, Sentry, PostHog, Supabase, OVH, Brevo (10.4f).
 
-## Étape 3 — Décisions à prendre avec Alex
-
-À trancher avant de lancer la 10.1 et la 10.3.
-
-- [ ] **Alerte CPU** : aucun seuil dans les critères de la 10.1 (disque, RAM disponible et swap seulement). La maquette affiche « pas d'alerte configurée ». Recommandation : ne pas alerter, car chaque build Dokploy fait monter le CPU.
-- [ ] **Ligne mobile « 1.0.1 dans `main`, en attente de l'App Store »** : exige de lire la version du mobile sur `main`, hors périmètre de la 10.2. Sans décision, seule la version publiée est affichée.
-- [ ] **KPIs** : comptes anonymes contre permanents, et tendance sur 14 jours (ajouts du brief). À confirmer dans la 10.3.
-- [ ] **Barres de disponibilité 30 jours et mini-courbes 24 h** : à vérifier dans l'API Better Stack (10.1), sinon on les retire de la maquette.
-- [ ] **v1 (10.5)** : audit par hachage ou identifiant de compte plutôt que l'email en clair ; valeur de l'origine de l'abonnement offert (`granted` proposé), `status` et `expires_at`.
-
-## Étape 4 — Epic 10 : la console ops
-
-Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash).
-
-| Ordre | Story | Contenu | Version |
-|---|---|---|---|
-| 1 | **10.1** | Alertes : moniteur ops, `/version`, script de métriques serveur (cron VPS, sans agent Better Stack), log 5xx (API, heartbeats et sauvegardes sont déjà faits) | v0 |
-| 2 | **10.2** | `GET /version` côté backend et ops | v0 |
-| 3 | **10.3** | Backend admin en lecture seule : auth, audit, `GET /admin/overview` | v0 |
-| 4 | **10.4a à 10.4g** | Console `/[locale]/admin` : socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales | v0 |
-| 5 | **10.5** | Recherche par email et offrir Premium, avec audit | v1 |
+### 10.5 — Recherche par email et offrir Premium, avec audit · v1
+- [ ] Audit par hachage ou identifiant de compte plutôt que l'email en clair.
+- [ ] Valeur de l'origine de l'abonnement offert (`granted` proposé), `status` et `expires_at`.
 
 ---
 
