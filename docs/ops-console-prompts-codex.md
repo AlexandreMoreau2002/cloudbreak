@@ -25,7 +25,7 @@ LECTURES OBLIGATOIRES, dans cet ordre, avant toute action :
 1. CLAUDE.md (racine) puis le CLAUDE.md du sous-projet concerné (backend/ ou ops/).
 2. docs/ops-console-contrats.md : FAIT FOI pour les formats JSON, routes, flux, variables d'environnement. Ne réinvente aucun champ.
 3. La section de ta story dans docs/ops-console-stories.md et ses critères d'acceptation dans _bmad-output/planning-artifacts/epics.md (Epic 10).
-4. Maquettes (pour les stories d'interface) : artifact « Cloudbreak Ops », https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB. Chaque frame a un identifiant (HOME-01, ACC-03…) cité dans la story.
+4. Maquettes (pour les stories d'interface) : lis docs/ops-console-maquettes/README.md puis le code dans docs/ops-console-maquettes/app.js (copie de l'artifact, que tu ne peux pas ouvrir). Chaque frame a un identifiant (HOME-01, ACC-03…) cité dans la story ; le dictionnaire fr/en et les jetons de design y sont aussi.
 
 MÉTHODE
 - Commence par écrire un plan court : la liste des tâches, leurs fichiers, leurs dépendances. Montre-le, puis enchaîne sans attendre sauf blocage.
@@ -85,7 +85,7 @@ DONE QUAND : AC de la story 10.3 couverts, make validate vert, migration vérifi
 
 ```text
 STORY : 10.4a — Socle de la console ops (repo ops/, branche feature/10-4a-socle-console).
-CONTRATS : docs/ops-console-contrats.md §1 (décisions), §2.1 (connexion et accès), §5 (variables d'environnement ops). MAQUETTES : ACC-01 à ACC-06, NAV-01, TST-01, TST-02, ERR-01, ERR-02, et le cadre (barre latérale desktop, onglets mobile) visible dans HOME-01 et HOME-02. Règles d'interface communes : docs/ops-console-stories.md §3.
+CONTRATS : docs/ops-console-contrats.md §1 (décisions), §2.1 (connexion et accès), §5 (variables d'environnement ops). MAQUETTES (docs/ops-console-maquettes/, voir README) : ACC-01 à ACC-06, NAV-01, TST-01, TST-02, ERR-01, ERR-02, et le cadre (barre latérale desktop, onglets mobile) visible dans HOME-01 et HOME-02. Règles d'interface communes : docs/ops-console-stories.md §3.
 
 CONTEXTE : cette story est la FONDATION. Les pages Utilisateurs, Santé, Déploiements, Accueil et légales seront développées en parallèle par d'autres sessions sur ton socle : ce que tu livres ne sera plus modifié par elles.
 

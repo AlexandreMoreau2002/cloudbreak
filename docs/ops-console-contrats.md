@@ -1,7 +1,7 @@
 # Ops console — contrats d'entrée-sortie et flux
 
 > Date : 2026-11-22. **Fait foi pour toutes les formes de données, routes, secrets et flux de l'Epic 10.** À donner à Codex avec le `CLAUDE.md` du submodule et la story visée. En cas de divergence avec `epics.md` ou `ops-console-stories.md`, ce document gagne ; les écarts sont à corriger à la source.
-> Liens : stories `docs/ops-console-stories.md` · AC `_bmad-output/planning-artifacts/epics.md` (Epic 10) · besoins `docs/ops-dashboard-besoins.md` · choix d'interface `docs/ops-dashboard-ux-decisions.md` · maquettes : artifact « Cloudbreak Ops » https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB (52 frames, identifiants `HOME-01` à `V1-05`).
+> Liens : stories `docs/ops-console-stories.md` · AC `_bmad-output/planning-artifacts/epics.md` (Epic 10) · besoins `docs/ops-dashboard-besoins.md` · choix d'interface `docs/ops-dashboard-ux-decisions.md` · maquettes : artifact « Cloudbreak Ops » https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB (privé ; copie lisible du code dans `docs/ops-console-maquettes/`, 48 frames, identifiants `HOME-01` à `V1-05`).
 
 ## 1. Décisions figées (2026-11-22)
 
