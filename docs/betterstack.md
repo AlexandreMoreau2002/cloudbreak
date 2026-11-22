@@ -16,6 +16,6 @@ Le monitor appelle l’API depuis l’extérieur. Modifier ses réglages ou ajou
 
 - Ajouter les moniteurs HTTP des pages Ops et des environnements dev lorsque leurs URL sont stabilisées.
 - Ajouter des heartbeats pour les crons importants (favoris, purge) et vérifier les alertes de rétablissement.
-- Ajouter l’agent Better Stack et des seuils CPU, RAM et disque sur le VPS partagé, sans lancer une stack Grafana locale.
+- Surveiller le VPS partagé (disque > 85 %, RAM disponible < 10 %, swap > 75 %) avec un petit script cron, sur le modèle des crons favoris et purge, et non avec l’agent Better Stack : le collecteur demande 2 Go de RAM disponible (1,44 Go au relevé du 2026-11-21) et Vector seul n’a pas de plafond garanti. Décision du 2026-11-22.
 
 Les détails de l’état des environnements restent dans [environnements.md](environnements.md).

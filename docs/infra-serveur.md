@@ -21,6 +21,7 @@
   ou de 2 GiB de RAM disponible et 2 vCPU sans traçage. Au relevé, il manquait 574 MiB de RAM disponible pour atteindre ce minimum.
   Faute de plafond RSS publié garantissant la limite de 100 Mo, Vector reste non validé. Aucune installation effectuée.
   Les seuils restent à disque > 85 %, RAM disponible < 10 % (≈ 382 MiB) et swap > 75 % (≈ 3,0 GiB). Aucun n'est franchi sur ce relevé.
+  **Décision (2026-11-22) : pas d'agent Better Stack** ; surveillance du VPS par un script cron léger (story 10.1).
 - Firewall : ports ouverts 22 (SSH), 80/443 (HTTP/HTTPS), 3000 (UI Dokploy)
 
 ## 2. Accès

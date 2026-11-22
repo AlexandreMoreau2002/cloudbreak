@@ -38,7 +38,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 
 | Ordre | Story | Contenu | Version |
 |---|---|---|---|
-| 1 | **10.1** | Alertes : moniteur ops, `/version`, agent serveur, log 5xx (API, heartbeats et sauvegardes sont déjà faits) | v0 |
+| 1 | **10.1** | Alertes : moniteur ops, `/version`, script de métriques serveur (cron VPS, sans agent Better Stack), log 5xx (API, heartbeats et sauvegardes sont déjà faits) | v0 |
 | 2 | **10.2** | `GET /version` côté backend et ops | v0 |
 | 3 | **10.3** | Backend admin en lecture seule : auth, audit, `GET /admin/overview` | v0 |
 | 4 | **10.4a à 10.4g** | Console `/[locale]/admin` : socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales | v0 |
