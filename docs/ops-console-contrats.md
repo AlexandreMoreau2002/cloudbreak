@@ -156,13 +156,20 @@ Toutes les routes exigent la session admin (§2.1). Sans session : `401` ; non a
 - **Scripts existants** (`~/cloudbreak-*-prod.sh`, `/srv/scripts/backup-databases.sh`) : ajouter `POST /internal/heartbeats/{purge|favorites|backup}` à la fin, avec `status` selon le code de sortie. Un échec de ce ping ne doit jamais faire échouer le job.
 - Une seule connexion SSH à la fois ; aucun secret dans git, chat ou log.
 
-## 7. Découpage Codex (un prompt = une ligne)
+## 7. Découpage Codex (un prompt = une ligne, dans l'ordre de développement)
 
-| Prompt | Repo | Contrats | Validation |
-|---|---|---|---|
-| 10.2 `/version` | backend, ops | §3.1 | `make validate`, `npm run validate` |
-| 10.3 admin lecture seule | backend | §3.2, §3.3, §3.4 | `make validate` + revue `cloudbreak-security` |
-| 10.4a socle | ops | §2.1, §5 | `npm run validate` |
-| 10.4b sources | ops | §2.2, §4 | `npm run validate` |
-| 10.4c à 10.4g | ops | maquettes du stories doc | `npm run validate` |
-| 10.1 alertes | VPS, backend | §6, log 5xx | checklist manuelle + `make validate` |
+| Vague | Prompt | Repo | Contrats | Validation |
+|---|---|---|---|---|
+| 1 | 10.4a socle | ops | §2.1, §5 | `npm run validate` |
+| 1 | 10.3 admin lecture seule | backend | §3.2, §3.3, §3.4 | `make validate` + revue `cloudbreak-security` |
+| 1 | 10.2 `/version` | backend, ops | §3.1 | `make validate`, `npm run validate` |
+| 1 | 10.1a alertes | VPS, backend | §6, log 5xx | checklist manuelle + `make validate` |
+| 2 | 10.4b sources | ops | §2.2, §4 | `npm run validate` |
+| 3 | 10.4c Utilisateurs | ops | §4.1 | `npm run validate` |
+| 3 | 10.4d Santé | ops | §4.1, §4.2 | `npm run validate` |
+| 3 | 10.4e Déploiements | ops | §4.3 | `npm run validate` |
+| 3 | 10.4g Pages légales | ops | §2.1 | `npm run validate` (dont e2e du site légal) |
+| 4 | 10.4f Accueil | ops | §4 | `npm run validate` |
+| 5 | 10.1b branchement VPS | VPS | §3.2, §3.3, §6 | checklist manuelle |
+
+Maquettes de chaque prompt : `docs/ops-console-stories.md` §1. Règles communes (collisions de traductions, composants partagés) : §3 du même fichier.

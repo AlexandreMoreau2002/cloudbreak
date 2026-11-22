@@ -8,21 +8,24 @@
 
 Périmètre v0 : **prod uniquement**, lecture seule. La story 10.4 est découpée en sept parties (10.4a à 10.4g) pour que chaque prompt Codex reste court et vérifiable.
 
-| Ordre | Story | Titre | Repo | Dépend de | Maquettes |
+Les stories sont rangées en **vagues** : toutes les stories d'une même vague peuvent être développées en parallèle (une branche chacune), et une vague ne démarre que quand les « Dépend de » des précédentes sont mergés. Les formats d'échange étant figés dans `docs/ops-console-contrats.md`, une page ops peut se construire contre des données factices avant que le backend existe.
+
+| Vague | Story | Titre | Repo | Dépend de | Maquettes |
 |---|---|---|---|---|---|
-| 1 | 10.1 | Alertes d'abord : moniteurs, heartbeats, script de métriques serveur (sans agent) | VPS, BetterStack, backend | — | aucune (hors écran) |
-| 2 | 10.2 | `GET /version` sur backend et ops | backend, ops | — | alimente `DEP-*` |
-| 3 | 10.3 | Backend admin en lecture seule : auth, audit, overview, heartbeats | backend | 10.1 | alimente `HOME-*`, `USR-*`, crons de `SAN-*` |
-| 4 | 10.4a | Socle de la console : accès, cadre, retours d'action | ops | 10.3 | `ACC-01` à `ACC-06`, `NAV-01`, `TST-01`, `TST-02`, `ERR-01`, `ERR-02` |
-| 5 | 10.4b | Sources lues par ops : santé (BetterStack) et versions (GitHub, App Store) | ops | 10.1, 10.2, 10.4a | aucune (alimente `SAN-*`, `DEP-*`, `HOME-*`) |
-| 6 | 10.4c | Page Utilisateurs | ops | 10.3, 10.4a | `USR-01` à `USR-05` |
-| 7 | 10.4d | Page Santé | ops | 10.3, 10.4b | `SAN-01` à `SAN-08` |
-| 8 | 10.4e | Page Déploiements | ops | 10.4b | `DEP-01` à `DEP-06` |
-| 9 | 10.4f | Accueil | ops | 10.4c, 10.4d, 10.4e | `HOME-01` à `HOME-11` |
-| 10 | 10.4g | Pages légales : liens et bouton « Retour à la console » | ops | 10.4a | `LEG-01`, `LEG-02` |
+| **1** | 10.4a | **Socle de la console** : connexion, garde d'accès, cadre, états partagés, toasts | ops | — (Supabase suffit) | `ACC-01` à `ACC-06`, `NAV-01`, `TST-01`, `TST-02`, `ERR-01`, `ERR-02` |
+| **1** | 10.3 | Backend admin en lecture seule : auth, audit, overview, heartbeats, relevés serveur | backend | — | alimente `HOME-*`, `USR-*`, crons et jauges de `SAN-*` |
+| **1** | 10.2 | `GET /version` sur backend et ops | backend, ops | — | alimente `DEP-*` |
+| **1** | 10.1a | Alertes : moniteur ops, script de métriques → Better Stack seul, log 5xx | VPS, Better Stack, backend | — | aucune (hors écran) |
+| **2** | 10.4b | Sources lues par ops : santé (Better Stack) et versions (GitHub, App Store), enveloppe d'erreur et cache | ops | 10.4a ; 10.2 pour les versions (données factices avant) | aucune (alimente `SAN-*`, `DEP-*`, `HOME-*`) |
+| **3** | 10.4c | Page Utilisateurs | ops | 10.4a ; 10.3 pour les vraies données | `USR-01` à `USR-05` |
+| **3** | 10.4d | Page Santé | ops | 10.4b ; 10.3 pour crons et jauges | `SAN-01` à `SAN-08` |
+| **3** | 10.4e | Page Déploiements | ops | 10.4b, 10.2 | `DEP-01` à `DEP-06` |
+| **3** | 10.4g | Pages légales : liens et bouton « Retour à la console » | ops | 10.4a | `LEG-01`, `LEG-02` |
+| **4** | 10.4f | Accueil | ops | 10.4c, 10.4d, 10.4e | `HOME-01` à `HOME-11` |
+| **5** | 10.1b | Brancher les scripts du VPS sur le backend (`/internal/*`) | VPS | 10.3 **déployé en prod** | aucune |
 | v1 | 10.5 | Recherche par email et offrir Premium | backend, ops | 10.3, 10.4a | `V1-01` à `V1-05` |
 
-L'accueil (10.4f) passe après les trois pages de détail : il réutilise leurs blocs et leurs sources.
+L'accueil (10.4f) passe après les trois pages de détail : il réutilise leurs blocs et leurs sources. La 10.1 est coupée en deux : 10.1a (indépendante, vague 1, « alertes d'abord ») et 10.1b (le branchement, possible seulement quand la 10.3 est en prod).
 
 ## 2. Décision d'architecture : qui lit quoi
 
@@ -46,6 +49,7 @@ Conséquences :
 - **Aucune donnée personnelle** affichée en v0.
 - **Isolation du site légal** : aucun import de code admin depuis les pages légales, sauf le bouton de retour de 10.4g. Les e2e existants (CGU, confidentialité, AASA, `/sommet/[slug]`) restent verts.
 - Mobile d'abord (375 pt), cibles tactiles d'au moins 40 px, focus visible, `prefers-reduced-motion` respecté.
+- **Éviter les collisions entre stories parallèles** : un espace de noms de traductions par page (`admin.users`, `admin.health`, `admin.deployments`, `admin.home`, `admin.legal`) ; les composants partagés (squelette, bloc vide, source indisponible, erreur de bloc, toast) sont livrés **entièrement** par la 10.4a et ne sont pas modifiés ensuite : un besoin spécifique à une page = un composant dans le dossier de cette page.
 - Validation : `npm run validate` dans `ops`, `make validate` dans `backend`.
 
 ## 4. Détail par story
@@ -112,14 +116,15 @@ Conséquences :
 | URLs des tableaux de bord externes (BetterStack, Sentry, PostHog, Supabase, OVH, Brevo) | 10.4f |
 | Décisions par défaut (modifiables) : pas d'alerte CPU, pas de ligne « en attente de l'App Store » | 10.1, 10.4e |
 
-## 6. Ordre conseillé sur une semaine
+## 6. Ordre de développement
 
-| Jour | Backend | Ops |
-|---|---|---|
-| 1 | 10.3 | 10.2 (partie ops), puis 10.4a |
-| 2 | 10.2 (partie backend), 10.1 (log 5xx) | 10.4a (fin), 10.4b |
-| 3 | 10.1 (heartbeats, moniteurs, script de métriques : en partie manuel ; branchement sur le backend après le déploiement de la 10.3) | 10.4c, 10.4d |
-| 4 | — | 10.4e, 10.4f |
-| 5 | — | 10.4g, déploiement sur `dev-ops` d'abord, puis prod |
+| Étape | Quoi | En parallèle | Ce qu'Alex doit avoir fourni | Livré quand |
+|---|---|---|---|---|
+| **Vague 1** | 10.4a, 10.3, 10.2, 10.1a | 4 branches (ops, backend, backend+ops, VPS) | Compte admin Supabase **dev** avec `app_metadata.role = "admin"` pour tester (le compte prod avant la mise en prod) | Un admin se connecte à la console vide ; `/version` répond ; `/admin/overview` répond ; l'uptime ops et les alertes serveur sont actifs |
+| **Vague 2** | 10.4b | seule (sur le socle) | Jeton Better Stack en lecture seule | Les trois routes `/api/admin/*` répondent avec leur enveloppe, y compris en cas de source injoignable |
+| **Vague 3** | 10.4c, 10.4d, 10.4e, 10.4g | 4 branches ops | — | Les quatre pages sont complètes avec leurs états (chargement, vide, indisponible, erreur) |
+| **Vague 4** | 10.4f | seule | URLs des six outils externes | L'accueil agrège les trois pages |
+| **Vague 5** | Déploiement `dev-ops` puis prod ; 10.1b | — | Compte admin Supabase **prod** et UUID dans `ADMIN_USER_IDS` | La console est en prod ; les scripts du VPS alimentent crons et jauges |
+| v1 | 10.5 | — | — | Hors v0 |
 
-Backend et ops avancent en parallèle, mais un seul build Dokploy à la fois sur le VPS. La v0 tient dans la semaine si les éléments de la section 5 sont réglés le premier jour ; le point bloquant des sauvegardes est levé (2026-11-18).
+Contraintes : **un seul build Dokploy à la fois** sur le VPS (les PR peuvent être parallèles, pas les déploiements) ; une seule connexion SSH à la fois pour 10.1a et 10.1b.

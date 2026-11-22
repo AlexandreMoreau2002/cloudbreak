@@ -11,37 +11,36 @@ Documents de référence :
 
 ## Prochaine action
 
-**10.2 — `GET /version`** : aucune dépendance, on peut coder tout de suite. Ensuite 10.1, puis 10.3 et 10.4.
+**Vague 1** : lancer en parallèle 10.4a, 10.3, 10.2 et 10.1a. Rien d'autre ne les bloque.
 
-Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Chaque prérequis ci-dessous est rattaché à la story qui en a besoin : rien ne bloque les stories précédentes.
+Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
----
+## Ordre de développement
 
-## Epic 10 — la console ops, dans l'ordre
+| Vague | Story | Quoi | Repo | Prérequis d'Alex | Fait |
+|---|---|---|---|---|---|
+| **1** | 10.4a | Socle de la console : connexion, garde d'accès, cadre, états partagés | ops | Compte admin Supabase **dev** (`app_metadata.role = "admin"`) pour tester | [ ] |
+| **1** | 10.3 | Backend admin en lecture seule (auth, audit, `/admin/overview`, heartbeats, relevés serveur) | backend | — | [ ] |
+| **1** | 10.2 | `GET /version` backend et ops | backend, ops | — | [ ] |
+| **1** | 10.1a | Moniteur ops, script de métriques → Better Stack (alertes seules), log 5xx | VPS, backend | — | [ ] |
+| **2** | 10.4b | Routes serveur ops : santé (Better Stack), versions (GitHub, App Store) | ops | **Jeton Better Stack en lecture seule** | [ ] |
+| **3** | 10.4c | Page Utilisateurs | ops | — | [ ] |
+| **3** | 10.4d | Page Santé | ops | — | [ ] |
+| **3** | 10.4e | Page Déploiements | ops | — | [ ] |
+| **3** | 10.4g | Pages légales : liens et bouton « Retour à la console » | ops | — | [ ] |
+| **4** | 10.4f | Accueil | ops | **URLs des six outils** (Better Stack, Sentry, PostHog, Supabase, OVH, Brevo) | [ ] |
+| **5** | Mise en prod | Déploiement `dev-ops` puis prod | ops, backend | **Compte admin Supabase prod** + UUID dans `ADMIN_USER_IDS` | [ ] |
+| **5** | 10.1b | Brancher les scripts du VPS sur le backend (`/internal/*`), 10.3 déployée en prod d'abord | VPS | — | [ ] |
+| v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Audit par hachage ; valeur de l'origine de l'abonnement offert (`granted` proposé) | [ ] |
 
-### 10.2 — `GET /version` (backend et ops) · v0
-Rien à fournir.
-- [ ] **Ligne mobile « 1.0.1 dans `main`, en attente de l'App Store »** : hors périmètre (il faudrait lire la version du mobile sur `main`). Par défaut, seule la version publiée est affichée.
+Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
-### 10.1 — Alertes · v0
-Moniteur ops, `/version`, log 5xx et script de métriques serveur. API, heartbeats et sauvegardes sont déjà faits.
-- **Pas d'agent Better Stack** (décision du 2026-11-22, voir `docs/infra-serveur.md`) : un script cron sur le VPS (toutes les 15 min), sur le modèle des crons favoris et purge, alerte sur disque > 85 %, RAM disponible < 10 % et swap > 75 %.
-- [ ] **Alerte CPU** : par défaut aucune (chaque build Dokploy fait monter le CPU). À changer seulement sur demande.
-- [ ] **Barres de disponibilité 30 jours et mini-courbes 24 h** : à vérifier dans l'API Better Stack, sinon on les retire de la maquette.
+## Décisions par défaut (modifiables sur demande)
 
-### 10.3 — Backend admin en lecture seule · v0
-Auth, audit, `GET /admin/overview`.
-- [ ] **Compte admin Supabase prod** avec `app_metadata.role = "admin"`, et son UUID pour la variable `ADMIN_USER_IDS` (aussi pour la 10.4a).
-- [ ] **KPIs** : comptes anonymes contre permanents, et tendance sur 14 jours (ajouts du brief). À confirmer.
-
-### 10.4a à 10.4g — Console `/[locale]/admin` · v0
-Socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales.
-- [ ] **Jeton Better Stack en lecture seule** pour la console ops (10.4b). La décision est prise, il reste à créer le jeton.
-- [ ] **URLs des six outils externes** : Better Stack, Sentry, PostHog, Supabase, OVH, Brevo (10.4f).
-
-### 10.5 — Recherche par email et offrir Premium, avec audit · v1
-- [ ] Audit par hachage ou identifiant de compte plutôt que l'email en clair.
-- [ ] Valeur de l'origine de l'abonnement offert (`granted` proposé), `status` et `expires_at`.
+- Pas d'alerte CPU (chaque build Dokploy fait monter le CPU).
+- Seule la version publiée de l'app est affichée (pas de ligne « 1.0.1 dans `main`, en attente de l'App Store »).
+- KPIs : comptes anonymes et permanents, tendance 14 jours : à confirmer dans la 10.3.
+- Barres de disponibilité 30 jours : à vérifier dans l'API Better Stack (10.4b), sinon retirées de la maquette.
 
 ---
 
