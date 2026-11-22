@@ -158,10 +158,17 @@ development_status:
   # v0 = lecture seule (10.1–10.4) ; v1 = actions admin (10.5)
   # ─────────────────────────────────────────────────────────────
   epic-10: backlog
-  10-1-alertes-uptime-heartbeats-agent-serveur: backlog
+  10-1-alertes-uptime-heartbeats-metriques-serveur: backlog  # sans agent Better Stack (décision 2026-11-22)
   10-2-version-deployee-get-version: backlog
   10-3-backend-admin-lecture-seule-auth-audit-kpis: backlog
-  10-4-dashboard-ops-v0-admin: backlog
+  10-4-dashboard-ops-v0-admin: backlog  # livré en 10-4a à 10-4g
+  10-4a-socle-console: backlog
+  10-4b-sources-lues-par-ops: backlog
+  10-4c-page-utilisateurs: backlog
+  10-4d-page-sante: backlog
+  10-4e-page-deploiements: backlog
+  10-4f-accueil: backlog
+  10-4g-pages-legales: backlog
   10-5-recherche-email-offrir-premium: backlog  # v1
   epic-10-retrospective: optional
 

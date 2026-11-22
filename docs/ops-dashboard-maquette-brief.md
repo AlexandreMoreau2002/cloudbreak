@@ -73,8 +73,8 @@ Sources : `GET /admin/overview` (séries et totaux), blocs 3.2 / 3.3 / 3.5 / 3.6
 
 ### 3.6 Serveur (CPU / RAM / disque)
 
-- **Contenu** : trois jauges (CPU, RAM, disque) avec valeur actuelle, seuil d'alerte et petite tendance sur 24 h. Une mention du swap utilisé si l'agent le remonte.
-- **Source** : agent BetterStack sur le VPS (story 10.1), lu par le serveur ops. Le VPS est partagé avec le dev et d'autres projets : le bloc porte la mention « Serveur partagé avec d'autres projets ».
+- **Contenu** : trois jauges (CPU, RAM, disque) avec valeur actuelle, seuil d'alerte et petite tendance sur 24 h. Une mention du swap utilisé.
+- **Source** : script cron du VPS (story 10.1) → backend, relevé toutes les 15 min, lu via `/admin/overview` ; gris « Inconnu » si l'API est en panne ou si le relevé a plus de 30 min. Le VPS est partagé avec le dev et d'autres projets : le bloc porte la mention « Serveur partagé avec d'autres projets ».
 - **Lien** : « Ouvrir BetterStack ».
 
 ### 3.7 Plus tard (v1) : Actions admin — offrir Premium
@@ -121,7 +121,7 @@ Prévoir les libellés dans `messages/fr.json` et `en.json` (espace de noms `adm
 | 7a | Accueil : check rapide + nombre d'utilisateurs + courbe de progression (utilisateurs / usage) | 3.0 | 10.3, 10.4 | v0 | `GET /admin/overview` (séries 90 j) |
 | 7 | KPIs : utilisateurs, actifs 30 j, anonymes/permanents, abonnés, essais, checks/jour | 3.4 | 10.3, 10.4 | v0 | `GET /admin/overview` (SQL) |
 | 8 | Crons et sauvegardes (dernier passage, retard) | 3.5 | 10.1, 10.3, 10.4 | v0 | Heartbeats |
-| 9 | Serveur : CPU / RAM / disque / swap | 3.6 | 10.1, 10.4 | v0 | Agent BetterStack |
+| 9 | Serveur : CPU / RAM / disque / swap | 3.6 | 10.1, 10.3, 10.4 | v0 | Script cron du VPS → backend |
 | 10 | Rafraîchissement auto 60 s + « Actualiser » | Global | 10.4 | v0 | — |
 | 11 | Liens sortants BetterStack / PostHog / Sentry | Dans les blocs | 10.4 | v0 (PostHog/Sentry « bientôt ») | — |
 | 12 | Thème clair/sombre, fr/en | Global | 10.4 | v0 | `ThemeToggle`, `messages/*.json` |

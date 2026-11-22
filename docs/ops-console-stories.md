@@ -1,6 +1,7 @@
 # Ops console — liste des stories et maquettes associées
 
 > Date : 2026-11-16. Point d'entrée pour lancer Codex story par story. Les critères d'acceptation complets restent dans `_bmad-output/planning-artifacts/epics.md` (Epic 10). Besoins : `docs/ops-dashboard-besoins.md`. Choix d'interface : `docs/ops-dashboard-ux-decisions.md`.
+> Contrats d'entrée-sortie et flux : `docs/ops-console-contrats.md` (fait foi).
 > Maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB). Chaque frame porte un identifiant (`HOME-01`, `SAN-04`…) affiché dans sa légende. Les données des maquettes sont fictives.
 
 ## 1. Vue d'ensemble
@@ -9,7 +10,7 @@ Périmètre v0 : **prod uniquement**, lecture seule. La story 10.4 est découpé
 
 | Ordre | Story | Titre | Repo | Dépend de | Maquettes |
 |---|---|---|---|---|---|
-| 1 | 10.1 | Alertes d'abord : moniteurs, heartbeats, agent serveur | VPS, BetterStack, backend | — | aucune (hors écran) |
+| 1 | 10.1 | Alertes d'abord : moniteurs, heartbeats, script de métriques serveur (sans agent) | VPS, BetterStack, backend | — | aucune (hors écran) |
 | 2 | 10.2 | `GET /version` sur backend et ops | backend, ops | — | alimente `DEP-*` |
 | 3 | 10.3 | Backend admin en lecture seule : auth, audit, overview, heartbeats | backend | 10.1 | alimente `HOME-*`, `USR-*`, crons de `SAN-*` |
 | 4 | 10.4a | Socle de la console : accès, cadre, retours d'action | ops | 10.3 | `ACC-01` à `ACC-06`, `NAV-01`, `TST-01`, `TST-02`, `ERR-01`, `ERR-02` |
@@ -27,8 +28,8 @@ L'accueil (10.4f) passe après les trois pages de détail : il réutilise leurs 
 
 | Donnée | Lue par | Pourquoi |
 |---|---|---|
-| Utilisateurs, abonnements, checks, séries, état des crons | **Backend** (`GET /api/v1/admin/overview`) | Données de la base ; le backend reste le seul à y accéder. |
-| Disponibilité des services, incidents, CPU / RAM / disque / swap | **Serveur ops** (route protégée de l'admin, jeton BetterStack en lecture seule dans l'env d'ops) | Si l'API tombe, la console doit continuer d'afficher l'état des services. Passer par le backend rendrait la console aveugle pendant la panne qu'elle doit montrer. |
+| Utilisateurs, abonnements, checks, séries, état des crons, **jauges serveur** (relevés envoyés par le script du VPS) | **Backend** (`GET /api/v1/admin/overview`) | Données de la base ; le backend reste le seul à y accéder. |
+| Disponibilité des services et incidents | **Serveur ops** (route protégée de l'admin, jeton BetterStack en lecture seule dans l'env d'ops) | Si l'API tombe, la console doit continuer d'afficher l'état des services. Passer par le backend rendrait la console aveugle pendant la panne qu'elle doit montrer. |
 | Versions : `/version` du backend et d'ops, écart avec `main`, version App Store | **Serveur ops** (API GitHub et iTunes publiques, sans clé) | Même raison ; aucune donnée sensible. |
 
 Conséquences :
@@ -50,10 +51,10 @@ Conséquences :
 ## 4. Détail par story
 
 ### 10.1 — Alertes d'abord
-- **Périmètre** : moniteurs BetterStack sur l'API et le site ops **de prod**, heartbeats des trois crons, agent serveur avec seuils (disque 85 %, RAM disponible 10 %, swap 75 %), log 5xx structuré côté backend.
+- **Périmètre** : moniteurs BetterStack sur l'API et le site ops **de prod**, heartbeats des trois crons, script cron de métriques serveur toutes les 15 min avec seuils (disque 85 %, RAM disponible 10 %, swap 75 %, pas d'alerte CPU), log 5xx structuré côté backend. Le branchement des scripts sur le backend (`/internal/*`) se fait après le déploiement de la 10.3. Voir contrats §6.
 - **Sauvegardes (levé le 2026-11-18)** : toutes les bases (prod comprise) + Supabase prod sont sauvegardées, copie hors site chiffrée en place (`docs/sauvegardes/`). Heartbeats des trois crons (sauvegarde, purge prod, favoris prod) et **alerte de consommation OVH** (5 €/mois) posés le même jour.
-- **À lever avant** : la mesure de la RAM de l'agent.
-- **À vérifier pour les maquettes** : BetterStack fournit-il la disponibilité jour par jour sur 30 jours (barres de `SAN-01`) et une série 24 h des métriques serveur (mini-courbes des jauges) ? Sinon, ces deux éléments sont retirés en 10.4d.
+- **Décision du 2026-11-22** : pas d'agent Better Stack (RAM insuffisante, mesure dans `docs/infra-serveur.md`).
+- **À vérifier pour les maquettes** : BetterStack fournit-il la disponibilité jour par jour sur 30 jours (barres de `SAN-01`) ? Sinon, elles sont retirées en 10.4d. Les mini-courbes 24 h des jauges viennent du backend (`overview.server.history_24h`, relevés de 15 min).
 - **AC** : `epics.md`, story 10.1.
 
 ### 10.2 — `GET /version`
@@ -61,7 +62,7 @@ Conséquences :
 - **AC** : `epics.md`, story 10.2.
 
 ### 10.3 — Backend admin en lecture seule
-- **Périmètre** : dépendance `require_admin` (claim + allowlist), table `admin_audit_log`, `GET /api/v1/admin/overview` (totaux, variations 7 jours, séries 90 jours, état des crons avec « à l'heure / en retard / échec / jamais passé »), `POST /internal/heartbeats/<job>`.
+- **Périmètre** : dépendance `require_admin` (claim + allowlist), table `admin_audit_log`, `GET /api/v1/admin/overview` (totaux, variations 7 jours, séries 90 jours, état des crons avec « à l'heure / en retard / échec / jamais passé »), `POST /internal/heartbeats/<job>`, `POST /internal/server-metrics`, et le bloc `server` de l'overview (contrats §3).
 - **Ajouts issus des maquettes** : variation sur 7 jours pour chaque chiffre (`USR-01`), série des checks sur 14 jours au minimum (déjà couverte par la série 90 jours), statut `failed` distinct de `late` pour un cron (`SAN-04`).
 - **AC** : `epics.md`, story 10.3.
 
@@ -109,7 +110,7 @@ Conséquences :
 | Jeton BetterStack en lecture seule | 10.4b |
 | Compte admin dans Supabase prod avec `app_metadata.role = "admin"`, et son UUID pour `ADMIN_USER_IDS` | 10.3, 10.4a |
 | URLs des tableaux de bord externes (BetterStack, Sentry, PostHog, Supabase, OVH, Brevo) | 10.4f |
-| Décisions ouvertes : alerte CPU, « en attente de l'App Store » | 10.1, 10.4e |
+| Décisions par défaut (modifiables) : pas d'alerte CPU, pas de ligne « en attente de l'App Store » | 10.1, 10.4e |
 
 ## 6. Ordre conseillé sur une semaine
 
@@ -117,7 +118,7 @@ Conséquences :
 |---|---|---|
 | 1 | 10.3 | 10.2 (partie ops), puis 10.4a |
 | 2 | 10.2 (partie backend), 10.1 (log 5xx) | 10.4a (fin), 10.4b |
-| 3 | 10.1 (heartbeats, moniteurs, agent : en partie manuel) | 10.4c, 10.4d |
+| 3 | 10.1 (heartbeats, moniteurs, script de métriques : en partie manuel ; branchement sur le backend après le déploiement de la 10.3) | 10.4c, 10.4d |
 | 4 | — | 10.4e, 10.4f |
 | 5 | — | 10.4g, déploiement sur `dev-ops` d'abord, puis prod |
 

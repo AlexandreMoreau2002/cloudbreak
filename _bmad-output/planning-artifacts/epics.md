@@ -1015,7 +1015,7 @@ So that Cloudbreak ranks in the top 10 for "mer de nuage" and related searches.
 
 ## Epic 10: Ops console
 
-L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés de la prod, puis (v1) peut offrir Premium par email avec audit. Remplace la story 1.6 et absorbe la 1.5. Besoins et décisions : `docs/ops-dashboard-besoins.md`.
+L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un cron ou le serveur tombe, voit en un écran la version déployée et les KPIs clés de la prod, puis (v1) peut offrir Premium par email avec audit. Remplace la story 1.6 et absorbe la 1.5. Besoins et décisions : `docs/ops-dashboard-besoins.md`. **Contrats d'entrée-sortie et flux (fait foi) : `docs/ops-console-contrats.md`.** Maquettes : artifact « Cloudbreak Ops » https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB (identifiants de frames dans `docs/ops-console-stories.md`).
 
 **FRs couverts :** FR35, FR36, FR37 · **NFR :** NFR7
 
@@ -1025,7 +1025,7 @@ L'administrateur (Alex) est alerté en moins de 2 minutes quand un service, un c
 
 ---
 
-### Story 10.1: Alertes d'abord — uptime, heartbeats et agent serveur
+### Story 10.1: Alertes d'abord — uptime, heartbeats et métriques serveur
 
 As an administrator (Alex),
 I want to be alerted within 2 minutes when a service, a cron, a backup or the server goes wrong,
@@ -1045,10 +1045,12 @@ So that I learn about an outage before users do, with monitoring that does not d
 **Then** il appelle l'URL de heartbeat BetterStack correspondante (secret dans un fichier 600, jamais en argument) — **fait le 2026-11-18 pour les trois jobs** (sauvegarde, purge prod, favoris prod ; marge 2 h, alerte e-mail)
 **And** un run manquant ou en échec (code HTTP ≠ 200) déclenche une alerte dans le délai de grâce configuré
 
-**Given** l'agent serveur BetterStack installé sur le VPS
+**Given** le script cron `~/cloudbreak-server-metrics.sh` sur le VPS (toutes les 15 min, décision du 2026-11-22 : pas d'agent Better Stack)
 **When** le disque dépasse 85 %, **ou** la RAM *disponible* passe sous 10 % (colonne `available` de `free -m`, pas `used`), **ou** le swap utilisé dépasse 75 %
-**Then** Alex est alerté
-**And** la consommation RAM/CPU de l'agent a été mesurée avant activation en prod (référence relevée le 2026-11-15 : 3,8 Go de RAM, 1,75 Go disponibles ; swap 4 Go utilisé à 1,9 Go ; disque 56 % soit 17 Go libres ; load average 0,1 ; Dokploy seul ≈ 780 Mo ; 2 vCPU) et notée dans `docs/infra-serveur.md` ; si l'agent dépasse ~100 Mo, il n'est pas activé et un script cron plus léger le remplace (décision consignée)
+**Then** le script appelle le heartbeat Better Stack en échec (`/fail`) et Alex est alerté (≤ 30 min ; pas d'alerte CPU)
+**And** un relevé manquant (script mort, VPS arrêté) déclenche aussi l'alerte (marge 15 min)
+**And** l'impact de l'agent a été mesuré le 2026-11-21 (relevé dans `docs/infra-serveur.md` : 1,44 Go de RAM disponible, minimum Better Stack 2 Go) et l'agent n'est pas installé
+**And** une fois la 10.3 déployée, le script envoie aussi son relevé à `POST /internal/server-metrics` (contrats §3.3) ; format et seuils dans `docs/ops-console-contrats.md` §6
 
 **Given** le script `/srv/scripts/backup-databases.sh` (cron 03:00 UTC)
 **When** il se termine
@@ -1071,7 +1073,7 @@ So that I learn about an outage before users do, with monitoring that does not d
 
 **Point bloquant : levé le 2026-11-18.** La série `cloudbreak-postgres-*` historique venait de la base **dev** ; la prod n'était pas sauvegardée. Le script a été refondu (découverte automatique de toutes les bases, échec bruyant, export Supabase prod, copie hors site chiffrée vers OVH S3), la restauration testée (prod, Supabase, depuis OVH). Voir `docs/sauvegardes/recapitulatif.md`.
 
-**Fichiers cibles :** scripts VPS `~/cloudbreak-*.sh` et `/srv/scripts/backup-databases.sh` (ajout du ping heartbeat et de l'`exit` non nul, hors repo), `backend/app/main.py` / `backend/app/core/errors.py` (log 5xx structuré si absent), `docs/infra-serveur.md` (moniteurs, heartbeats, agent, mesure RAM). Aucun secret dans git.
+**Fichiers cibles :** scripts VPS `~/cloudbreak-*.sh`, nouveau `~/cloudbreak-server-metrics.sh` et `/srv/scripts/backup-databases.sh` (ajout du ping heartbeat et de l'`exit` non nul, hors repo ; copie du nouveau script dans `infra/` du repo), `backend/app/main.py` / `backend/app/core/errors.py` (log 5xx structuré si absent), `docs/infra-serveur.md` (moniteurs, heartbeats, agent, mesure RAM). Aucun secret dans git.
 **Tests à écrire :** test backend du log 5xx structuré (`backend/tests/test_errors.py` ou fichier existant équivalent) ; la partie BetterStack/VPS se valide par une panne simulée et une checklist manuelle.
 **Validation :** `make validate` (backend) + checklist manuelle (panne simulée, heartbeat manquant). Une connexion `ssh vps-ovh-projets` à la fois, pas de build Dokploy en parallèle.
 
@@ -1123,7 +1125,7 @@ As an administrator (Alex),
 I want a protected read-only admin API with an audit trail,
 So that the ops dashboard can show KPIs and cron/backup status without ever writing to the database from the web app.
 
-**Dépendances :** 10.1 (URLs de heartbeat et format des signaux) ; 10.4 la consomme.
+**Dépendances :** aucune technique (les scripts du VPS s'y branchent après son déploiement, contrats §2.3) ; 10.4 la consomme.
 
 **Acceptance Criteria:**
 
@@ -1134,7 +1136,9 @@ So that the ops dashboard can show KPIs and cron/backup status without ever writ
 
 **Given** le même admin authentifié
 **When** il appelle `GET /api/v1/admin/overview`
-**Then** la réponse contient aussi une série quotidienne sur 90 jours : nombre cumulé d'utilisateurs (calculé depuis `users.created_at`, avec la répartition anonymes / permanents) et nombre de checks par jour (depuis `predictions.created_at`)
+**Then** la réponse suit **exactement** le schéma de `docs/ops-console-contrats.md` §3.4 (KPIs avec `delta_7d`, `checks_daily`, `series_90d`, `crons`, `server`)
+**And** `POST /internal/server-metrics` (contrats §3.3) et `POST /internal/heartbeats/<job>` (§3.2) alimentent respectivement `server` et `crons`
+**And** la réponse contient aussi une série quotidienne sur 90 jours : nombre cumulé d'utilisateurs (calculé depuis `users.created_at`, avec la répartition anonymes / permanents) et nombre de checks par jour (depuis `predictions.created_at`)
 **And** la limite est documentée : un compte supprimé ou purgé disparaît de l'historique cumulé ; si ce biais devient gênant, une table de snapshots quotidiens (nouvelle migration) remplacera le calcul
 
 **Given** un JWT valide mais sans claim admin, ou claim admin mais UUID hors allowlist, ou allowlist vide
@@ -1168,7 +1172,7 @@ As an administrator (Alex),
 I want one screen showing global status, deployed versions, KPIs, crons/backups and server health for production,
 So that I can check that everything works in a few seconds and jump to BetterStack / PostHog / Sentry for details.
 
-**Dépendances :** 10.1, 10.2, 10.3.
+**Dépendances :** 10.1, 10.2, 10.3. Routes serveur ops, enveloppe d'erreur, cache, session par cookie et variables d'environnement : `docs/ops-console-contrats.md` §2, §4 et §5 (la 10.4b n'a pas d'AC propres : ce document en tient lieu).
 
 **Découpage pour la livraison (2026-11-16) :** cette story se livre en sept parties, 10.4a à 10.4g (socle, sources lues par ops, Utilisateurs, Santé, Déploiements, Accueil, pages légales). Le périmètre de chaque partie et les maquettes associées (identifiants `HOME-*`, `SAN-*`, `DEP-*`, `USR-*`, `ACC-*`, `NAV-*`, `TST-*`, `ERR-*`, `LEG-*`) sont dans `docs/ops-console-stories.md`. Les critères ci-dessous valent pour l'ensemble.
 

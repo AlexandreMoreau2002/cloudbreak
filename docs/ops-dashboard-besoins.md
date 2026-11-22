@@ -43,7 +43,7 @@
 | 6 | Hébergement | **Route group `admin` dans l'app ops existante** (`noindex`, middleware). Pas de service séparé : un conteneur Node de plus pèserait sur un VPS déjà juste. |
 | 7 | Auth admin | **JWT Supabase + claim de rôle dans `app_metadata`** (non modifiable par l'utilisateur), validé localement par le backend. **Second verrou** : allowlist de l'UUID admin dans l'env du backend. |
 | 8 | i18n | **Sous `[locale]`**, avec `messages/fr.json` et `en.json` : l'URL est `/[locale]/admin`. Aucune exception à la règle « aucune string en dur » d'ops. |
-| 9 | Métriques serveur (CPU / RAM / disque) | **Incluses dans la v0**, via un **agent BetterStack** sur le VPS qui alerte sur seuil ; le dashboard affiche l'état et renvoie vers BetterStack. Choix délégué par Alex (par défaut : agent externe, pas de clé Dokploy, pas de stockage de métriques chez nous). |
+| 9 | Métriques serveur (CPU / RAM / disque) | **Incluses dans la v0**, via un **script cron léger** sur le VPS (toutes les 15 min) qui alerte sur seuil par heartbeat Better Stack et envoie son relevé au backend ; la console affiche les jauges. **Décision du 2026-11-22 : pas d'agent Better Stack** (RAM insuffisante). Pas de clé Dokploy. Voir `docs/ops-console-contrats.md`. |
 
 ## 4. Besoins fonctionnels
 
@@ -80,7 +80,7 @@
 | Crons purge / favoris / sauvegarde | Heartbeats BetterStack | Chaque script du VPS ping une URL de heartbeat en fin d'exécution réussie ; BetterStack alerte s'il manque un ping. |
 | Copie hors site des sauvegardes (dernier envoi, taille du dépôt) | Heartbeat de sauvegarde + script hors site | Le heartbeat n'est envoyé qu'après la réussite de la copie hors site (`/srv/scripts/offsite-backup.sh`). Le script échoue si le dépôt dépasse 2 Go. |
 | Coût OVH (Public Cloud) | Alerte de consommation OVH | Alerte e-mail OVH sur seuil mensuel (voir story 10.1) ; le dashboard ne lit pas la facture, il renvoie vers la console OVH (carte « Outils »). |
-| CPU / RAM / disque du VPS | Agent BetterStack | Seuils d'alerte (par ex. disque > 85 %, RAM > 90 %), à valider après mesure. |
+| CPU / RAM / disque du VPS | Script cron du VPS → backend (relevé 15 min) | Seuils d'alerte (par ex. disque > 85 %, RAM > 90 %), à valider après mesure. |
 | Version déployée | `GET /version` backend + ops | SHA du build injecté au build ; comparé à `main` sur GitHub (API publique, lecture). |
 | Utilisateurs, abonnements, checks/jour | PostgreSQL (backend) | `GET /admin/overview` (agrégats seulement, aucune donnée personnelle). |
 | Réception des heartbeats côté app | Backend | Dernier passage de chaque job, exposé dans `/admin/overview`. |
@@ -96,7 +96,7 @@
 | **Couplage avec le site légal** : `ops/` est public et critique (CGU, confidentialité exigées par Apple, AASA Universal Links, `/sommet/[slug]`). Un déploiement raté de l'admin casserait ça. | Haute | Code `admin` isolé (aucun import depuis le site légal), middleware en liste blanche stricte, e2e Playwright sur les pages légales et l'AASA dans la CI, déploiement dev d'abord. |
 | **VPS partagé = point de défaillance unique** : dev et prod, plus Quest / Snoroc / ESTER, sur 2 vCPU / 3,7 Go. | Haute | L'uptime et les alertes sont externes (BetterStack) ; le dashboard lui-même est un service du VPS et peut tomber avec lui, d'où « alertes d'abord ». |
 | **Sauvegardes sur la même machine** : `/srv/backups`, rétention 14 jours, même disque que les bases. | Moyenne (traité le 2026-11-18) | **Copie hors site chiffrée en place** (restic vers un bucket OVH S3, Gravelines) ; la console surveille qu'elle s'est faite (heartbeat de sauvegarde, qui n'est envoyé qu'après la copie hors site) et que son **coût** reste sous un seuil (alerte de consommation OVH). Détail : `docs/sauvegardes/`. |
-| **RAM de l'agent BetterStack** : processus de plus sur un VPS déjà contraint. Mesures du 2026-11-15 : 1,75 Go de RAM disponibles sur 3,8 Go, swap 1,9 Go / 4 Go, load 0,1. | Moyenne | Mesurer l'agent avant activation en prod ; abandonner ou remplacer par un script cron plus léger si > ~100 Mo. Seuils RAM sur `available` (< 10 %) et swap (> 75 %), pas sur `used` : le cache disque fausse le `used`. |
+| **RAM de l'agent BetterStack** (risque levé le 2026-11-22 : agent abandonné, script cron à la place) : processus de plus sur un VPS déjà contraint. Mesures du 2026-11-15 : 1,75 Go de RAM disponibles sur 3,8 Go, swap 1,9 Go / 4 Go, load 0,1. | Moyenne | Mesurer l'agent avant activation en prod ; abandonner ou remplacer par un script cron plus léger si > ~100 Mo. Seuils RAM sur `available` (< 10 %) et swap (> 75 %), pas sur `used` : le cache disque fausse le `used`. |
 | **Swap** : vérifié le 2026-11-15, il y a bien 4 Go de swap (`/swapfile`), utilisés à 1,9 Go. `docs/infra-serveur.md` (« pas de swap ») était faux, corrigé. Le VPS fonctionne déjà en partie sur le swap. | Moyenne | Alerte sur le swap (> 75 %). Si la RAM manque durablement, envisager un VPS plus gros plutôt qu'un agent de plus. |
 | **Sauvegarde Cloudbreak : couverture** : levé le 2026-11-18. L'ancien script ne sauvegardait que la base **dev** (la prod n'avait aucune sauvegarde). Le nouveau script découvre toutes les bases (6 sur le VPS) + l'export Supabase prod, sort en erreur si une base attendue manque, et envoie le heartbeat seulement si tout (dumps et copie hors site) a réussi. | Basse | Reste à brancher le heartbeat (`HEARTBEAT_URL` dans `/srv/scripts/backup.env`) et à surveiller **Supabase** (plan Free : pause après une semaine d'inactivité, aucune sauvegarde automatique). |
 | **Coût du stockage hors site** : le projet OVH Public Cloud est facturé à la carte. Une dérive (dépôt qui gonfle, mauvaise manip) ne serait vue qu'à la facture. | Moyenne | Garde-fou dans le script (échec si le dépôt dépasse 2 Go) **et** alerte de consommation OVH par e-mail (seuil mensuel). Le dashboard affiche un lien « Facturation OVH » et l'état de la copie hors site ; aucune clé OVH côté navigateur. |
@@ -109,7 +109,7 @@ Dépendances : 10.1 est indépendante et passe en premier. 10.2 et 10.3 sont ind
 
 | Story | Titre | Résumé |
 |---|---|---|
-| **10.1** | Alertes d'abord | BetterStack uptime (api et ops, prod uniquement), heartbeats des crons purge / favoris / sauvegarde, agent serveur CPU/RAM/disque avec seuils. **Absorbe la story 1.5.** |
+| **10.1** | Alertes d'abord | BetterStack uptime (api et ops, prod uniquement), heartbeats des crons purge / favoris / sauvegarde, script de métriques serveur (CPU/RAM/disque/swap) avec seuils, sans agent. **Absorbe la story 1.5.** |
 | **10.2** | `GET /version` | SHA du build exposé par backend et ops, comparaison au `main` GitHub. Pas de clé Dokploy. |
 | **10.3** | Backend admin lecture seule | Auth JWT Supabase + claim `app_metadata` + allowlist UUID, table d'audit, `GET /admin/overview` (utilisateurs, abonnements actifs / essai, checks/jour, heartbeats reçus). |
 | **10.4** | UI ops `/[locale]/admin` v0 | Écrans du brief (prod uniquement), liens vers les outils externes et les pages légales, toasts, i18n fr/en, `noindex`, middleware, e2e. |

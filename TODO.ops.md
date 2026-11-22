@@ -4,6 +4,7 @@ Chantier **Ops console** et fiabilité de l'infra. Ce fichier ne garde que ce qu
 Dernière mise à jour : 2026-11-22.
 
 Documents de référence :
+- **Contrats d'entrée-sortie et flux : `docs/ops-console-contrats.md`** (fait foi)
 - Besoins et décisions : `docs/ops-dashboard-besoins.md`
 - Stories, maquettes, ordre de livraison : `docs/ops-console-stories.md` (Epic 10 dans `_bmad-output/planning-artifacts/epics.md`)
 - Maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB)
@@ -24,7 +25,7 @@ Rien à fournir.
 
 ### 10.1 — Alertes · v0
 Moniteur ops, `/version`, log 5xx et script de métriques serveur. API, heartbeats et sauvegardes sont déjà faits.
-- **Pas d'agent Better Stack** (décision du 2026-11-22, voir `docs/infra-serveur.md`) : un script cron sur le VPS, sur le modèle des crons favoris et purge, alerte sur disque > 85 %, RAM disponible < 10 % et swap > 75 %.
+- **Pas d'agent Better Stack** (décision du 2026-11-22, voir `docs/infra-serveur.md`) : un script cron sur le VPS (toutes les 15 min), sur le modèle des crons favoris et purge, alerte sur disque > 85 %, RAM disponible < 10 % et swap > 75 %.
 - [ ] **Alerte CPU** : par défaut aucune (chaque build Dokploy fait monter le CPU). À changer seulement sur demande.
 - [ ] **Barres de disponibilité 30 jours et mini-courbes 24 h** : à vérifier dans l'API Better Stack, sinon on les retire de la maquette.
 

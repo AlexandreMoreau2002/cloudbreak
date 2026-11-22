@@ -68,7 +68,7 @@ Les anciennes frames ops (dashboard, monitoring, utilisateurs, connexion) étaie
 5. **Nombres de la maquette** (184 utilisateurs, 87 % de disque, etc.) sont fictifs ; la production a ouvert le 2026-11-13.
 6. **Barres d'uptime sur 30 jours** (page Santé) : ajout hors brief. À confirmer en story 10.1 que l'API BetterStack donne la disponibilité jour par jour ; sinon ne garder que les pourcentages 24 h et 30 j.
 7. **Alerte CPU** : les besoins §4 citent « disque / RAM / CPU », l'AC 10.1 ne fixe de seuil que pour le disque, la RAM disponible et le swap. La maquette affiche « Pas d'alerte configurée » pour le processeur. À trancher.
-8. **Tendances 24 h du serveur et 14 j des checks** : demandent des séries que ni `/admin/overview` (7 jours de checks dans l'AC 10.3, 90 jours dans la série) ni l'agent BetterStack ne garantissent encore. À vérifier en 10.1 et 10.3.
+8. **Tendances 24 h du serveur et 14 j des checks** : demandent des séries que `/admin/overview` (7 jours de checks dans l'AC 10.3, 90 jours dans la série) ne garantissent encore. **Réglé le 2026-11-22** : la série 14 jours des checks est dans `/admin/overview` (`checks_daily`), les relevés serveur de 15 min sur 24 h aussi (`server.history_24h`) ; voir `docs/ops-console-contrats.md` §3.4.
 
 ## 4. Journal d'avancement
 
