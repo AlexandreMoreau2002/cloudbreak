@@ -46,7 +46,7 @@ RÈGLES NON NÉGOCIABLES
 
 ENVIRONNEMENT LOCAL
 - Backend : cd backend && source .venv/bin/activate && make dev (Docker : API + Postgres + Redis, hot reload). Jamais uvicorn directement. Données : make seed puis make seed-test si utile.
-- Ops : cd ops && npm install && npm run dev (port 3100). Config dans ops/.env.local à partir de ops/.env.example, valeurs du projet Supabase DEV. Ne les affiche jamais.
+- Ops : cd ops && npm install && npm run dev (port affiché au démarrage ; next dev utilise 3000 par défaut). Config dans ops/.env.local à partir de ops/.env.example, valeurs du projet Supabase DEV. Ne les affiche jamais.
 - Compte admin de test : Supabase DEV, avec app_metadata.role = "admin". S'il n'existe pas, demande-le à Alex.
 
 LE CIRCUIT : 4 PORTES, TU T'ARRÊTES À CHACUNE ET TU ATTENDS UN « GO » EXPLICITE D'ALEX
@@ -102,7 +102,7 @@ H. Config : ops/.env.example complété avec toutes les variables du contrat §5
 TESTS : Vitest co-localisés (garde : non connecté, non admin, admin, JWT expiré ou invalide ; allowlist vide ; chaque composant d'état ; parité des clés fr/en ; noindex et absence du sitemap) ; e2e Playwright de non-régression : CGU, confidentialité, /.well-known/apple-app-site-association et /sommet/[slug] répondent EXACTEMENT comme avant, aucun import de code admin depuis les pages légales.
 VALIDATION : npm run validate dans ops/.
 
-TEST LOCAL À PROPOSER À LA PORTE 1 : npm run dev (port 3100) ; sans session : /fr/admin redirige vers la connexion ; mauvais mot de passe (message ACC-05) ; compte NON admin du Supabase DEV (accès refusé neutre) ; compte admin (console vide, quatre pages accessibles) ; déconnexion ; mobile 375 pt et thème sombre ; les pages légales identiques à avant ; « afficher le code source » de /fr/admin pour vérifier noindex ; un cookie de session non lisible depuis la console du navigateur (httpOnly).
+TEST LOCAL À PROPOSER À LA PORTE 1 : npm run dev (port affiché au démarrage ; next dev utilise 3000 par défaut) ; sans session : /fr/admin redirige vers la connexion ; mauvais mot de passe (message ACC-05) ; compte NON admin du Supabase DEV (accès refusé neutre) ; compte admin (console vide, quatre pages accessibles) ; déconnexion ; mobile 375 pt et thème sombre ; les pages légales identiques à avant ; « afficher le code source » de /fr/admin pour vérifier noindex ; un cookie de session non lisible depuis la console du navigateur (httpOnly).
 DONE QUAND : AC de la 10.4 qui concernent le socle couverts, npm run validate vert (e2e inclus), aucune dépendance du site légal vers le code admin.
 ```
 
@@ -119,7 +119,7 @@ C. Dockerfiles / build : ARG GIT_SHA, BUILT_AT, GIT_TAG -> ENV dans le Dockerfil
 D. Investigation (lecture seule, sans toucher au serveur) : Dokploy fournit-il le SHA du commit au build ? Cherche dans la doc Dokploy et dans docs/infra-serveur.md. Écris la conclusion dans docs/infra-serveur.md du repo concerné SI tu as une réponse sûre ; sinon écris dans ton rapport « à vérifier sur dev », avec le repli : renseigner les build args à la main dans l'app Dokploy à chaque release.
 
 VALIDATION : make validate (backend), npm run validate (ops).
-TEST LOCAL À PROPOSER À LA PORTE 1 : make dev puis curl http://localhost:8000/version (sha "unknown" attendu) ; relancer avec GIT_SHA=abc123 ; npm run dev puis curl http://localhost:3100/version ; vérifier que /fr/privacy et l'AASA sont inchangés.
+TEST LOCAL À PROPOSER À LA PORTE 1 : make dev puis curl http://localhost:8000/version (sha "unknown" attendu) ; relancer avec GIT_SHA=abc123 ; npm run dev puis curl http://localhost:<port affiché par next dev>/version ; vérifier que /fr/privacy et l'AASA sont inchangés.
 DONE QUAND : les deux routes répondent au contrat, tests verts, validations vertes dans les deux repos.
 ```
 
