@@ -38,6 +38,18 @@ divergence, `CLAUDE.md` gagne.
    refléter l'état des stories dans `_bmad-output/implementation-artifacts/sprint-status.yaml`.
 10. Pas de trace d'agent dans les messages de commit (`Co-Authored-By` interdit, tous repos).
 
+### Mode « batch efficient » (priorité sur les points 1, 2, 4 et 6 ci-dessus)
+
+S'applique dès qu'un prompt dit « mode batch efficient » **ou** que la story a un contrat écrit (Epic 10 : `docs/ops-console-contrats.md`). Constat du 2026-11-23 (story 10.3) : le workflow lourd a produit un spec, un plan et plusieurs agents pour peu de valeur, puis une livraison incomplète.
+
+- **Le contrat fait office de spec.** Pas de brainstorming, pas de spec ni de plan écrits (`docs/superpowers/` est de toute façon jamais commité). Un court plan de tâches dans la réponse suffit.
+- **Un seul agent par story**, sauf besoin réel et indépendant. Une seule validation complète (`make validate` / `npm run validate`) après intégration, une seule revue ciblée, audit sécurité seulement si auth, données, secrets ou API sensible. Pas de polling verbeux de la CI.
+- **Un worktree par story** (`git worktree add`), jamais dans le checkout principal. Ne jamais committer `.coverage*`, `docs/superpowers/`, ni de reformatage sans rapport avec la story.
+- **Ne pas rendre la main avant la PORTE 1**, sauf blocage que tu ne peux pas lever seul (dis lequel). Un `make validate` rouge se corrige, il ne se rapporte pas.
+- **Définition de « terminé »** : chaque comportement décrit dans le contrat a un test qui l'exerce vraiment (base de test ou Redis de test, pas seulement des mocks) ; le code métier nouveau est couvert à 90 % ou plus (`pytest --cov=<module>`) ; toute migration est testée sur base vide ; chaque endpoint a sa requête dans `http/` (nominal, 403 sans auth, 422, cas métier) ; docs de la story et `security.md` à jour si concernés.
+- **Portes** : à chaque porte, bilan compact (ce qui est fait, résultat réel des validations, étapes de test manuel), environnement local lancé, puis STOP jusqu'au « go » explicite d'Alexandre. Jamais de PR, de merge ou de fix sans ce « go ».
+- Commits en Conventional Commits, sans `Co-Authored-By`.
+
 ---
 
 ## Project Structure & Module Organization
