@@ -160,7 +160,7 @@ development_status:
   epic-10: backlog
   10-1-alertes-uptime-heartbeats-metriques-serveur: backlog  # sans agent Better Stack (décision 2026-11-22)
   10-2-version-deployee-get-version: done # backend #49 + ops #12, mergés 2026-11-23 ; reste à vérifier l'injection des build args par Dokploy
-  10-3-backend-admin-lecture-seule-auth-audit-kpis: backlog
+  10-3-backend-admin-lecture-seule-auth-audit-kpis: done # backend #50, mergé 2026-11-23 ; test manuel nominal à faire sur dev-api
   10-4-dashboard-ops-v0-admin: backlog  # livré en 10-4a à 10-4g
   10-4a-socle-console: backlog
   10-4b-sources-lues-par-ops: backlog
