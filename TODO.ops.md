@@ -38,7 +38,7 @@ Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-co
 ## À faire côté serveur
 
 - [x] `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) remis sur `develop` et redéployés le 2026-11-23 : `/version` répond 200 sur dev-api et dev-ops, `/api/v1/admin/overview` répond 403 sans JWT. SSH était bloqué depuis le réseau du cowork (cause réseau, pas serveur : pas de fail2ban, UFW ouvert).
-- [ ] **`/version` répond `sha: unknown`** : Dokploy n'injecte pas `GIT_SHA`/`BUILT_AT`/`GIT_TAG` en build args. À régler (build args dans Dokploy, ou script de déploiement) avant d'utiliser la page Déploiements (10.4e).
+- [x] `/version` affiche le vrai sha sur dev-api et dev-ops depuis le 2026-11-23 (backend `445ccd7` #51, ops `5f81469` #14) : un script de build relit le commit dans `.git`, sans build args Dokploy. À refaire sur la prod au premier déploiement après ces merges.
 - [ ] Compte avec mot de passe sur Supabase **dev** pour tester la console en local (le compte dev d'Alex est en Apple, rôle `admin` déjà posé dessus), puis `ADMIN_USER_IDS` sur le backend dev et test nominal de `backend/http/admin.http`.
 - [x] Rôle `admin` posé le 2026-11-23 sur le compte Supabase **prod** `pricedelu@gmail.com` (UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`, connexion e-mail + mot de passe). À mettre dans `ADMIN_USER_IDS` du backend prod à la mise en prod (vague 5).
 
