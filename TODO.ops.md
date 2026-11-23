@@ -11,7 +11,7 @@ Documents de référence :
 
 ## Prochaine action
 
-**Vague 1** : lancer en parallèle 10.4a, 10.3, 10.2 et 10.1a. Rien d'autre ne les bloque.
+**Vague 1** (10.2 faite) : lancer en parallèle 10.4a, 10.3 et 10.1a, en « mode batch efficient » (1 agent par ticket, une validation par repo, une revue ciblée). Rien d'autre ne les bloque.
 
 Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
@@ -21,7 +21,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 |---|---|---|---|---|---|
 | **1** | 10.4a | Socle de la console : connexion, garde d'accès, cadre, états partagés | ops | Compte admin Supabase **dev** (`app_metadata.role = "admin"`) pour tester | [ ] |
 | **1** | 10.3 | Backend admin en lecture seule (auth, audit, `/admin/overview`, heartbeats, relevés serveur) | backend | — | [ ] |
-| **1** | 10.2 | `GET /version` backend et ops | backend, ops | — | [ ] |
+| **1** | 10.2 | `GET /version` backend et ops | backend, ops | Vérifier sur dev que Dokploy injecte `GIT_SHA`/`BUILT_AT`/`GIT_TAG` (sinon `sha: unknown`) | [x] mergée 2026-11-23 (`0b9d24f`, `7b806f1`) |
 | **1** | 10.1a | Moniteur ops, script de métriques → Better Stack (alertes seules), log 5xx | VPS, backend | — | [ ] |
 | **2** | 10.4b | Routes serveur ops : santé (Better Stack), versions (GitHub, App Store) | ops | **Jeton Better Stack en lecture seule** | [ ] |
 | **3** | 10.4c | Page Utilisateurs | ops | — | [ ] |
