@@ -35,6 +35,12 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 
 Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
+## À faire côté serveur (bloque la vérification de 10.2 et 10.3 sur dev)
+
+- [ ] **Remettre `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) sur la branche `develop`** : ils suivent encore `release/1.0.0` (supprimée le 2026-11-21), leur dernier déploiement est en erreur, donc `/version` et `/api/v1/admin/overview` répondent 404 sur dev. Via l'API Dokploy (`application.saveGitProvider` puis `application.deploy`), un déploiement à la fois ; SSH a expiré le 2026-11-23 à 14:15 UTC, à réessayer plus tard.
+- [ ] Poser `ADMIN_USER_IDS` (UUID du compte admin dev) et vérifier `INTERNAL_CRON_SECRET` sur l'env Dokploy du backend dev, puis jouer le test nominal de `backend/http/admin.http`.
+- [ ] Vérifier que Dokploy injecte `GIT_SHA`/`BUILT_AT`/`GIT_TAG` (sinon `/version` répond `unknown` ; ajouter les build args dans Dokploy).
+
 ## Décisions par défaut (modifiables sur demande)
 
 - Pas d'alerte CPU (chaque build Dokploy fait monter le CPU).
