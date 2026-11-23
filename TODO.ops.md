@@ -38,6 +38,7 @@ Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-co
 ## À faire côté serveur (bloque la vérification de 10.2 et 10.3 sur dev)
 
 - [ ] **Remettre `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) sur la branche `develop`** : ils suivent encore `release/1.0.0` (supprimée le 2026-11-21), leur dernier déploiement est en erreur, donc `/version` et `/api/v1/admin/overview` répondent 404 sur dev. Via l'API Dokploy (`application.saveGitProvider` puis `application.deploy`), un déploiement à la fois ; SSH a expiré le 2026-11-23 à 14:15 UTC, à réessayer plus tard.
+- [x] Rôle `admin` posé le 2026-11-23 sur le compte Supabase dev `moreaualexandre2002@gmail.com` (UUID `8a438dd0-6aa6-48b5-b433-07f8dcaa6765`) ; **ce compte se connecte par Apple, sans mot de passe** : la connexion e-mail + mot de passe de la console ops (10.4a) demande un compte admin dédié avec mot de passe, à créer par Alex.
 - [ ] Poser `ADMIN_USER_IDS` (UUID du compte admin dev) et vérifier `INTERNAL_CRON_SECRET` sur l'env Dokploy du backend dev, puis jouer le test nominal de `backend/http/admin.http`.
 - [ ] Vérifier que Dokploy injecte `GIT_SHA`/`BUILT_AT`/`GIT_TAG` (sinon `/version` répond `unknown` ; ajouter les build args dans Dokploy).
 
