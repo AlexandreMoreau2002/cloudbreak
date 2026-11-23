@@ -79,15 +79,13 @@ Erreurs : `{"detail":"…","code":"ERROR_CODE"}`. Dates en ISO 8601 UTC. Aucune 
 {
   "generated_at": "2026-11-22T22:50:00Z",
   "kpis": {
-    "users_total":          { "value": 412, "delta_7d": 31 },
     "users_permanent":      { "value": 188, "delta_7d": 12 },
-    "users_anonymous":      { "value": 224, "delta_7d": 19 },
     "users_active_30d":     { "value": 140, "delta_7d": 9 },
     "subscriptions_active": { "value": 14,  "delta_7d": 2 },
     "subscriptions_trial":  { "value": 5,   "delta_7d": 1 }
   },
   "checks_daily": [ { "date": "2026-11-21", "count": 87 } ],
-  "series_90d":   [ { "date": "2026-11-21", "users_total": 412, "users_permanent": 188, "users_anonymous": 224, "checks": 87 } ],
+  "series_90d":   [ { "date": "2026-11-21", "users_permanent": 188, "checks": 87 } ],
   "crons": [
     { "job": "purge", "state": "ok", "last_run_at": "2026-11-22T05:05:02Z", "last_status": "ok", "expected_every_s": 90000, "overdue_s": null }
   ],
@@ -105,7 +103,7 @@ Erreurs : `{"detail":"…","code":"ERROR_CODE"}`. Dates en ISO 8601 UTC. Aucune 
 - `checks_daily` : 14 jours minimum ; `series_90d` : 90 jours ; un jour sans donnée vaut `0` (jamais absent).
 - `crons[].state` ∈ `ok` | `late` | `failed` | `never`. `late` si `now − last_run_at > expected_every_s` ; `failed` si `last_status == "fail"` (prioritaire sur `late`) ; `never` si aucun heartbeat reçu. Attendus : purge 90 000 s (25 h), favoris 90 000 s, sauvegarde 93 600 s (26 h).
 - `server.state` ∈ `ok` | `stale` (dernier relevé > 30 min) | `never`. En `stale` et `never`, les valeurs sont `null` côté jauges (affichées « Inconnu »).
-- `delta_7d` = valeur d'aujourd'hui − valeur il y a 7 jours (peut être négatif).
+- `delta_7d` = nombre créés sur les 7 derniers jours (`created_at`), jamais négatif. Les comptes anonymes n'existent que dans Supabase Auth, pas dans `users` : ils ne sont pas comptés en v0 (décision du 2026-11-23, pas de table d'historique).
 
 ## 4. Contrats serveur ops
 
