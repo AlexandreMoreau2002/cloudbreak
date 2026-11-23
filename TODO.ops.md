@@ -11,7 +11,7 @@ Documents de référence :
 
 ## Prochaine action
 
-**Vague 1** (10.2 et 10.3 faites) : lancer 10.4a et 10.1a, en « mode batch efficient » (1 agent par ticket, une validation par repo, une revue ciblée). Rien d'autre ne les bloque.
+**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a en cours (worktree `ops-10-4a-socle-console`), puis 10.1a, en « mode batch efficient » (1 agent par ticket, une validation par repo, une revue ciblée). Rien d'autre ne les bloque.
 
 Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
@@ -20,8 +20,6 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 | Vague | Story | Quoi | Repo | Prérequis d'Alex | Fait |
 |---|---|---|---|---|---|
 | **1** | 10.4a | Socle de la console : connexion, garde d'accès, cadre, états partagés | ops | Compte admin Supabase **dev** (`app_metadata.role = "admin"`) pour tester | [ ] |
-| **1** | 10.3 | Backend admin en lecture seule (auth, audit, `/admin/overview`, heartbeats, relevés serveur) | backend | Poser `ADMIN_USER_IDS` sur Dokploy dev ; test manuel nominal (200/204) à faire sur dev-api | [x] mergée 2026-11-23 (`8a4ef7a`) |
-| **1** | 10.2 | `GET /version` backend et ops | backend, ops | Vérifier sur dev que Dokploy injecte `GIT_SHA`/`BUILT_AT`/`GIT_TAG` (sinon `sha: unknown`) | [x] mergée 2026-11-23 (`0b9d24f`, `7b806f1`) |
 | **1** | 10.1a | Moniteur ops, script de métriques → Better Stack (alertes seules), log 5xx | VPS, backend | — | [ ] |
 | **2** | 10.4b | Routes serveur ops : santé (Better Stack), versions (GitHub, App Store) | ops | **Jeton Better Stack en lecture seule** | [ ] |
 | **3** | 10.4c | Page Utilisateurs | ops | — | [ ] |
@@ -46,7 +44,7 @@ Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-co
 
 - Pas d'alerte CPU (chaque build Dokploy fait monter le CPU).
 - Seule la version publiée de l'app est affichée (pas de ligne « 1.0.1 dans `main`, en attente de l'App Store »).
-- KPIs : comptes anonymes et permanents, tendance 14 jours : à confirmer dans la 10.3.
+- KPIs : comptes permanents, actifs 30 j, abonnements actifs et essais ; `delta_7d` = créations sur 7 jours. Les comptes anonymes ne sont pas comptés (ils n'existent que dans Supabase Auth ; décision du 2026-11-23).
 - Barres de disponibilité 30 jours : à vérifier dans l'API Better Stack (10.4b), sinon retirées de la maquette.
 
 ---
