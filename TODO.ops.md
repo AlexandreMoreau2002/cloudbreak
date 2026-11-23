@@ -35,13 +35,12 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 
 Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
-## À faire côté serveur (bloque la vérification de 10.2 et 10.3 sur dev)
+## À faire côté serveur
 
-- [ ] **Remettre `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) sur la branche `develop`** : ils suivent encore `release/1.0.0` (supprimée le 2026-11-21), leur dernier déploiement est en erreur, donc `/version` et `/api/v1/admin/overview` répondent 404 sur dev. Via l'API Dokploy (`application.saveGitProvider` puis `application.deploy`), un déploiement à la fois ; SSH a expiré le 2026-11-23 à 14:15 UTC, à réessayer plus tard.
-- [x] Rôle `admin` posé le 2026-11-23 sur le compte Supabase dev `moreaualexandre2002@gmail.com` (UUID `8a438dd0-6aa6-48b5-b433-07f8dcaa6765`) ; **ce compte se connecte par Apple, sans mot de passe** : la connexion e-mail + mot de passe de la console ops (10.4a) demande un compte admin dédié avec mot de passe, à créer par Alex.
+- [x] `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) remis sur `develop` et redéployés le 2026-11-23 : `/version` répond 200 sur dev-api et dev-ops, `/api/v1/admin/overview` répond 403 sans JWT. SSH était bloqué depuis le réseau du cowork (cause réseau, pas serveur : pas de fail2ban, UFW ouvert).
+- [ ] **`/version` répond `sha: unknown`** : Dokploy n'injecte pas `GIT_SHA`/`BUILT_AT`/`GIT_TAG` en build args. À régler (build args dans Dokploy, ou script de déploiement) avant d'utiliser la page Déploiements (10.4e).
+- [ ] Compte avec mot de passe sur Supabase **dev** pour tester la console en local (le compte dev d'Alex est en Apple, rôle `admin` déjà posé dessus), puis `ADMIN_USER_IDS` sur le backend dev et test nominal de `backend/http/admin.http`.
 - [x] Rôle `admin` posé le 2026-11-23 sur le compte Supabase **prod** `pricedelu@gmail.com` (UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`, connexion e-mail + mot de passe). À mettre dans `ADMIN_USER_IDS` du backend prod à la mise en prod (vague 5).
-- [ ] Poser `ADMIN_USER_IDS` (UUID du compte admin dev) et vérifier `INTERNAL_CRON_SECRET` sur l'env Dokploy du backend dev, puis jouer le test nominal de `backend/http/admin.http`.
-- [ ] Vérifier que Dokploy injecte `GIT_SHA`/`BUILT_AT`/`GIT_TAG` (sinon `/version` répond `unknown` ; ajouter les build args dans Dokploy).
 
 ## Décisions par défaut (modifiables sur demande)
 
