@@ -161,8 +161,8 @@ development_status:
   10-1-alertes-uptime-heartbeats-metriques-serveur: backlog  # sans agent Better Stack (décision 2026-11-22)
   10-2-version-deployee-get-version: done # backend #49/#51 + ops #12/#14, mergés et déployés sur dev 2026-11-23 (sha de build relu dans .git)
   10-3-backend-admin-lecture-seule-auth-audit-kpis: done # backend #50, mergé et déployé sur dev 2026-11-23 ; reste le test nominal avec un compte admin dev (voir TODO.ops.md)
-  10-4-dashboard-ops-v0-admin: backlog  # livré en 10-4a à 10-4g
-  10-4a-socle-console: backlog
+  10-4-dashboard-ops-v0-admin: in-progress  # livré en 10-4a à 10-4g
+  10-4a-socle-console: done # ops #13 mergé 2026-11-24 (c08ab77)
   10-4b-sources-lues-par-ops: backlog
   10-4c-page-utilisateurs: backlog
   10-4d-page-sante: backlog

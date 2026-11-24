@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21",
+  "updated": "2026-11-24",
   "resume": "1.0.0 est en ligne. La 1.0.1 (abonnements) attend la décision d'Apple. La suite : fiabiliser l'achat (1.0.2).",
   "envs": [
     {
@@ -87,7 +87,7 @@
       "features": [
         { "t": "Recherche tolérante aux fautes", "d": "Accents, fautes de frappe, variantes", "svc": ["mobile", "backend"], "etat": "todo" },
         { "t": "Sommets saisis à la main", "d": "Tour Eiffel (330 m) en premier", "svc": ["backend"], "etat": "todo" },
-        { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "todo" },
+        { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "doing", "note": "Socle (connexion, garde d'accès, cadre) mergé sur develop ; pages à venir." },
         { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "doing" },
         { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "todo" }
       ]
