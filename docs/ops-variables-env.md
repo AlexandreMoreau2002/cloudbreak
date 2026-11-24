@@ -2,7 +2,7 @@
 
 > Source de vérité du code : `ops/.env.example` (noms) et ce document (rôle, origine, état par environnement). **À tenir à jour à chaque évolution d'ops** : toute variable ajoutée, renommée ou retirée est reportée ici dans la même session (règle dans `CLAUDE.md`, « Suivi de chantier »). Aucune valeur secrète dans ce fichier : jamais.
 
-Dernière mise à jour : 2026-11-24.
+Dernière mise à jour : 2026-11-25.
 
 ## Règles
 
@@ -65,7 +65,7 @@ Une URL absente, vide ou non http(s) donne un outil affiché **sans lien**.
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_USER_IDS`, `API_BASE_URL` | Supabase dev | **posées sur les sources de prod** (le dev n'a pas de métriques) | **à poser à la mise en prod** |
 | `BETTERSTACK_*` | facultatif | posées (lecture seule, moniteurs de prod) | **à poser à la mise en prod** |
 | `GITHUB_*`, `APP_STORE_ID` | facultatif | posées | **à poser à la mise en prod** |
-| `TOOL_URL_*` | facultatif | **non posées** | **à poser à la mise en prod** |
+| `TOOL_URL_*` | facultatif | posées (pages d'accueil des outils, Supabase = projet prod ; Sentry en `sentry.io` générique, à remplacer par l'URL du projet si souhaité) | **à poser à la mise en prod** |
 
 À la mise en prod : poser tout le bloc console sur `cloudbreak-ops-prod`, `API_BASE_URL` = backend prod, `ADMIN_USER_IDS` = UUID prod ; poser `ADMIN_USER_IDS` aussi sur `cloudbreak-backend-prod` ; puis remettre `dev-ops` sur le Supabase et l'API de dev. Test noir-boîte du build prod : `/fr/admin` sans cookie redirige vers la connexion, `/api/admin/*` répond 401.
 
