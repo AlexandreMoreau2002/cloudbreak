@@ -11,7 +11,7 @@ Documents de référence :
 
 ## Prochaine action
 
-**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). Suite : 10.4b.
+**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). 10.4b mergée (ops #15, `1cd994d`). Suite : vague 3 (10.4c, d, e, g en parallèle).
 
 Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
@@ -21,7 +21,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 |---|---|---|---|---|---|
 | **1** | 10.4a | Socle de la console : connexion, garde d'accès, cadre, états partagés | ops | Compte admin Supabase **dev** (`app_metadata.role = "admin"`) pour tester | [x] mergée (ops #13) |
 | **1** | 10.1a | Moniteur ops, script de métriques → Better Stack (alertes seules), log 5xx | VPS, backend | — | [x] posé et testé le 2026-11-24, e-mail d'alerte reçu |
-| **2** | 10.4b | Routes serveur ops : santé (Better Stack), versions (GitHub, App Store) | ops | **Jeton Better Stack en lecture seule** | [ ] |
+| **2** | 10.4b | Routes serveur ops : santé (Better Stack), versions (GitHub, App Store) | ops | **Jeton Better Stack en lecture seule** | [x] mergée (ops #15, `1cd994d`) ; jeton Better Stack non testé en réel |
 | **3** | 10.4c | Page Utilisateurs | ops | — | [ ] |
 | **3** | 10.4d | Page Santé | ops | — | [ ] |
 | **3** | 10.4e | Page Déploiements | ops | — | [ ] |
