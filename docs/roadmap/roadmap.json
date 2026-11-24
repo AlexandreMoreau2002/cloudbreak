@@ -116,7 +116,7 @@
     { "nom": "Onboarding et hors-ligne", "fait": 3, "total": 3 },
     { "nom": "Validation terrain", "fait": 1, "total": 2, "note": "Reste la photo" },
     { "nom": "Socle et suivi technique", "fait": 6, "total": 8, "note": "Sentry et PostHog prêts, actifs à la prochaine release" },
-    { "nom": "Console d'admin", "fait": 0, "total": 5 },
+    { "nom": "Console d'admin", "fait": 2, "total": 5, "note": "Version et API admin faites ; socle de la console mergé (10.4a), pages à venir" },
     { "nom": "Landing et ASO", "fait": 0, "total": 2 },
     { "nom": "Croissance", "fait": 0, "total": 5 }
   ]
