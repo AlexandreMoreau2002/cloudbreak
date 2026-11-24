@@ -164,11 +164,11 @@ development_status:
   10-4-dashboard-ops-v0-admin: in-progress  # livré en 10-4a à 10-4g
   10-4a-socle-console: done # ops #13 mergé 2026-11-24 (c08ab77)
   10-4b-sources-lues-par-ops: done # ops #15 mergé 2026-11-24 (1cd994d) ; jeton Better Stack non testé en réel
-  10-4c-page-utilisateurs: backlog
-  10-4d-page-sante: backlog
-  10-4e-page-deploiements: backlog
+  10-4c-page-utilisateurs: done # ops #19 9a9b2fb, mergé 2026-11-24
+  10-4d-page-sante: done # ops #18 d1a651b ; sans barres 30 j ni mini-courbes 24 h, mergé 2026-11-24
+  10-4e-page-deploiements: done # ops #17 ac69a05, mergé 2026-11-24
   10-4f-accueil: backlog
-  10-4g-pages-legales: backlog
+  10-4g-pages-legales: done # ops #16 f3a4bf7, mergé 2026-11-24
   10-5-recherche-email-offrir-premium: backlog  # v1
   epic-10-retrospective: optional
 

@@ -130,6 +130,10 @@ Toutes les routes exigent la session admin (§2.1). Sans session : `401` ; non a
 - Source : Better Stack Uptime API v2 (monitors, incidents, disponibilité), jeton lecture seule en `Authorization: Bearer`. **À confirmer en 10.4b** : l'API donne-t-elle la disponibilité 30 jours jour par jour (barres de `SAN-01`) ? Sinon, retirer les barres de la maquette.
 - Les jauges Serveur ne passent **pas** par cette route (elles sont dans `overview.server`).
 
+### 4.0 `GET /api/admin/session` (ajouté en 10.4g)
+
+Sonde pour les pages légales publiques : `204` sans corps avec une session admin valide, `401`/`403` sinon. Aucune donnée de session.
+
 ### 4.3 `GET /api/admin/versions`
 ```json
 { "services": [
