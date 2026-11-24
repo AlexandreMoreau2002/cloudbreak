@@ -1,37 +1,65 @@
 {
   "updated": "2026-11-24",
-  "resume": "1.0.0 est en ligne. La 1.0.1 (abonnements) attend la décision d'Apple. La suite : fiabiliser l'achat (1.0.2).",
+  "resume": "La 1.0.0 et la 1.0.1 (abonnements) sont publiées sur l'App Store. La suite : fiabiliser l'achat (1.0.2).",
   "envs": [
     {
       "nom": "Production",
       "note": "Ce que les utilisateurs ont",
       "items": [
-        { "svc": "mobile", "version": "1.0.0", "etat": "ok", "detail": "sur l'App Store" },
-        { "svc": "backend", "version": "1.0.0", "etat": "ok", "detail": "API saine" },
-        { "svc": "ops", "version": "1.0.0", "etat": "ok", "detail": "pages légales" }
-      ]
-    },
-    {
-      "nom": "En attente d'Apple",
-      "note": "Soumis, pas encore décidé",
-      "items": [
-        { "svc": "mobile", "version": "1.0.1", "etat": "wait", "detail": "avec les abonnements" }
+        {
+          "svc": "mobile",
+          "version": "1.0.1",
+          "etat": "ok",
+          "detail": "sur l'App Store, avec les abonnements"
+        },
+        {
+          "svc": "backend",
+          "version": "1.0.0",
+          "etat": "ok",
+          "detail": "API saine"
+        },
+        {
+          "svc": "ops",
+          "version": "1.0.0",
+          "etat": "ok",
+          "detail": "pages légales"
+        }
       ]
     },
     {
       "nom": "Dev (develop)",
       "note": "Mergé, pas encore livré",
       "items": [
-        { "svc": "mobile", "version": "Sentry + PostHog", "etat": "dev", "detail": "prêt ; clés de prod posées, actif à la prochaine release" },
-        { "svc": "backend", "version": "Sentry + PostHog", "etat": "dev", "detail": "prêt ; clés de prod posées, actif à la prochaine release" },
-        { "svc": "ops", "version": "rien de neuf", "etat": "ok", "detail": "identique à la prod" }
+        {
+          "svc": "mobile",
+          "version": "Sentry + PostHog",
+          "etat": "dev",
+          "detail": "prêt ; clés de prod posées, actif à la prochaine release"
+        },
+        {
+          "svc": "backend",
+          "version": "Sentry + PostHog",
+          "etat": "dev",
+          "detail": "prêt ; clés de prod posées, actif à la prochaine release"
+        },
+        {
+          "svc": "ops",
+          "version": "rien de neuf",
+          "etat": "ok",
+          "detail": "identique à la prod"
+        }
       ]
     }
   ],
   "attention": [
-    { "niveau": "wait", "texte": "Apple doit valider la 1.0.1. Tant que ce n'est pas fait, les abonnements ne sont pas achetables." },
-    { "niveau": "todo", "texte": "Après validation : tester un achat mensuel et annuel sur iPhone, depuis l'app téléchargée sur l'App Store." },
-    { "niveau": "todo", "texte": "Sentry et PostHog : clés de production posées, mais le code n'est que sur develop. Ils s'activent à la prochaine release (backend sur main + nouveau build) ; vérifier alors les événements." }
+    {
+      "niveau": "todo",
+      "texte": "Tester un achat mensuel et annuel sur iPhone, depuis l'app téléchargée sur l'App Store."
+    },
+    {
+      "niveau": "todo",
+      "texte": "Sentry et PostHog : clés de production posées, mais le code n'est que sur develop. Ils s'activent à la prochaine release (backend sur main + nouveau build) ; vérifier alors les événements."
+    }
   ],
   "versions": [
     {
@@ -41,27 +69,119 @@
       "date": "2026-11-13",
       "ou": "App Store + prod",
       "features": [
-        { "t": "Score mer de nuage", "d": "Pour un sommet, une date, une heure, avec « Pourquoi ce score ? »", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Recherche et favoris", "d": "Plus de 23 000 sommets", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Vue semaine et mode hors-ligne", "d": "Cache de 3 h", "svc": ["mobile"], "etat": "prod" },
-        { "t": "Compte", "d": "Email, Apple, invité, mot de passe oublié, nom d'usage, suppression RGPD", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Onboarding et mini-sondage", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Freemium", "d": "1 check par jour en gratuit, paywall", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Notifications push", "d": "Alertes favoris (Premium) et rappel de validation terrain", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Validation terrain", "d": "Confirmer ou infirmer la prévision", "svc": ["mobile", "backend"], "etat": "prod" },
-        { "t": "Pages légales et partage", "d": "CGU, confidentialité, liens de partage de sommet", "svc": ["ops", "mobile"], "etat": "prod" },
-        { "t": "Socle serveur", "d": "Prod, sauvegardes hors site, crons, surveillance de l'API", "svc": ["backend", "ops"], "etat": "prod" }
+        {
+          "t": "Score mer de nuage",
+          "d": "Pour un sommet, une date, une heure, avec « Pourquoi ce score ? »",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Recherche et favoris",
+          "d": "Plus de 23 000 sommets",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Vue semaine et mode hors-ligne",
+          "d": "Cache de 3 h",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Compte",
+          "d": "Email, Apple, invité, mot de passe oublié, nom d'usage, suppression RGPD",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Onboarding et mini-sondage",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Freemium",
+          "d": "1 check par jour en gratuit, paywall",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Notifications push",
+          "d": "Alertes favoris (Premium) et rappel de validation terrain",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Validation terrain",
+          "d": "Confirmer ou infirmer la prévision",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Pages légales et partage",
+          "d": "CGU, confidentialité, liens de partage de sommet",
+          "svc": [
+            "ops",
+            "mobile"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Socle serveur",
+          "d": "Prod, sauvegardes hors site, crons, surveillance de l'API",
+          "svc": [
+            "backend",
+            "ops"
+          ],
+          "etat": "prod"
+        }
       ]
     },
     {
       "id": "1.0.1",
       "titre": "Abonnements",
-      "etat": "review",
-      "date": "soumise le 2026-11-13",
-      "ou": "Apple en vérification",
+      "etat": "livree",
+      "date": "publiée sur l'App Store",
+      "ou": "App Store",
       "features": [
-        { "t": "Abonnement Premium", "d": "Mensuel 4,99 €, annuel 44,99 €, essai de 7 jours", "svc": ["mobile"], "etat": "review" },
-        { "t": "Bouton « réessayer » du paywall", "d": "Recharge les offres Apple", "svc": ["mobile"], "etat": "review" }
+        {
+          "t": "Abonnement Premium",
+          "d": "Mensuel 4,99 €, annuel 44,99 €, essai de 7 jours",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "prod"
+        },
+        {
+          "t": "Bouton « réessayer » du paywall",
+          "d": "Recharge les offres Apple",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "prod"
+        }
       ]
     },
     {
@@ -71,11 +191,48 @@
       "date": "après la décision d'Apple",
       "ou": "à préparer",
       "features": [
-        { "t": "Suivi des erreurs et des usages", "d": "Sentry (erreurs) et PostHog (analytics)", "svc": ["mobile", "backend"], "etat": "develop", "note": "Code mergé, clés de production posées. S'active avec la release." },
-        { "t": "Achat sans gel ni chargement infini", "d": "Reproduire sur iPhone, puis corriger le cycle d'achat", "svc": ["mobile"], "etat": "todo" },
-        { "t": "Premium appliqué tout de suite", "d": "Plus de redémarrage après l'achat", "svc": ["mobile"], "etat": "todo" },
-        { "t": "Correctifs compte", "d": "Rejouer l'onboarding après suppression ; pas de « Supprimer » pour un invité", "svc": ["mobile"], "etat": "todo" },
-        { "t": "Nom « Premium » partout", "d": "App, traductions, App Store (fini « Pro »)", "svc": ["mobile"], "etat": "todo" }
+        {
+          "t": "Suivi des erreurs et des usages",
+          "d": "Sentry (erreurs) et PostHog (analytics)",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "develop",
+          "note": "Code mergé, clés de production posées. S'active avec la release."
+        },
+        {
+          "t": "Achat sans gel ni chargement infini",
+          "d": "Reproduire sur iPhone, puis corriger le cycle d'achat",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "todo"
+        },
+        {
+          "t": "Premium appliqué tout de suite",
+          "d": "Plus de redémarrage après l'achat",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "todo"
+        },
+        {
+          "t": "Correctifs compte",
+          "d": "Rejouer l'onboarding après suppression ; pas de « Supprimer » pour un invité",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "todo"
+        },
+        {
+          "t": "Nom « Premium » partout",
+          "d": "App, traductions, App Store (fini « Pro »)",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "todo"
+        }
       ]
     },
     {
@@ -85,11 +242,51 @@
       "date": "non daté",
       "ou": "à planifier",
       "features": [
-        { "t": "Recherche tolérante aux fautes", "d": "Accents, fautes de frappe, variantes", "svc": ["mobile", "backend"], "etat": "todo" },
-        { "t": "Sommets saisis à la main", "d": "Tour Eiffel (330 m) en premier", "svc": ["backend"], "etat": "todo" },
-        { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "develop", "note": "Console complète sur develop (connexion, accueil, santé, déploiements, utilisateurs) ; mise en prod avec le gros chantier." },
-        { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "doing" },
-        { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "todo" }
+        {
+          "t": "Recherche tolérante aux fautes",
+          "d": "Accents, fautes de frappe, variantes",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "todo"
+        },
+        {
+          "t": "Sommets saisis à la main",
+          "d": "Tour Eiffel (330 m) en premier",
+          "svc": [
+            "backend"
+          ],
+          "etat": "todo"
+        },
+        {
+          "t": "Console d'admin (lecture seule)",
+          "d": "Alertes, version déployée, KPIs, tableau de bord",
+          "svc": [
+            "ops",
+            "backend"
+          ],
+          "etat": "develop",
+          "note": "Console complète sur develop (connexion, accueil, santé, déploiements, utilisateurs) ; mise en prod avec le gros chantier."
+        },
+        {
+          "t": "Surveillance étendue",
+          "d": "Ops prod, dev, crons, métriques du serveur",
+          "svc": [
+            "backend",
+            "ops"
+          ],
+          "etat": "doing"
+        },
+        {
+          "t": "Offrir Premium depuis la console",
+          "d": "Recherche par email (v1 de la console)",
+          "svc": [
+            "ops",
+            "backend"
+          ],
+          "etat": "todo"
+        }
       ]
     },
     {
@@ -99,25 +296,113 @@
       "date": "post-MVP",
       "ou": "idées cadrées",
       "features": [
-        { "t": "Message hors-saison", "d": "À faire avant l'été 2027", "svc": ["mobile"], "etat": "later" },
-        { "t": "Photo de terrain et taux de précision", "svc": ["mobile", "backend"], "etat": "later" },
-        { "t": "Alertes régionales", "svc": ["mobile", "backend"], "etat": "later" },
-        { "t": "Croissance", "d": "Carte partageable, parrainage, badges, replay photo, récap annuel", "svc": ["mobile", "backend"], "etat": "later" },
-        { "t": "Landing page et ASO", "svc": ["ops"], "etat": "later" },
-        { "t": "Carte de roadmap dans la console", "d": "Mise à jour en direct, sans redéployer ; après la console d'admin", "svc": ["ops", "backend"], "etat": "later" }
+        {
+          "t": "Message hors-saison",
+          "d": "À faire avant l'été 2027",
+          "svc": [
+            "mobile"
+          ],
+          "etat": "later"
+        },
+        {
+          "t": "Photo de terrain et taux de précision",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "later"
+        },
+        {
+          "t": "Alertes régionales",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "later"
+        },
+        {
+          "t": "Croissance",
+          "d": "Carte partageable, parrainage, badges, replay photo, récap annuel",
+          "svc": [
+            "mobile",
+            "backend"
+          ],
+          "etat": "later"
+        },
+        {
+          "t": "Landing page et ASO",
+          "svc": [
+            "ops"
+          ],
+          "etat": "later"
+        },
+        {
+          "t": "Carte de roadmap dans la console",
+          "d": "Mise à jour en direct, sans redéployer ; après la console d'admin",
+          "svc": [
+            "ops",
+            "backend"
+          ],
+          "etat": "later"
+        }
       ]
     }
   ],
   "chantiers": [
-    { "nom": "Score et consultation", "fait": 5, "total": 6, "note": "Reste le message hors-saison" },
-    { "nom": "Compte", "fait": 11, "total": 11 },
-    { "nom": "Abonnement", "fait": 5, "total": 5, "note": "Achats à tester après Apple" },
-    { "nom": "Notifications", "fait": 3, "total": 3 },
-    { "nom": "Onboarding et hors-ligne", "fait": 3, "total": 3 },
-    { "nom": "Validation terrain", "fait": 1, "total": 2, "note": "Reste la photo" },
-    { "nom": "Socle et suivi technique", "fait": 6, "total": 8, "note": "Sentry et PostHog prêts, actifs à la prochaine release" },
-    { "nom": "Console d'admin", "fait": 4, "total": 5, "note": "Version, API admin et pages de la console sur develop ; reste la mise en prod" },
-    { "nom": "Landing et ASO", "fait": 0, "total": 2 },
-    { "nom": "Croissance", "fait": 0, "total": 5 }
+    {
+      "nom": "Score et consultation",
+      "fait": 5,
+      "total": 6,
+      "note": "Reste le message hors-saison"
+    },
+    {
+      "nom": "Compte",
+      "fait": 11,
+      "total": 11
+    },
+    {
+      "nom": "Abonnement",
+      "fait": 5,
+      "total": 5,
+      "note": "Achats à tester sur iPhone"
+    },
+    {
+      "nom": "Notifications",
+      "fait": 3,
+      "total": 3
+    },
+    {
+      "nom": "Onboarding et hors-ligne",
+      "fait": 3,
+      "total": 3
+    },
+    {
+      "nom": "Validation terrain",
+      "fait": 1,
+      "total": 2,
+      "note": "Reste la photo"
+    },
+    {
+      "nom": "Socle et suivi technique",
+      "fait": 6,
+      "total": 8,
+      "note": "Sentry et PostHog prêts, actifs à la prochaine release"
+    },
+    {
+      "nom": "Console d'admin",
+      "fait": 4,
+      "total": 5,
+      "note": "Version, API admin et pages de la console sur develop ; reste la mise en prod"
+    },
+    {
+      "nom": "Landing et ASO",
+      "fait": 0,
+      "total": 2
+    },
+    {
+      "nom": "Croissance",
+      "fait": 0,
+      "total": 5
+    }
   ]
 }
