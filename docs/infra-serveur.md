@@ -361,6 +361,22 @@ Le backend attend **une seule clé JWK** (`{"kty":"EC","alg":"ES256",…}`), com
 
 ## 9. Ce qui reste à faire (infra)
 
+### Console ops DEV et sources de production (2026-11-24)
+
+L'application Dokploy `cloudbreak-ops` de l'environnement `dev` utilise les moniteurs Better Stack
+de production en lecture seule, les dépôts GitHub backend et ops en lecture seule, ainsi que l'API
+et le projet Supabase de production, sur demande d'Alexandre. Aucun jeton n'est stocké dans ce document.
+Les variables renseignées pour la console sont `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+`ADMIN_USER_IDS`, `API_BASE_URL`, `BETTERSTACK_API_TOKEN`, `BETTERSTACK_MONITOR_API_ID`,
+`BETTERSTACK_MONITOR_OPS_ID`, `GITHUB_REPO_BACKEND`, `GITHUB_REPO_OPS`, `GITHUB_TOKEN` et
+`APP_STORE_ID`. Les variables préexistantes sont `NEXT_PUBLIC_SITE_URL`, `NODE_ENV`, `APPLE_TEAM_ID`
+et `NEXT_PUBLIC_APP_STORE_URL`. Les `TOOL_URL_*` restent à renseigner si souhaité.
+
+Le jeton GitHub est fine-grained, limité aux deux dépôts et en lecture seule, sans expiration.
+Le backend de production ne dispose pas encore d'`ADMIN_USER_IDS` : la route d'aperçu admin peut
+donc refuser l'accès. Refaire la configuration de la console sur l'application ops de production
+au premier déploiement de celle-ci, avec les contrôles d'accès et les validations adaptés.
+
 - [ ] MEP : suivre la checklist de la section 8ter (conteneur backend en mode production, env prod séparé).
 
 - [x] ~~Appliquer `ENVIRONMENT=development` sur le backend dev et redéployer~~ — fait le 2026-10-05, section 8bis.
