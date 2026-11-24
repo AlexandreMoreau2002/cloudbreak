@@ -11,7 +11,7 @@ Documents de référence :
 
 ## Prochaine action
 
-**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). 10.4b mergée (ops #15, `1cd994d`). Vague 3 mergée et déployée sur dev-ops le 2026-11-24 : 10.4g #16 `f3a4bf7`, 10.4d #18 `d1a651b`, 10.4c #19 `9a9b2fb`, 10.4e #17 `ac69a05` (smoke test connecté à faire). dev-ops pointe sur Supabase/API de prod, jetons Better Stack et GitHub en lecture seule posés le 2026-11-24 (reste à confirmer : révocation de l'ancien jeton GitHub ; `TOOL_URL_*` non posées). Suite : 10.4f en cours.
+**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). 10.4b mergée (ops #15, `1cd994d`). Vague 3 mergée et déployée sur dev-ops le 2026-11-24 : 10.4g #16 `f3a4bf7`, 10.4d #18 `d1a651b`, 10.4c #19 `9a9b2fb`, 10.4e #17 `ac69a05` (smoke test connecté à faire). dev-ops pointe sur Supabase/API de prod, jetons Better Stack et GitHub en lecture seule posés le 2026-11-24 (reste à confirmer : révocation de l'ancien jeton GitHub ; `TOOL_URL_*` non posées). Suite : 10.4f en cours ; checklist des variables et réglages ci-dessous.
 
 Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
@@ -33,12 +33,39 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 
 Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
-## À faire côté serveur
+## Checklist des variables et réglages (état au 2026-11-24)
 
-- [x] `cloudbreak-backend` et `cloudbreak-ops` (Dokploy dev) remis sur `develop` et redéployés le 2026-11-23 : `/version` répond 200 sur dev-api et dev-ops, `/api/v1/admin/overview` répond 403 sans JWT. SSH était bloqué depuis le réseau du cowork (cause réseau, pas serveur : pas de fail2ban, UFW ouvert).
-- [x] `/version` affiche le vrai sha sur dev-api et dev-ops depuis le 2026-11-23 (backend `445ccd7` #51, ops `5f81469` #14) : un script de build relit le commit dans `.git`, sans build args Dokploy. À refaire sur la prod au premier déploiement après ces merges.
-- [ ] Compte avec mot de passe sur Supabase **dev** pour tester la console en local (le compte dev d'Alex est en Apple, rôle `admin` déjà posé dessus), puis `ADMIN_USER_IDS` sur le backend dev et test nominal de `backend/http/admin.http`.
-- [x] Rôle `admin` posé le 2026-11-23 sur le compte Supabase **prod** `pricedelu@gmail.com` (UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`, connexion e-mail + mot de passe). À mettre dans `ADMIN_USER_IDS` du backend prod à la mise en prod (vague 5).
+Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase prod, `api.cloudbreak-app.com`, Better Stack prod, GitHub) parce que le dev n'a pas de métriques. À remettre sur le dev (ou à retirer) quand l'app ops de prod sera déployée.
+
+### Déjà fait
+
+- [x] `dev-ops` (Dokploy) : `SUPABASE_URL` et `SUPABASE_PUBLISHABLE_KEY` (projet prod), `ADMIN_USER_IDS` (UUID prod `89d0d336-78e9-4dab-be43-af611a0f7e81`), `API_BASE_URL` (prod), `BETTERSTACK_API_TOKEN` + `BETTERSTACK_MONITOR_API_ID` + `BETTERSTACK_MONITOR_OPS_ID` (lecture seule), `GITHUB_TOKEN` (fine-grained, lecture seule, deux dépôts) + `GITHUB_REPO_BACKEND` + `GITHUB_REPO_OPS`, `APP_STORE_ID`. Relu après sauvegarde, redéployé le 2026-11-24.
+- [x] Rôle `admin` sur le compte Supabase **prod** `pricedelu@gmail.com` (e-mail + mot de passe) ; Better Stack : moniteurs API et site ops, heartbeats serveur/sauvegarde/purge/favoris ; script de métriques et cron `*/15` sur le VPS (10.1a).
+- [x] `/version` sur dev-api et dev-ops (vrai sha). `dev-api` et `dev-ops` suivent `develop`.
+
+### À faire, dans cet ordre
+
+1. **Release du backend en prod** (Alexandre décide du moment) : `develop` → `main` selon le workflow release. Embarque 10.2 `/version`, 10.3 routes admin, migration `c3d4e5f6a7b8` (auto au démarrage), log 5xx. C'est ce qui débloque les blocs Utilisateurs, Crons, Serveur et la version backend dans Déploiements (aujourd'hui « source indisponible »).
+2. **`ADMIN_USER_IDS` sur le backend prod** (`cloudbreak-backend-prod`) : UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`. Sans lui `/api/v1/admin/overview` répond 403 même pour l'admin. Relire l'env après Save.
+3. **10.1b** (après 1) : brancher les scripts du VPS sur le backend prod : `POST /internal/heartbeats/{purge|favorites|backup}` dans les scripts de cron prod, et `POST /internal/server-metrics` dans `cloudbreak-server-metrics.sh` (secret `INTERNAL_CRON_SECRET`, header par fichier, jamais en argument).
+4. **Variables `TOOL_URL_*`** sur `dev-ops` (carte Outils de l'Accueil 10.4f ; une URL absente = outil sans lien) : `TOOL_URL_BETTERSTACK`, `TOOL_URL_SENTRY`, `TOOL_URL_POSTHOG`, `TOOL_URL_SUPABASE` (dashboard du projet prod `mjtohynpmzfxhfhtegiv`), `TOOL_URL_OVH`, `TOOL_URL_BREVO`.
+5. **Mise en prod de la console** : release `ops` `develop` → `main`, puis sur `cloudbreak-ops-prod` poser les mêmes variables que `dev-ops` (sans les écarts de l'encadré ci-dessus), `API_BASE_URL` prod, `ADMIN_USER_IDS` prod ; test noir-boîte sur le build prod (route `/fr/admin` sans cookie → redirection, `/api/admin/*` → 401). Puis remettre `dev-ops` sur Supabase/API dev.
+6. **Compte admin Supabase dev avec mot de passe** (optionnel, seulement si on veut une console de dev autonome) : le compte dev est en Apple ; `ADMIN_USER_IDS` sur dev-api ; test nominal de `backend/http/admin.http`.
+
+### Sécurité et ménage des secrets
+
+- [ ] Confirmer que l'**ancien jeton GitHub** est bien révoqué (GitHub a affiché une erreur à la suppression le 2026-11-24).
+- [ ] `GITHUB_TOKEN` posé **sans expiration** : mettre une date d'expiration et noter la rotation.
+- [ ] Page Notion « Serveur OVH » : contient des mots de passe et un jeton Dokploy en clair (Dokploy, Snoroc, bases de données) : à déplacer dans le gestionnaire de mots de passe, puis régénérer le jeton Dokploy.
+- [ ] Jeton Better Stack en lecture seule : noter où il a été créé et qui peut le régénérer.
+- [ ] **Mise à jour de sécurité Next.js** (avertissement à chaque build, fait échouer un build sur deux en local) : PR dédiée `next upgrade --agent=security`, à valider par la CI.
+
+### Écarts connus des pages (à reprendre si besoin)
+
+- Santé : pas de barres de disponibilité 30 jours ni de mini-courbes 24 h des jauges (relevés disponibles côté backend, `history_24h`).
+- Utilisateurs : 5 cartes au lieu de 6 (anonymes hors contrat) ; pas d'étiquette « Backend » sur la courbe.
+- 10.4a : `Secure: true` sur le cookie de session peut gêner un test local sous Safari ; l'écran « accès refusé » est servi en 200 et non 403 (contrat §2.1).
+- Test manuel connecté de chaque page avec les vraies données : à refaire après la release backend.
 
 ## Décisions par défaut (modifiables sur demande)
 
