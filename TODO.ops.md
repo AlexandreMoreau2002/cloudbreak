@@ -60,7 +60,7 @@ Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase p
 - [ ] `GITHUB_TOKEN` posé **sans expiration** : mettre une date d'expiration et noter la rotation.
 - [ ] Page Notion « Serveur OVH » : contient des mots de passe et un jeton Dokploy en clair (Dokploy, Snoroc, bases de données) : à déplacer dans le gestionnaire de mots de passe, puis régénérer le jeton Dokploy.
 - [ ] Jeton Better Stack en lecture seule : noter où il a été créé et qui peut le régénérer.
-- [ ] **Mise à jour de sécurité Next.js** (avertissement à chaque build, fait échouer un build sur deux en local) : PR dédiée `next upgrade --agent=security`, à valider par la CI.
+- [x] Mise à jour de sécurité Next.js 16.4.3 → 16.4.6 mergée (ops #21, `efead05`, 2026-11-24).
 
 ### Écarts connus des pages (à reprendre si besoin)
 
