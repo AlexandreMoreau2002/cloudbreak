@@ -45,6 +45,8 @@ Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase p
 
 ### À faire, dans cet ordre
 
+> **Décision d'Alexandre (2026-11-24) : aucune release ni MEP avant la fin du développement de toutes les features.** Les points 1, 2, 3 et 5 sont gelés jusqu'à ce « gros chantier » ; en attendant, les blocs liés au backend prod restent « source indisponible » sur dev-ops, c'est voulu.
+
 1. **Release du backend en prod** (Alexandre décide du moment) : `develop` → `main` selon le workflow release. Embarque 10.2 `/version`, 10.3 routes admin, migration `c3d4e5f6a7b8` (auto au démarrage), log 5xx. C'est ce qui débloque les blocs Utilisateurs, Crons, Serveur et la version backend dans Déploiements (aujourd'hui « source indisponible »).
 2. **`ADMIN_USER_IDS` sur le backend prod** (`cloudbreak-backend-prod`) : UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`. Sans lui `/api/v1/admin/overview` répond 403 même pour l'admin. Relire l'env après Save.
 3. **10.1b** (après 1) : brancher les scripts du VPS sur le backend prod : `POST /internal/heartbeats/{purge|favorites|backup}` dans les scripts de cron prod, et `POST /internal/server-metrics` dans `cloudbreak-server-metrics.sh` (secret `INTERNAL_CRON_SECRET`, header par fichier, jamais en argument).
