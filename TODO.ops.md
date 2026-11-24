@@ -64,8 +64,8 @@ Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase p
 
 ### Écarts connus des pages (à reprendre si besoin)
 
-- Santé : pas de barres de disponibilité 30 jours ni de mini-courbes 24 h des jauges (relevés disponibles côté backend, `history_24h`).
-- Utilisateurs : 5 cartes au lieu de 6 (anonymes hors contrat) ; pas d'étiquette « Backend » sur la courbe.
+- Santé : pas de barres de disponibilité 30 jours (l'API Better Stack ne donne que des chiffres agrégés) ; mini-courbes 24 h faites (ops #22), testées sur fixtures en attendant le backend 10.3 en prod.
+- Utilisateurs : 5 cartes au lieu de 6 (anonymes hors contrat) ; étiquette « Backend » ajoutée (ops #22).
 - 10.4a : `Secure: true` sur le cookie de session peut gêner un test local sous Safari ; l'écran « accès refusé » est servi en 200 et non 403 (contrat §2.1).
 - Test manuel connecté de chaque page avec les vraies données : à refaire après la release backend.
 
