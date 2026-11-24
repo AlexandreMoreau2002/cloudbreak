@@ -11,7 +11,7 @@ Documents de référence :
 
 ## Prochaine action
 
-**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). 10.4b mergée (ops #15, `1cd994d`). Vague 3 mergée et déployée sur dev-ops le 2026-11-24 : 10.4g #16 `f3a4bf7`, 10.4d #18 `d1a651b`, 10.4c #19 `9a9b2fb`, 10.4e #17 `ac69a05` (smoke test connecté à faire). dev-ops pointe sur Supabase/API de prod, jetons Better Stack et GitHub en lecture seule posés le 2026-11-24 (reste à confirmer : révocation de l'ancien jeton GitHub ; `TOOL_URL_*` non posées). Suite : 10.4f en cours ; checklist des variables et réglages ci-dessous.
+**Vague 1** (10.2 et 10.3 mergées et déployées sur dev) : 10.4a mergée (ops #13, `c08ab77`, à tester sur dev-ops après déploiement) ; 10.1a : code mergé (backend #52 `9f8e5fd`, script `infra/cloudbreak-server-metrics.sh` sur main `203d8a0`), posé sur le VPS le 2026-11-24 (cron actif, moniteur ops prod + heartbeat serveur créés, panne simulée détectée en < 10 s ; e-mail d'alerte reçu, confirmé par Alexandre). 10.4b mergée (ops #15, `1cd994d`). Vague 3 mergée et déployée sur dev-ops le 2026-11-24 : 10.4g #16 `f3a4bf7`, 10.4d #18 `d1a651b`, 10.4c #19 `9a9b2fb`, 10.4e #17 `ac69a05` (smoke test connecté à faire). dev-ops pointe sur Supabase/API de prod, jetons Better Stack et GitHub en lecture seule posés le 2026-11-24 (reste à confirmer : révocation de l'ancien jeton GitHub ; `TOOL_URL_*` non posées). Vague 4 : 10.4f mergée (ops #20, `c77a41e`). Suite : 10.1b et mise en prod (gelées) ; checklist des variables et réglages ci-dessous.
 
 Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule concerné, PR vers `develop` (squash). Une vague ne démarre que quand la précédente est mergée. Un seul build Dokploy et une seule connexion SSH à la fois.
 
@@ -26,7 +26,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 | **3** | 10.4d | Page Santé | ops | — | [x] mergée (ops #18) |
 | **3** | 10.4e | Page Déploiements | ops | — | [x] mergée (ops #17) |
 | **3** | 10.4g | Pages légales : liens et bouton « Retour à la console » | ops | — | [x] mergée (ops #16) |
-| **4** | 10.4f | Accueil | ops | **URLs des six outils** (Better Stack, Sentry, PostHog, Supabase, OVH, Brevo) | [ ] |
+| **4** | 10.4f | Accueil | ops | **URLs des six outils** (Better Stack, Sentry, PostHog, Supabase, OVH, Brevo) | [x] mergée (ops #20) |
 | **5** | Mise en prod | Déploiement `dev-ops` puis prod | ops, backend | **Compte admin Supabase prod** + UUID dans `ADMIN_USER_IDS` | [ ] |
 | **5** | 10.1b | Brancher les scripts du VPS sur le backend (`/internal/*`), 10.3 déployée en prod d'abord | VPS | — | [ ] |
 | v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Audit par hachage ; valeur de l'origine de l'abonnement offert (`granted` proposé) | [ ] |
