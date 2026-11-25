@@ -1,7 +1,7 @@
 # TODO ops — Cloudbreak
 
 Chantier **Ops console** (Epic 10). Ce fichier ne garde que ce qui reste à faire : on retire ce qui est fini (l'historique est dans git, `sprint-status.yaml` et `docs/versions.md`).
-Dernière mise à jour : 2026-11-25 (mise en prod 1.1.0).
+Dernière mise à jour : 2026-11-25 (utilisateurs / comptes / usage mergé sur `develop`, pas encore en prod).
 
 Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stories.md`, `docs/ops-variables-env.md` (variables d'ops, à tenir à jour), maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB).
 
@@ -11,10 +11,11 @@ Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stor
 
 ## Reste à faire, dans cet ordre
 
+0. **Mettre en prod « utilisateurs / comptes / usage »** (backend `b7f1ff7` #61, ops `2b58e49` #29, mergés sur `develop`, migration `e7f8a9b0c1d2`) : à faire à la prochaine MEP, sur accord d'Alexandre. L'historique des utilisateurs commence le jour du déploiement.
+
 1. **Smoke test connecté** (Alexandre) sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : correctifs 1.1.1 en prod (menu fixe, cartes Usage, actifs 30 j), blocs Crons et Serveur remplis ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
-2. **Utilisateurs, comptes, usage : trois mesures séparées** (demande d'Alexandre, 2026-11-25) : l'app s'utilise sans compte, donc la console doit compter aussi les sessions anonymes. 1) **Utilisateurs** = toutes les personnes qui utilisent l'app (anonymes + comptes), 2) **Comptes** = comptes permanents, 3) **Usage** = checks par jour. Cela remet en cause la décision du 2026-11-23 (« anonymes hors contrat ») : à brainstormer (source du nombre d'anonymes : Supabase Auth via la clé service-role du backend, ou `user_id` distincts des `predictions` ; purge à 30 j ; deltas) puis mettre à jour `docs/ops-console-contrats.md` (KPIs, `series_90d`), backend et ops.
-3. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
-4. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
+2. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
+3. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
 
 ## Optionnel
 
@@ -24,7 +25,6 @@ Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stor
 ## Écarts connus des pages
 
 - Santé : pas de barres de disponibilité 30 jours (l'API Better Stack ne donne que des chiffres agrégés).
-- Utilisateurs : 5 cartes au lieu de 6 (comptes anonymes hors contrat).
 - 10.4a : `Secure: true` sur le cookie de session peut gêner un test local sous Safari ; l'écran « accès refusé » est servi en 200 et non 403 (contrat §2.1).
 
 ## Nettoyage (à tout moment, sans ordre)

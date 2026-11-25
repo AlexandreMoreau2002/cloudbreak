@@ -81,7 +81,7 @@
         { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0 (backend et ops)." },
         { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "prod" },
         { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0, avec journal d'audit." },
-        { "t": "Compter aussi les utilisateurs sans compte", "d": "Console : utilisateurs, comptes, usage (3 mesures séparées)", "svc": ["ops", "backend"], "etat": "todo" }
+        { "t": "Compter aussi les utilisateurs sans compte", "d": "Console : utilisateurs (anonymes inclus), comptes et usage, 3 mesures séparées", "svc": ["ops", "backend"], "etat": "develop" }
       ]
     },
     {
