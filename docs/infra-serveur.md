@@ -399,3 +399,10 @@ au premier déploiement de celle-ci, avec les contrôles d'accès et les validat
   dépendance du monitor Better Stack.
 - [ ] Créer un vrai environnement de prod Dokploy séparé, quand une vraie prod existera (domaines
   `api.cloudbreak-app.com` / `ops.cloudbreak-app.com` déjà réservés dans le schéma de nommage, voir section 4bis).
+
+## 8septies. Câblage des crons prod sur la console admin (2026-11-25, story 10.1b)
+
+- `infra/cloudbreak-cron-ping.sh` (installé en `~/cloudbreak-cron-ping.sh`) : `POST /internal/heartbeats/{purge|favorites|backup}` avec `status` ok/fail et `detail` court. En-tête `X-Cron-Secret` lu dans `~/.cloudbreak-prod/cron.header` (`-H @fichier`, jamais en argument). Ne fait jamais échouer l'appelant.
+- Appelé à la fin de `~/cloudbreak-run-favorites-prod.sh`, `~/cloudbreak-purge-anonymous-prod.sh` (hors `dry`) et `/srv/scripts/backup-databases.sh` (succès et échec). Anciennes versions : `*.bak-20261125` (même dossier).
+- `infra/cloudbreak-server-metrics.sh` envoie en plus son relevé à `POST /internal/server-metrics` (204) avant le heartbeat Better Stack ; le code HTTP est dans `~/cloudbreak-server-metrics.log` (`metrics=204`).
+- Les apps Dokploy prod (`cloudbreak-backend-prod`, `cloudbreak-ops-prod`) n'ont **pas de webhook GitHub** : après un merge dans `main`, lancer `application.deploy` par l'API.

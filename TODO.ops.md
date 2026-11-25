@@ -12,7 +12,7 @@ Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stor
 ## Reste à faire, dans cet ordre
 
 1. **Smoke test connecté** (Alexandre) sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : Accueil, Santé, Déploiements, Utilisateurs avec les vraies données ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
-2. **10.1b** (VPS) : brancher les scripts sur le backend prod : `POST /internal/heartbeats/{purge|favorites|backup}` dans les scripts de cron prod et `POST /internal/server-metrics` dans `cloudbreak-server-metrics.sh` (secret `INTERNAL_CRON_SECRET`, header par fichier, jamais en argument). C'est ce qui remplit les blocs Crons et Serveur.
+2. ~~10.1b~~ **faite le 2026-11-25** : `cloudbreak-cron-ping.sh` + relevé serveur → backend prod (heartbeats et métriques en 204). Les blocs Crons et Serveur se remplissent au prochain run de chaque cron (favoris 18:05, purge 06:05, sauvegarde 03:00 UTC) ; le relevé serveur dans les 15 min.
 3. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
 4. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
 

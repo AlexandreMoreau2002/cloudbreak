@@ -15,6 +15,8 @@ DF_CMD="${DF_CMD:-df -P /}"
 NPROC_CMD="${NPROC_CMD:-nproc}"
 LOADAVG_FILE="${LOADAVG_FILE:-/proc/loadavg}"
 DRY_RUN="${DRY_RUN:-0}"
+API_HEADER_FILE="${API_HEADER_FILE:-$HOME/.cloudbreak-prod/cron.header}"
+API_URL="${API_URL:-https://api.cloudbreak-app.com}"
 
 DISK_MAX=85
 RAM_AVAILABLE_MIN=10
@@ -65,6 +67,17 @@ if [ "$DRY_RUN" = "1" ]; then
   exit 0
 fi
 
+# Relevé envoyé au backend (console admin). Un échec ne change ni le verdict ni le heartbeat.
+# Secret : en-tête lu dans un fichier 600 (-H @fichier), jamais en argument.
+metrics_code="skip"
+disk_total_gb=$($DF_CMD | awk 'NR==2 { printf "%.2f", $2 / 1048576 }')
+disk_used_gb=$($DF_CMD | awk 'NR==2 { printf "%.2f", $3 / 1048576 }')
+if [ -r "$API_HEADER_FILE" ] && [[ "$disk_total_gb" =~ ^[0-9.]+$ && "$disk_used_gb" =~ ^[0-9.]+$ && "$load1" =~ ^[0-9.]+$ && "$cpus" =~ ^[0-9]+$ ]]; then
+  body=$(printf '{"sampled_at":"%s","cpu_load_1m":%s,"cpu_count":%s,"mem_total_mb":%s,"mem_available_mb":%s,"swap_total_mb":%s,"swap_used_mb":%s,"disk_total_gb":%s,"disk_used_gb":%s}' \
+    "$(now)" "$load1" "$cpus" "$ram_total" "$ram_avail" "$swap_total" "$swap_used" "$disk_total_gb" "$disk_used_gb")
+  metrics_code=$(printf '%s' "$body" | curl -sS -m 15 -o /dev/null -w '%{http_code}' -X POST -H @"$API_HEADER_FILE" -H 'Content-Type: application/json' --data-binary @- "$API_URL/internal/server-metrics" 2>/dev/null || echo "000")
+fi
+
 http_code="skip"
 if [ -r "$HEARTBEAT_URL_FILE" ]; then
   url=$(tr -d '[:space:]' <"$HEARTBEAT_URL_FILE")
@@ -73,5 +86,5 @@ else
   http_code="no-secret"
 fi
 
-echo "$(now) $values verdict=\"$verdict\" heartbeat=$http_code" >>"$LOG_FILE"
+echo "$(now) $values verdict=\"$verdict\" heartbeat=$http_code metrics=$metrics_code" >>"$LOG_FILE"
 exit 0

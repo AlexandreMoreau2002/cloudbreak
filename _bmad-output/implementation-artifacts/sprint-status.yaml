@@ -158,7 +158,7 @@ development_status:
   # v0 = lecture seule (10.1–10.4) ; v1 = actions admin (10.5)
   # ─────────────────────────────────────────────────────────────
   epic-10: backlog
-  10-1-alertes-uptime-heartbeats-metriques-serveur: in-progress  # 10.1a code mergé 2026-11-24 (backend #52 9f8e5fd, script infra/ 203d8a0) ; reste VPS + Better Stack ; sans agent Better Stack (décision 2026-11-22)
+  10-1-alertes-uptime-heartbeats-metriques-serveur: done  # 10.1a (2026-11-24) + 10.1b scripts VPS câblés au backend prod le 2026-11-25 (heartbeats 204, métriques 204) ; sans agent Better Stack (décision 2026-11-22)
   10-2-version-deployee-get-version: done # backend #49/#51 + ops #12/#14, mergés et déployés sur dev 2026-11-23 (sha de build relu dans .git)
   10-3-backend-admin-lecture-seule-auth-audit-kpis: done # backend #50, mergé et déployé sur dev 2026-11-23 ; reste le test nominal avec un compte admin dev (voir TODO.ops.md)
   10-4-dashboard-ops-v0-admin: done  # 10-4a à 10-4g mergés sur develop (2026-11-24) ; mise en prod différée au gros chantier

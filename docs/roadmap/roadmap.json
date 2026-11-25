@@ -79,7 +79,7 @@
         { "t": "Recherche tolérante aux fautes", "d": "Accents, fautes de frappe, variantes", "svc": ["mobile", "backend"], "etat": "todo" },
         { "t": "Sommets saisis à la main", "d": "Tour Eiffel (330 m) en premier", "svc": ["backend"], "etat": "todo" },
         { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0 (backend et ops)." },
-        { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "doing" },
+        { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "prod" },
         { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0, avec journal d'audit." }
       ]
     },
@@ -107,7 +107,7 @@
     { "nom": "Onboarding et hors-ligne", "fait": 3, "total": 3 },
     { "nom": "Validation terrain", "fait": 1, "total": 2, "note": "Reste la photo" },
     { "nom": "Socle et suivi technique", "fait": 6, "total": 8, "note": "Sentry et PostHog backend en prod, app au prochain build" },
-    { "nom": "Console d'admin", "fait": 5, "total": 5, "note": "En prod depuis la 1.1.0 ; reste le branchement des scripts du serveur (10.1b)" },
+    { "nom": "Console d'admin", "fait": 5, "total": 5, "note": "Terminée : en prod depuis la 1.1.0, scripts du serveur branchés" },
     { "nom": "Landing et ASO", "fait": 0, "total": 2 },
     { "nom": "Croissance", "fait": 0, "total": 5 }
   ]
