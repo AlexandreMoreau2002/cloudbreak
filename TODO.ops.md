@@ -29,7 +29,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 | **4** | 10.4f | Accueil | ops | **URLs des six outils** (Better Stack, Sentry, PostHog, Supabase, OVH, Brevo) | [x] mergée (ops #20) |
 | **5** | Mise en prod | Déploiement `dev-ops` puis prod | ops, backend | **Compte admin Supabase prod** + UUID dans `ADMIN_USER_IDS` | [ ] |
 | **5** | 10.1b | Brancher les scripts du VPS sur le backend (`/internal/*`), 10.3 déployée en prod d'abord | VPS | — | [ ] |
-| v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Audit par hachage ; valeur de l'origine de l'abonnement offert (`granted` proposé) | [ ] |
+| v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Décidé le 2026-11-25 : audit par hachage de l'email ; origine `granted` | [ ] en cours |
 
 Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
@@ -53,14 +53,6 @@ Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase p
 4. [x] Variables `TOOL_URL_*` posées sur `dev-ops` le 2026-11-25 (pages d'accueil des six outils ; Supabase = dashboard du projet prod). Sentry en `sentry.io` générique : remplacer par l'URL du projet si souhaité.
 5. **Mise en prod de la console** : release `ops` `develop` → `main`, puis sur `cloudbreak-ops-prod` poser les mêmes variables que `dev-ops` (sans les écarts de l'encadré ci-dessus), `API_BASE_URL` prod, `ADMIN_USER_IDS` prod ; test noir-boîte sur le build prod (route `/fr/admin` sans cookie → redirection, `/api/admin/*` → 401). Puis remettre `dev-ops` sur Supabase/API dev.
 6. **Compte admin Supabase dev avec mot de passe** (optionnel, seulement si on veut une console de dev autonome) : le compte dev est en Apple ; `ADMIN_USER_IDS` sur dev-api ; test nominal de `backend/http/admin.http`.
-
-### Sécurité et ménage des secrets
-
-- [ ] Confirmer que l'**ancien jeton GitHub** est bien révoqué (GitHub a affiché une erreur à la suppression le 2026-11-24).
-- [ ] `GITHUB_TOKEN` posé **sans expiration** : mettre une date d'expiration et noter la rotation.
-- [ ] Page Notion « Serveur OVH » : contient des mots de passe et un jeton Dokploy en clair (Dokploy, Snoroc, bases de données) : à déplacer dans le gestionnaire de mots de passe, puis régénérer le jeton Dokploy.
-- [ ] Jeton Better Stack en lecture seule : noter où il a été créé et qui peut le régénérer.
-- [x] Mise à jour de sécurité Next.js 16.4.3 → 16.4.6 mergée (ops #21, `efead05`, 2026-11-24).
 
 ### Écarts connus des pages (à reprendre si besoin)
 
