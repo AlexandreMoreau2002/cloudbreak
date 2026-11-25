@@ -11,8 +11,8 @@ Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stor
 
 ## Reste à faire, dans cet ordre
 
-1. **Smoke test connecté** (Alexandre) sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : Accueil, Santé, Déploiements, Utilisateurs avec les vraies données ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
-2. ~~10.1b~~ **faite le 2026-11-25** : `cloudbreak-cron-ping.sh` + relevé serveur → backend prod (heartbeats et métriques en 204). Les blocs Crons et Serveur se remplissent au prochain run de chaque cron (favoris 18:05, purge 06:05, sauvegarde 03:00 UTC) ; le relevé serveur dans les 15 min.
+1. **Smoke test connecté** (Alexandre) sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : correctifs 1.1.1 en prod (menu fixe, cartes Usage, actifs 30 j), blocs Crons et Serveur remplis ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
+2. **Utilisateurs, comptes, usage : trois mesures séparées** (demande d'Alexandre, 2026-11-25) : l'app s'utilise sans compte, donc la console doit compter aussi les sessions anonymes. 1) **Utilisateurs** = toutes les personnes qui utilisent l'app (anonymes + comptes), 2) **Comptes** = comptes permanents, 3) **Usage** = checks par jour. Cela remet en cause la décision du 2026-11-23 (« anonymes hors contrat ») : à brainstormer (source du nombre d'anonymes : Supabase Auth via la clé service-role du backend, ou `user_id` distincts des `predictions` ; purge à 30 j ; deltas) puis mettre à jour `docs/ops-console-contrats.md` (KPIs, `series_90d`), backend et ops.
 3. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
 4. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
 
