@@ -2,7 +2,7 @@
 
 > Source de vérité du code : `ops/.env.example` (noms) et ce document (rôle, origine, état par environnement). **À tenir à jour à chaque évolution d'ops** : toute variable ajoutée, renommée ou retirée est reportée ici dans la même session (règle dans `CLAUDE.md`, « Suivi de chantier »). Aucune valeur secrète dans ce fichier : jamais.
 
-Dernière mise à jour : 2026-11-25.
+Dernière mise à jour : 2026-11-25 (mise en prod 1.1.0).
 
 ## Règles
 
@@ -57,17 +57,17 @@ Une URL absente, vide ou non http(s) donne un outil affiché **sans lien**.
 | `TOOL_URL_OVH` | OVH Manager |
 | `TOOL_URL_BREVO` | Brevo |
 
-## État par environnement (2026-11-24)
+## État par environnement (2026-11-25)
 
 | Groupe | Local | `dev-ops` (Dokploy) | `ops` prod |
 |---|---|---|---|
 | Site public (`NEXT_PUBLIC_*`, `APPLE_TEAM_ID`, `NODE_ENV`) | `.env.local` | posé | posé |
-| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_USER_IDS`, `API_BASE_URL` | Supabase dev | **posées sur les sources de prod** (le dev n'a pas de métriques) | **à poser à la mise en prod** |
-| `BETTERSTACK_*` | facultatif | posées (lecture seule, moniteurs de prod) | **à poser à la mise en prod** |
-| `GITHUB_*`, `APP_STORE_ID` | facultatif | posées | **à poser à la mise en prod** |
-| `TOOL_URL_*` | facultatif | posées (pages d'accueil des outils, Supabase = projet prod ; Sentry en `sentry.io` générique, à remplacer par l'URL du projet si souhaité) | **à poser à la mise en prod** |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_USER_IDS`, `API_BASE_URL` | Supabase dev | **posées sur les sources de prod** (le dev n'a pas de métriques) | posées le 2026-11-25 (copie de `dev-ops`, valeurs de prod) |
+| `BETTERSTACK_*` | facultatif | posées (lecture seule, moniteurs de prod) | posées le 2026-11-25 (copie de `dev-ops`, valeurs de prod) |
+| `GITHUB_*`, `APP_STORE_ID` | facultatif | posées | posées le 2026-11-25 (copie de `dev-ops`, valeurs de prod) |
+| `TOOL_URL_*` | facultatif | posées (pages d'accueil des outils, Supabase = projet prod ; Sentry en `sentry.io` générique, à remplacer par l'URL du projet si souhaité) | posées le 2026-11-25 (copie de `dev-ops`, valeurs de prod) |
 
-À la mise en prod : poser tout le bloc console sur `cloudbreak-ops-prod`, `API_BASE_URL` = backend prod, `ADMIN_USER_IDS` = UUID prod ; poser `ADMIN_USER_IDS` aussi sur `cloudbreak-backend-prod` ; puis remettre `dev-ops` sur le Supabase et l'API de dev. Test noir-boîte du build prod : `/fr/admin` sans cookie redirige vers la connexion, `/api/admin/*` répond 401.
+Mise en prod faite le 2026-11-25 : le bloc console est posé sur `cloudbreak-ops-prod` (`API_BASE_URL` = backend prod, `ADMIN_USER_IDS` = UUID prod), et sur `cloudbreak-backend-prod` : `ADMIN_USER_IDS` et `AUDIT_HASH_KEY` (variable **du backend**, 32+ caractères aléatoires, secret, jamais commitée ; vide = recherche par email et offre Premium refusées en 503 ; ne pas la changer, sinon les anciennes lignes d'audit ne sont plus corrélables). Test noir-boîte du build prod fait le 2026-11-25 : `/fr/admin` sans cookie → 307 vers la connexion, `/api/admin/*` → 401. Reste à décider : remettre `dev-ops` sur le Supabase et l'API de dev (il lit la prod aujourd'hui).
 
 ## Poser une variable sur Dokploy
 
