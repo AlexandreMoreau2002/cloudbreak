@@ -7,8 +7,8 @@
       "note": "Ce que les utilisateurs ont",
       "items": [
         { "svc": "mobile", "version": "1.0.1", "etat": "ok", "detail": "sur l'App Store, avec les abonnements" },
-        { "svc": "backend", "version": "1.1.1", "etat": "ok", "detail": "console admin, Sentry et PostHog actifs" },
-        { "svc": "ops", "version": "1.1.1", "etat": "ok", "detail": "pages légales et console /admin" }
+        { "svc": "backend", "version": "1.2.0", "etat": "ok", "detail": "console admin, Sentry et PostHog actifs" },
+        { "svc": "ops", "version": "1.2.0", "etat": "ok", "detail": "pages légales et console /admin" }
       ]
     },
     {
@@ -81,7 +81,7 @@
         { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0 (backend et ops)." },
         { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "prod" },
         { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "prod", "note": "En prod depuis la 1.1.0, avec journal d'audit." },
-        { "t": "Compter aussi les utilisateurs sans compte", "d": "Console : utilisateurs (anonymes inclus), comptes et usage, 3 mesures séparées", "svc": ["ops", "backend"], "etat": "develop" }
+        { "t": "Compter aussi les utilisateurs sans compte", "d": "Console : utilisateurs (anonymes inclus), comptes et usage, 3 mesures séparées", "svc": ["ops", "backend"], "etat": "prod" }
       ]
     },
     {

@@ -1,19 +1,17 @@
 # TODO ops — Cloudbreak
 
 Chantier **Ops console** (Epic 10). Ce fichier ne garde que ce qui reste à faire : on retire ce qui est fini (l'historique est dans git, `sprint-status.yaml` et `docs/versions.md`).
-Dernière mise à jour : 2026-11-25 (utilisateurs / comptes / usage mergé sur `develop`, pas encore en prod).
+Dernière mise à jour : 2026-11-25 (mise en prod 1.2.0 : utilisateurs / comptes / usage).
 
 Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stories.md`, `docs/ops-variables-env.md` (variables d'ops, à tenir à jour), maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB).
 
 ## État
 
-**Epic 10 en prod depuis le 2026-11-25** (backend et ops `v1.1.0`, `/version` 1.1.0, test noir-boîte du build prod fait : `/fr/admin` sans cookie → redirection, `/api/admin/*` → 401, routes admin du backend → 403). `AUDIT_HASH_KEY` et `ADMIN_USER_IDS` posées sur le backend prod, bloc console posé sur `cloudbreak-ops-prod`. Les apps Dokploy prod n'ont pas de webhook : après un merge dans `main`, lancer `application.deploy`. `dev-ops` lit encore la prod.
+**Epic 10 en prod depuis le 2026-11-25** (backend et ops `v1.2.0`, `/version` 1.2.0, historique des utilisateurs démarré le jour du déploiement ; test noir-boîte du build prod fait : `/fr/admin` sans cookie → redirection, `/api/admin/*` → 401, routes admin du backend → 403). `AUDIT_HASH_KEY` et `ADMIN_USER_IDS` posées sur le backend prod, bloc console posé sur `cloudbreak-ops-prod`. Les apps Dokploy prod n'ont pas de webhook : après un merge dans `main`, lancer `application.deploy`. `dev-ops` lit encore la prod.
 
 ## Reste à faire, dans cet ordre
 
-0. **Mettre en prod « utilisateurs / comptes / usage »** (backend `b7f1ff7` #61, ops `2b58e49` #29, mergés sur `develop`, migration `e7f8a9b0c1d2`) : à faire à la prochaine MEP, sur accord d'Alexandre. L'historique des utilisateurs commence le jour du déploiement.
-
-1. **Smoke test connecté** (Alexandre) sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : correctifs 1.1.1 en prod (menu fixe, cartes Usage, actifs 30 j), blocs Crons et Serveur remplis ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
+1. **Smoke test connecté** (Alexandre), dont les trois blocs Utilisateurs / Comptes / Usage et leurs trois courbes (desktop et mobile 375 px), sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : correctifs 1.1.1 en prod (menu fixe, cartes Usage, actifs 30 j), blocs Crons et Serveur remplis ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
 2. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
 3. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
 
