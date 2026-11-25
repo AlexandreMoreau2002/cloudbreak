@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-24",
+  "updated": "2026-11-25",
   "resume": "La 1.0.0 et la 1.0.1 (abonnements) sont publiées sur l'App Store. La suite : fiabiliser l'achat (1.0.2).",
   "envs": [
     {
@@ -81,7 +81,7 @@
         { "t": "Sommets saisis à la main", "d": "Tour Eiffel (330 m) en premier", "svc": ["backend"], "etat": "todo" },
         { "t": "Console d'admin (lecture seule)", "d": "Alertes, version déployée, KPIs, tableau de bord", "svc": ["ops", "backend"], "etat": "develop", "note": "Console complète sur develop (connexion, accueil, santé, déploiements, utilisateurs) ; mise en prod avec le gros chantier." },
         { "t": "Surveillance étendue", "d": "Ops prod, dev, crons, métriques du serveur", "svc": ["backend", "ops"], "etat": "doing" },
-        { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "todo" }
+        { "t": "Offrir Premium depuis la console", "d": "Recherche par email (v1 de la console)", "svc": ["ops", "backend"], "etat": "develop", "note": "Recherche par email exact, offre de Premium avec journal d'audit ; en prod avec le gros chantier." }
       ]
     },
     {
@@ -108,7 +108,7 @@
     { "nom": "Onboarding et hors-ligne", "fait": 3, "total": 3 },
     { "nom": "Validation terrain", "fait": 1, "total": 2, "note": "Reste la photo" },
     { "nom": "Socle et suivi technique", "fait": 6, "total": 8, "note": "Sentry et PostHog prêts, actifs à la prochaine release" },
-    { "nom": "Console d'admin", "fait": 4, "total": 5, "note": "Version, API admin et pages de la console sur develop ; reste la mise en prod" },
+    { "nom": "Console d'admin", "fait": 5, "total": 5, "note": "Console complète sur develop (lecture et offre de Premium) ; reste la mise en prod" },
     { "nom": "Landing et ASO", "fait": 0, "total": 2 },
     { "nom": "Croissance", "fait": 0, "total": 5 }
   ]

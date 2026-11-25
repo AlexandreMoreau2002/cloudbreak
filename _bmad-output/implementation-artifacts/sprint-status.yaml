@@ -169,7 +169,7 @@ development_status:
   10-4e-page-deploiements: done # ops #17 ac69a05, mergé 2026-11-24
   10-4f-accueil: done # ops #20 c77a41e, mergé 2026-11-24
   10-4g-pages-legales: done # ops #16 f3a4bf7, mergé 2026-11-24
-  10-5-recherche-email-offrir-premium: backlog  # v1
+  10-5-recherche-email-offrir-premium: done  # v1 mergé 2026-11-25 (backend #53 08ee5ad, ops #23 b79939d) ; AUDIT_HASH_KEY à poser avant usage
   epic-10-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

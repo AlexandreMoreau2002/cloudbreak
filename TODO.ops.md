@@ -29,7 +29,7 @@ Prod uniquement, lecture seule. Une story = une branche `feature/` du submodule 
 | **4** | 10.4f | Accueil | ops | **URLs des six outils** (Better Stack, Sentry, PostHog, Supabase, OVH, Brevo) | [x] mergée (ops #20) |
 | **5** | Mise en prod | Déploiement `dev-ops` puis prod | ops, backend | **Compte admin Supabase prod** + UUID dans `ADMIN_USER_IDS` | [ ] |
 | **5** | 10.1b | Brancher les scripts du VPS sur le backend (`/internal/*`), 10.3 déployée en prod d'abord | VPS | — | [ ] |
-| v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Décidé le 2026-11-25 : audit par hachage de l'email ; origine `granted` | [ ] en cours |
+| v1 | 10.5 | Recherche par email et offrir Premium, avec audit | backend, ops | Décidé le 2026-11-25 : audit par hachage de l'email ; origine `granted` | [x] mergée (backend #53, ops #23) |
 
 Détail : `docs/ops-console-stories.md` §1 et §6. Prompts Codex : `docs/ops-console-contrats.md` §7.
 
@@ -48,7 +48,7 @@ Rappel : `dev-ops` pointe volontairement sur les sources de **prod** (Supabase p
 > **Décision d'Alexandre (2026-11-24) : aucune release ni MEP avant la fin du développement de toutes les features.** Les points 1, 2, 3 et 5 sont gelés jusqu'à ce « gros chantier » ; en attendant, les blocs liés au backend prod restent « source indisponible » sur dev-ops, c'est voulu.
 
 1. **Release du backend en prod** (Alexandre décide du moment) : `develop` → `main` selon le workflow release. Embarque 10.2 `/version`, 10.3 routes admin, migration `c3d4e5f6a7b8` (auto au démarrage), log 5xx. C'est ce qui débloque les blocs Utilisateurs, Crons, Serveur et la version backend dans Déploiements (aujourd'hui « source indisponible »).
-2. **`ADMIN_USER_IDS` sur le backend prod** (`cloudbreak-backend-prod`) : UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`. Sans lui `/api/v1/admin/overview` répond 403 même pour l'admin. Relire l'env après Save.
+2. **`ADMIN_USER_IDS` et `AUDIT_HASH_KEY` sur le backend prod** (`cloudbreak-backend-prod`, et `AUDIT_HASH_KEY` aussi sur dev-api pour tester la 10.5 ; 32+ caractères aléatoires, vide = recherche et octroi refusés en 503) : `ADMIN_USER_IDS` = UUID `89d0d336-78e9-4dab-be43-af611a0f7e81`. Sans lui `/api/v1/admin/overview` répond 403 même pour l'admin. Relire l'env après Save.
 3. **10.1b** (après 1) : brancher les scripts du VPS sur le backend prod : `POST /internal/heartbeats/{purge|favorites|backup}` dans les scripts de cron prod, et `POST /internal/server-metrics` dans `cloudbreak-server-metrics.sh` (secret `INTERNAL_CRON_SECRET`, header par fichier, jamais en argument).
 4. [x] Variables `TOOL_URL_*` posées sur `dev-ops` le 2026-11-25 (pages d'accueil des six outils ; Supabase = dashboard du projet prod). Sentry en `sentry.io` générique : remplacer par l'URL du projet si souhaité.
 5. **Mise en prod de la console** : release `ops` `develop` → `main`, puis sur `cloudbreak-ops-prod` poser les mêmes variables que `dev-ops` (sans les écarts de l'encadré ci-dessus), `API_BASE_URL` prod, `ADMIN_USER_IDS` prod ; test noir-boîte sur le build prod (route `/fr/admin` sans cookie → redirection, `/api/admin/*` → 401). Puis remettre `dev-ops` sur Supabase/API dev.
