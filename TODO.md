@@ -6,26 +6,34 @@
 ## État de départ
 
 - **1.0.0 / build 10** est publique sur l'App Store depuis le 2026-11-13.
-- **1.0.1 / build 11** a été soumise à Apple avec le groupe « Cloudbreak Premium » et les abonnements mensuel et annuel : elle est en attente de vérification.
-- Le backend et ops de production suivent `main` et l'API prod est saine (Postgres et Redis OK).
+- **1.0.1 / build 11** (groupe « Cloudbreak Premium », abonnements mensuel et annuel) est **approuvée par Apple**. Les abonnements restent à valider sur l'app téléchargée depuis l'App Store (section 2).
+- **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **soumise à Apple** (2026-11-26), en **publication manuelle**. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
+- Backend et ops sont en prod en **1.2.0** (`main`).
 
-## 1. Actions à faire pendant l'attente Apple
+## 0. Finir la 1.0.2 (dans cet ordre)
+
+1. **Avant de publier la 1.0.2 : mettre à jour la politique de confidentialité** (`ops/src/content/privacy.ts` + ses tests). Elle affirme qu'aucun outil de rapport de plantage ni d'analyse n'est actif, ce qui est faux pour Sentry et PostHog (déjà actifs côté backend en prod). PR ops puis MEP ops.
+2. Vérifier que la clé PostHog de l'environnement EAS `production` vient bien d'un projet PostHog de production (pas celui de dev/TestFlight), et relire la déclaration « Confidentialité de l'app » dans App Store Connect (plantages, interaction avec le produit + finalité « Analyse »).
+3. Après l'approbation d'Apple : publier la version à la main.
+4. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
+5. Vérifier que les événements arrivent dans Sentry et PostHog (Live events), puis créer les funnels.
+
+## 1. Documentation de mise en production (à faire en parallèle)
 
 1. Écrire une checklist réutilisable de post-MEP : app installée depuis le store, score, création de compte, paywall/achat, logs, crons, `/health` et critères de retour arrière.
 2. Documenter le workflow dev → MEP, avec les schémas Mermaid : feature → `develop` → `release/X.Y.Z` → QA TestFlight → `main` → tag/GitHub Release → report vers `develop`, hotfix compris.
-3. Vérifier si les webhooks GitHub redéploient bien backend et ops après un push sur `main`; décider de les ajouter s'ils sont absents.
+3. Les apps Dokploy prod backend et ops n'ont **pas de webhook** (déploiement par `application.deploy` après le merge dans `main`) : décider d'en ajouter ou non.
 
 ## 2. Valider la 1.0.1 et les abonnements
 
-1. Attendre la décision d'Apple sur la 1.0.1 et les deux abonnements soumis ensemble.
-2. Après l'approbation, laisser le temps aux offres d'apparaître, puis tester sur un iPhone avec l'app téléchargée depuis l'App Store :
+1. Une fois la 1.0.1 disponible sur l'App Store, laisser le temps aux offres d'apparaître, puis tester sur un iPhone avec l'app téléchargée depuis l'App Store :
    - le paywall affiche les prix mensuel et annuel ;
    - un achat annuel et un achat mensuel ouvrent bien la feuille Apple et aboutissent ;
    - une annulation ou un refus laisse un bouton utilisable, sans chargement infini ;
    - Premium est appliqué sans redémarrage de l'app.
-3. Pendant ce test de fumée, vérifier `/health`, les logs backend prod et les premiers crons (purge à 06:05, favoris à 18:05 Paris).
+2. Pendant ce test de fumée, vérifier `/health`, les logs backend prod et les premiers crons (purge à 06:05, favoris à 18:05 Paris).
 
-## 3. Préparer la 1.0.2 — fiabiliser le paywall
+## 3. Préparer la 1.0.3 — fiabiliser le paywall
 
 1. Reproduire avec les logs appareil (`idevicesyslog`) les problèmes d'achat et du bouton « Cloudbreak Pro » : crash/gel intermittent, mensuel qui reste en chargement et absence de feuille Apple.
 2. Corriger le cycle d'achat : finir proprement une transaction refusée ou invalide, afficher une erreur actionnable et recharger l'abonnement/fermer le paywall dès que StoreKit confirme l'achat.
@@ -39,10 +47,9 @@
 
 ## 5. Ops console (alertes, versions, KPIs, admin)
 
-Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Ordre : 10.1 alertes → 10.2 `/version` → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium.
+Chantier cadré en **Epic 10** (`_bmad-output/planning-artifacts/epics.md`, entrées `10-*` dans `sprint-status.yaml`) ; besoins et décisions dans `docs/ops-dashboard-besoins.md`. Le détail et les prérequis par story sont dans `TODO.ops.md`. Ordre : 10.2 `/version` → 10.1 alertes → 10.3 backend admin lecture seule → 10.4 dashboard v0 → 10.5 (v1) recherche email et offrir Premium.
 
 ## Notes à conserver
 
 - Le premier groupe d'abonnements Apple devait être envoyé avec une nouvelle version : c'est la raison de la 1.0.1. Ne considérer les abonnements comme opérationnels qu'après le test sur l'app App Store.
 - Les sujets post-MVP (receipts Expo, alerte régionale, message hors-saison, growth) restent hors de ce plan court terme.
-- Après la prochaine release (code Sentry/PostHog sur `main` + build `production`) : vérifier les événements dans Sentry et PostHog (Live events) et créer les funnels.

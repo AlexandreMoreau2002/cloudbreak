@@ -67,7 +67,7 @@ h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: 
 .tag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 2px 8px; border-radius: 6px; flex: none; }
 .tag.wait { background: var(--wait-bg); color: var(--wait); } .tag.todo { background: var(--todo-bg); color: var(--todo); }
 
-.trail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; position: relative; padding-top: 22px; }
+.trail { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; position: relative; padding-top: 22px; }
 .trail::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 2px; background: repeating-linear-gradient(90deg, var(--accent-soft) 0 8px, transparent 8px 14px); }
 .stop { display: flex; flex-direction: column; gap: 10px; min-width: 0; position: relative; }
 .stop::before { content: ""; position: absolute; top: -19px; left: 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 3px solid var(--accent); }
