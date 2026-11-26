@@ -1,7 +1,7 @@
 # TODO ops — Cloudbreak
 
 Chantier **Ops console** (Epic 10). Ce fichier ne garde que ce qui reste à faire : on retire ce qui est fini (l'historique est dans git, `sprint-status.yaml` et `docs/versions.md`).
-Dernière mise à jour : 2026-11-25 (mise en prod 1.2.0 : utilisateurs / comptes / usage).
+Dernière mise à jour : 2026-11-26 (mise en prod 1.2.1 : politique de confidentialité).
 
 Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stories.md`, `docs/ops-variables-env.md` (variables d'ops, à tenir à jour), maquettes : artifact « Cloudbreak Ops » (https://claude.ai/artifact/2rjCEjpiqoUfF1RUNC1vHB).
 
@@ -11,11 +11,10 @@ Références : `docs/ops-console-contrats.md` (fait foi), `docs/ops-console-stor
 
 ## Reste à faire, dans cet ordre
 
-0. **Urgent, avant la publication de la 1.0.2 mobile : politique de confidentialité.** `src/content/privacy.ts` affirme qu'aucun outil de rapport de plantage ni d'analyse n'est actif (app et serveur). Faux : Sentry et PostHog sont actifs sur le backend prod et embarqués dans la 1.0.2. Corriger le texte, `LEGAL_UPDATED_AT` et les tests (`privacy.test.ts` exige aujourd'hui la phrase fausse), puis MEP ops.
-
 1. **Smoke test connecté** (Alexandre), dont les trois blocs Utilisateurs / Comptes / Usage et leurs trois courbes (desktop et mobile 375 px), sur https://ops.cloudbreak-app.com/fr/admin/login (compte `pricedelu@gmail.com`) : correctifs 1.1.1 en prod (menu fixe, cartes Usage, actifs 30 j), blocs Crons et Serveur remplis ; recherche par email puis offre Premium sur un compte de test, et vérification de la ligne d'audit (hachage, jamais l'email en clair).
 2. **Décider du sort de `dev-ops`** : le remettre sur Supabase et l'API de dev, ou le laisser sur la prod (documenter dans `docs/ops-variables-env.md`).
 3. **Vérifier Sentry et PostHog côté backend** (clés posées, actifs depuis la 1.1.0) : les événements arrivent-ils ?
+4. **Confidentialité, suites de la 1.2.1** : moyen d'opposition dans l'app (Sentry et PostHog, 1.0.3) ; durée de conservation et purge du journal d'audit admin et des emails de support ; vérifier les garanties de transfert d'ImprovMX, les DPA Sentry / PostHog et activer le non-stockage des adresses IP ; mettre à jour l'alerte de sécurité Next.js (rappel affiché au build et aux e2e) et les dépendances signalées par `npm audit`.
 
 ## Optionnel
 

@@ -8,15 +8,14 @@
 - **1.0.0 / build 10** est publique sur l'App Store depuis le 2026-11-13.
 - **1.0.1 / build 11** (groupe « Cloudbreak Premium », abonnements mensuel et annuel) est **approuvée par Apple**. Les abonnements restent à valider sur l'app téléchargée depuis l'App Store (section 2).
 - **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **soumise à Apple** (2026-11-26), en **publication manuelle**. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
-- Backend et ops sont en prod en **1.2.0** (`main`).
+- Backend en prod en **1.2.0**, ops en **1.2.1** (`main`).
 
 ## 0. Finir la 1.0.2 (dans cet ordre)
 
-1. **Avant de publier la 1.0.2 : mettre à jour la politique de confidentialité** (`ops/src/content/privacy.ts` + ses tests). Elle affirme qu'aucun outil de rapport de plantage ni d'analyse n'est actif, ce qui est faux pour Sentry et PostHog (déjà actifs côté backend en prod). PR ops puis MEP ops.
-2. Vérifier que la clé PostHog de l'environnement EAS `production` vient bien d'un projet PostHog de production (pas celui de dev/TestFlight), et relire la déclaration « Confidentialité de l'app » dans App Store Connect (plantages, interaction avec le produit + finalité « Analyse »).
-3. Après l'approbation d'Apple : publier la version à la main.
-4. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
-5. Vérifier que les événements arrivent dans Sentry et PostHog (Live events), puis créer les funnels.
+1. Relire la déclaration « Confidentialité de l'app » dans App Store Connect (plantages, performances, interaction avec le produit + finalité « Analyse », identifiants ; localisation précise « liée ») et vérifier dans PostHog que le projet visé est bien celui de production (même clé sur le backend prod et le build EAS `production`).
+2. Après l'approbation d'Apple : publier la version à la main.
+3. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
+4. Vérifier que les événements arrivent dans Sentry et PostHog (Live events), puis créer les funnels.
 
 ## 1. Documentation de mise en production (à faire en parallèle)
 
