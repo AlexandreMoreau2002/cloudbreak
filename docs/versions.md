@@ -52,7 +52,7 @@
 - **Prod** (Dokploy env `prod`) : `api` / `ops.cloudbreak-app.com`, Supabase `cloudbreak-prod`. Les apps `cloudbreak-backend-prod` et `cloudbreak-ops-prod` suivent **`main`** depuis le 2026-11-13 (réglage changé sans redéploiement : le code de `main` est identique à celui déjà en ligne).
 - **Version publiée** : `v1.0.0` (mobile build 10, App Store le 2026-11-13). Tag `v1.0.0` sur `main` des 3 repos.
 - **Hotfix mobile `v1.0.1`** (build 11, `main` `05df0fe`, 2026-11-13) : version soumise avec les abonnements, absents de la 1.0.0 en production. Backend et ops restent en `v1.0.0`.
-- **Mobile `1.0.2`** (build 12, `release/1.0.2` `a1ee0f9`, EAS `745d696e-858e-4f7b-8f85-468b9d6c70ef`) : soumise à Apple le 2026-11-26. Sentry, PostHog, correctifs OTP et suppression de compte. Merge dans `main` et tag après approbation.
+- **Mobile `1.0.2`** (build 12, `release/1.0.2` `a1ee0f9`, EAS `745d696e-858e-4f7b-8f85-468b9d6c70ef`) : soumise à Apple le 2026-11-26 à 15 h 59, « En attente de vérification », publication manuelle ; « Confidentialité de l'app » publiée le même jour (diagnostics non liés, usage en « Analyse »). Sentry, PostHog, correctifs OTP et suppression de compte. Merge dans `main` et tag après approbation.
 - Mobile : pas d'environnement serveur ; builds EAS (`staging` → dev, `production` → prod).
 
 ## 4. Comment mettre à jour ce fichier

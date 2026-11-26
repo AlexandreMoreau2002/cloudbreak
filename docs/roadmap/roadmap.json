@@ -15,7 +15,7 @@
       "nom": "Dev (develop)",
       "note": "Mergé, pas encore livré",
       "items": [
-        { "svc": "mobile", "version": "1.0.2 (build 12)", "etat": "wait", "detail": "chez Apple, publication manuelle" },
+        { "svc": "mobile", "version": "1.0.2 (build 12)", "etat": "wait", "detail": "en attente de vérification, publication manuelle" },
         { "svc": "backend", "version": "identique à la prod", "etat": "ok", "detail": "1.2.0" },
         { "svc": "ops", "version": "identique à la prod", "etat": "ok", "detail": "1.2.1, console branchée sur les sources de prod" }
       ]
@@ -24,7 +24,7 @@
   "attention": [
     { "niveau": "wait", "texte": "1.0.2 chez Apple. Après approbation : la publier à la main, puis la livrer dans main avec son tag." },
     { "niveau": "todo", "texte": "Tester un achat mensuel et annuel sur iPhone, depuis l'app téléchargée sur l'App Store." },
-    { "niveau": "todo", "texte": "Vérifier que les événements Sentry et PostHog arrivent, et relire « Confidentialité de l'app » dans App Store Connect." }
+    { "niveau": "todo", "texte": "Vérifier que les événements Sentry et PostHog arrivent." }
   ],
   "versions": [
     {
