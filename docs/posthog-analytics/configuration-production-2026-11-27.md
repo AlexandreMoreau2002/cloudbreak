@@ -15,6 +15,15 @@ résultat et aucune n'a signalé de warning. La disposition sauvegardée a été
 Le contrôle visuel dans Arc a atteint le bon titre mais présentait une zone de contenu blanche ;
 le rendu des graphiques n'a donc pas été validé visuellement.
 
+## Mise à jour du même jour : funnel d'onboarding étendu
+
+L'insight [ipEPuNLy](https://eu.posthog.com/project/353557/insights/ipEPuNLy), renommé
+**« Onboarding — de la bienvenue à la fin »**, couvre désormais les étapes 1, 2, 3, 4 puis
+`onboarding_complete` (fenêtre 24 h, séquentiel, filtres 1.0.2 / build 12 inchangés). Contrôle après
+sauvegarde : 2, 2, 1, 1, 1 identifiant, soit 50 % de bout en bout, sur un échantillon trop petit
+pour conclure. `onboarding_complete` et `peak_selected` sont désormais reçus. Le tableau ci-dessous
+et la liste des événements décrivent l'état antérieur à cette mise à jour.
+
 ## Projet et provenance : ce qui est confirmé
 
 - Nom actuel **Cloudbreak Production**, ID **353557**, projet créé le 2026-11-16 ; région UE,

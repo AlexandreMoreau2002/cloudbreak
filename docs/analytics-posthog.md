@@ -7,7 +7,7 @@ est authentifiée. Le projet **Cloudbreak Production (353557, UE, UTC)** reçoit
 mobile 1.0.2/build 12 et les événements de taxonomie backend.
 
 Le [dashboard Cloudbreak — suivi produit](https://eu.posthog.com/project/353557/dashboard/1157291)
-est créé et vérifié : **6 analyses**, dont le funnel onboarding étape 1 → étape 2 et une rétention
+est créé et vérifié : **6 analyses**, dont le funnel onboarding complet (étapes 1 à 4 puis terminé, étendu le 2026-11-27) et une rétention
 J7/J30 affichant **N/A** avant maturité. Les 9 insights génériques préexistants ont été inspectés
 et conservés ; ils utilisent des événements web qui ne correspondent pas à cette collecte.
 
