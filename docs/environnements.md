@@ -21,7 +21,7 @@
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
 | Build mobile (EAS) | ✅ profil `staging` (vise dev) | ✅ profil `production` | Sentry et le futur PostHog seront testés ensemble sur une build native dev/TestFlight |
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
-| App Store Connect | ✅ app + abonnements configurés | ✅ 1.0.2 publiée (2026-11-27) | 1.0.1 approuvée avec le groupe « Cloudbreak Premium » ; achats à tester depuis l'app téléchargée |
+| App Store Connect | ✅ app + abonnements configurés | ✅ 1.0.2 publiée (2026-11-27) | 1.0.1 approuvée avec le groupe « Cloudbreak Premium » ; achats fonctionnels (confirmation le 2026-11-27) |
 | TestFlight | ✅ QA avec le profil `staging` | — | la prod reste vierge : un seul test de fumée avant soumission |
 | Analytics (PostHog) | non vérifié séparément | projet Cloudbreak Production (353557, UE) ; mobile 1.0.2/build 12 et événements backend reçus | dashboard de six analyses créé le 2026-11-27 ; test/public non séparé ; voir `docs/posthog-analytics/configuration-production-2026-11-27.md` |
 | Error tracking (Sentry) | non vérifié | 🟡 variables posées (2026-11-21), 1.0.2 publiée | réception backend et mobile à vérifier |

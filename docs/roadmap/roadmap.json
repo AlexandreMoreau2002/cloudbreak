@@ -22,7 +22,6 @@
     }
   ],
   "attention": [
-    { "niveau": "todo", "texte": "Tester un achat mensuel et annuel sur iPhone, depuis l'app téléchargée sur l'App Store." },
     { "niveau": "todo", "texte": "PostHog : dashboard en place ; compléter les parcours mesurés et séparer les données de test. Réception Sentry à vérifier." }
   ],
   "versions": [
@@ -116,7 +115,7 @@
   "chantiers": [
     { "nom": "Score et consultation", "fait": 5, "total": 6, "note": "Reste le message hors-saison" },
     { "nom": "Compte", "fait": 11, "total": 11 },
-    { "nom": "Abonnement", "fait": 5, "total": 5, "note": "Achats à tester sur iPhone" },
+    { "nom": "Abonnement", "fait": 5, "total": 5 },
     { "nom": "Notifications", "fait": 3, "total": 3 },
     { "nom": "Onboarding et hors-ligne", "fait": 3, "total": 3 },
     { "nom": "Validation terrain", "fait": 1, "total": 2, "note": "Reste la photo" },
