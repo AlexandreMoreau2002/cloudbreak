@@ -7,20 +7,20 @@
 
 - **1.0.0 / build 10** est publique sur l'App Store depuis le 2026-11-13.
 - **1.0.1 / build 11** (groupe « Cloudbreak Premium », abonnements mensuel et annuel) est **approuvée par Apple**. Les abonnements restent à valider sur l'app téléchargée depuis l'App Store (section 2).
-- **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **publiée sur l’App Store** (2026-11-27, vérifiée sur la fiche publique) ; la déclaration « Confidentialité de l'app » est publiée et à jour. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
+- **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **publiée sur l’App Store** (2026-11-27, vérifiée sur la fiche publique) ; livrée dans `main` avec le tag `v1.0.2` ; la déclaration « Confidentialité de l'app » est publiée et à jour. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
 - Backend en prod en **1.2.0**, ops en **1.2.1** (`main`).
 
 ## 0. Suivi après publication de la 1.0.2
 
-1. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
-2. Compléter la recette PostHog sur un parcours App Store contrôlé : onboarding terminé, recherche, paywall, favoris et validation terrain. État et liens : `docs/posthog-analytics/configuration-production-2026-11-27.md`. Séparer test/TestFlight/public avant toute conclusion produit ; revoir les filtres mobiles 1.0.2/build 12 à la prochaine version.
-3. Préparer l'instrumentation du funnel complet : identité commune sans profils, score réellement vu/check intentionnel, résultats auth et cycle d'abonnement vérifiés. Détail : audit de code PostHog, sections 2 à 6. Laisser mûrir les cohortes J7/J30 ; N/A ne signifie pas 0%.
-4. Vérifier la réception Sentry (backend et mobile).
+1. Compléter la recette PostHog sur un parcours App Store contrôlé : onboarding terminé, recherche, paywall, favoris et validation terrain. État et liens : `docs/posthog-analytics/configuration-production-2026-11-27.md`. Séparer test/TestFlight/public avant toute conclusion produit ; revoir les filtres mobiles 1.0.2/build 12 à la prochaine version.
+2. Préparer l'instrumentation du funnel complet : identité commune sans profils, score réellement vu/check intentionnel, résultats auth et cycle d'abonnement vérifiés. Détail : audit de code PostHog, sections 2 à 6. Laisser mûrir les cohortes J7/J30 ; N/A ne signifie pas 0%.
+3. Vérifier la réception Sentry (backend et mobile).
 
 ## Avant de lancer la promo
 
-1. **Licence Open-Meteo** : l'API gratuite (`api.open-meteo.com`) exclut les apps avec abonnement ([conditions](https://open-meteo.com/en/terms), lues le 2026-11-27). Prendre un plan commercial (clé + `customer-api`, petit changement backend) ou changer de fournisseur ; ajouter le crédit CC BY 4.0 visible dans l'app (aujourd'hui cité seulement dans les CGU).
-2. Tester un achat depuis l'app téléchargée sur l'App Store (section 2).
+1. Tester un achat depuis l'app téléchargée sur l'App Store (section 2).
+
+Mis de côté par Alexandre le 2026-11-27 : la licence Open-Meteo (l'API gratuite exclut les apps avec abonnement, [conditions](https://open-meteo.com/en/terms) ; crédit CC BY 4.0 aujourd'hui dans les CGU seulement).
 
 ## 1. Documentation de mise en production (à faire en parallèle)
 

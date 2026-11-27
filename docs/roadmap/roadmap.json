@@ -6,7 +6,7 @@
       "nom": "Production",
       "note": "Ce que les utilisateurs ont",
       "items": [
-        { "svc": "mobile", "version": "1.0.2 (build 12)", "etat": "ok", "detail": "publiée sur l’App Store ; réception PostHog confirmée" },
+        { "svc": "mobile", "version": "1.0.2 (build 12)", "etat": "ok", "detail": "App Store, tag v1.0.2 ; réception PostHog confirmée" },
         { "svc": "backend", "version": "1.2.0", "etat": "ok", "detail": "console admin ; événements PostHog reçus, Sentry à vérifier" },
         { "svc": "ops", "version": "1.2.1", "etat": "ok", "detail": "pages légales à jour et console /admin" }
       ]
@@ -15,14 +15,13 @@
       "nom": "Dev (develop)",
       "note": "Mergé, pas encore livré",
       "items": [
-        { "svc": "mobile", "version": "1.0.2 (build 12)", "etat": "wait", "detail": "publiée, pas encore dans main ni taguée" },
+        { "svc": "mobile", "version": "identique à la prod", "etat": "ok", "detail": "1.0.2" },
         { "svc": "backend", "version": "identique à la prod", "etat": "ok", "detail": "1.2.0" },
         { "svc": "ops", "version": "identique à la prod", "etat": "ok", "detail": "1.2.1, console branchée sur les sources de prod" }
       ]
     }
   ],
   "attention": [
-    { "niveau": "wait", "texte": "1.0.2 publiée : reste à la livrer dans main avec le tag v1.0.2." },
     { "niveau": "todo", "texte": "Tester un achat mensuel et annuel sur iPhone, depuis l'app téléchargée sur l'App Store." },
     { "niveau": "todo", "texte": "PostHog : dashboard en place ; compléter les parcours mesurés et séparer les données de test. Réception Sentry à vérifier." }
   ],
