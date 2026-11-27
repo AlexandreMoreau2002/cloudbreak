@@ -1,6 +1,31 @@
 # PostHog — analytics produit
 
-Date : 2026-11-16 (story 1.8)
+## Point actuel — 2026-11-27
+
+La **1.0.2 / build 12 est publiée** (confirmation Alexandre). La connexion officielle MCP PostHog
+est authentifiée. Le projet **Cloudbreak Production (353557, UE, UTC)** reçoit les événements
+mobile 1.0.2/build 12 et les événements de taxonomie backend.
+
+Le [dashboard Cloudbreak — suivi produit](https://eu.posthog.com/project/353557/dashboard/1157291)
+est créé et vérifié : **6 analyses**, dont le funnel onboarding étape 1 → étape 2 et une rétention
+J7/J30 affichant **N/A** avant maturité. Les 9 insights génériques préexistants ont été inspectés
+et conservés ; ils utilisent des événements web qui ne correspondent pas à cette collecte.
+
+Liens, résultats et actions : [configuration vérifiée](posthog-analytics/configuration-production-2026-11-27.md).
+L'[audit de code initial](posthog-analytics/audit-production-2026-11-27.md) conserve la matrice des
+besoins et les propositions d'instrumentation. Son blocage d'accès initial est levé.
+
+**Limites** : tests/TestFlight/App Store non séparés ; identités UI/backend distinctes ; score
+calculé différent d'un score vu ; confirmations auth/achat absentes. Cinq noms d'événements sont
+reçus à ce stade. Le funnel complet vers Premium reste non mesurable. Aucun profil, replay ou
+collecte automatique activé pendant la configuration.
+
+## Historique — 2026-11-16 (story 1.8)
+
+> Les consignes dev/TestFlight et l'absence de variables/projet prod ci-dessous décrivent la
+> décision initiale, remplacée le 2026-11-21 (voir `observability-testflight-setup.md`). Elles ne
+> décrivent pas l'état actuel de production. Historique conservé ; ne pas réappliquer cette recette
+> ni conclure qu'aucun trafic ne part aujourd'hui.
 
 ## État actuel
 

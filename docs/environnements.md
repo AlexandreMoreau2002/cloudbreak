@@ -6,7 +6,7 @@
 > CI/CD) ; `docs/versions.md` détaille les versions de dépendances par submodule. Ce fichier
 > répond à "qu'est-ce qu'on a comme environnement, et qu'est-ce qu'il manque pour releaser ?".
 >
-> Dernière mise à jour : 2026-11-21. La **prod est en ligne depuis le 2026-11-13** (1.0.0) ; la console Ops ne surveille que la prod (décision du 2026-11-16, voir `docs/ops-console-stories.md`).
+> Dernière mise à jour : 2026-11-27. La **prod est en ligne depuis le 2026-11-13** (1.0.0) ; la console Ops ne surveille que la prod (décision du 2026-11-16, voir `docs/ops-console-stories.md`).
 
 ## Vue d'ensemble — statut par catégorie
 
@@ -21,10 +21,10 @@
 | Local dev (Docker Compose) | ✅ en place | — | n/a, dev uniquement |
 | Build mobile (EAS) | ✅ profil `staging` (vise dev) | ✅ profil `production` | Sentry et le futur PostHog seront testés ensemble sur une build native dev/TestFlight |
 | Apple Developer Program | ✅ validé (2026-09-27) | ✅ idem | 99 $/an — débloque tout le reste iOS |
-| App Store Connect | ✅ app + abonnements configurés | ✅ 1.0.0 publiée | 1.0.1 en revue Apple au 2026-11-15 (à confirmer) |
+| App Store Connect | ✅ app + abonnements configurés | ✅ 1.0.2 publiée (2026-11-27) | 1.0.1 approuvée avec le groupe « Cloudbreak Premium » ; achats à tester depuis l'app téléchargée |
 | TestFlight | ✅ QA avec le profil `staging` | — | la prod reste vierge : un seul test de fumée avant soumission |
-| Analytics (PostHog) | 🟡 code prêt, activation à tester | ❌ projet dédié absent | projet Product Analytics actuel réservé au dev/TestFlight ; variables Dokploy/EAS encore vides |
-| Error tracking (Sentry) | 🟡 code prêt | 🟡 variables à poser | projets backend/mobile créés ; DSN Dokploy/EAS et build TestFlight dev encore requis |
+| Analytics (PostHog) | non vérifié séparément | projet Cloudbreak Production (353557, UE) ; mobile 1.0.2/build 12 et événements backend reçus | dashboard de six analyses créé le 2026-11-27 ; test/public non séparé ; voir `docs/posthog-analytics/configuration-production-2026-11-27.md` |
+| Error tracking (Sentry) | non vérifié | 🟡 variables posées (2026-11-21), 1.0.2 publiée | réception backend et mobile à vérifier |
 | Uptime et heartbeats (BetterStack) | ❌ (non surveillé, voulu) | ✅ API + 3 heartbeats | Compte créé le 2026-11-16 ; monitor `Cloudbreak API production` (`/health`, toutes les 3 min, e-mail) ; heartbeats sauvegarde, purge prod et favoris prod posés le 2026-11-18. Reste : moniteur ops, `/version`, agent serveur (Epic 10, story 10.1). |
 | Alerte de coût OVH | — | ✅ 5 €/mois | stockage hors site des sauvegardes (projet Public Cloud) ; alerte e-mail OVH |
 | Console Ops (Epic 10) | ❌ non surveillé, pas de switch | 🟡 cadrée, non codée | maquettes dans l'artifact « Cloudbreak Ops » ; stories : `docs/ops-console-stories.md` |
@@ -96,8 +96,7 @@
 
 ## 5. Mobile — build & distribution (Apple)
 
-**État (2026-11-21) : l'app 1.0.0 est publiée sur l'App Store ; la 1.0.1 était en revue Apple
-au 2026-11-15. Les builds de QA TestFlight utilisent le profil EAS `staging` (vise dev), les
+**État (2026-11-27) : l'app 1.0.2 est publiée sur l'App Store. Les builds de QA TestFlight utilisent le profil EAS `staging` (vise dev), les
 builds de production le profil `production` (vise la prod).**
 
 - **Identité app** (`mobile/app.json`) :
@@ -129,8 +128,8 @@ builds de production le profil `production` (vise la prod).**
 
 | Outil | Rôle | État |
 |---|---|---|
-| **PostHog** | Analytics produit (funnels, rétention) | Projet Product Analytics existant réservé au **dev/TestFlight** ; adaptateurs backend (`26ca893`) et mobile (`4d54c37`) prêts, filtrage explicite uniquement. `POSTHOG_API_KEY`/`POSTHOG_HOST` (Dokploy) et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` (EAS) restent à poser, donc aucun trafic à ce stade. Autocapture, replay, erreurs, logs, flags, profils et rage clicks sont désactivés. Un projet/une clé de production séparés sont obligatoires avant activation publique. Voir `docs/posthog-analytics/`. |
-| **Sentry** | Crash/error tracking | Projets `cloudbreak-backend` et `cloudbreak-mobile` créés le 2026-11-16 ; code backend/mobile prêt en mode erreurs seulement. Reste à poser `SENTRY_DSN` dans Dokploy, `EXPO_PUBLIC_SENTRY_DSN` et le secret EAS `SENTRY_AUTH_TOKEN`, puis tester sur une build iOS dev/TestFlight. |
+| **PostHog** | Analytics produit (funnels, rétention) | SDKs filtrés et MCP authentifié. Projet Cloudbreak Production 353557 (UE, UTC), cinq événements reçus dont mobile 1.0.2/build 12 ; dashboard de six analyses vérifié. Test/TestFlight/App Store non séparés ; funnel complet impossible sans identité commune et confirmations métier. Aucun profil, replay ou collecte automatique activé pendant cette configuration. Voir `docs/analytics-posthog.md`. |
+| **Sentry** | Crash/error tracking | Projets `cloudbreak-backend` et `cloudbreak-mobile` créés le 2026-11-16, mode erreurs seulement. Variables de production posées le 2026-11-21 (Dokploy prod, EAS `production`), actives avec backend 1.2.0 et mobile 1.0.2. Réception à vérifier. |
 | **BetterStack** | Alertes uptime | Compte créé le 2026-11-16. Le monitor `Cloudbreak API production` vérifie `https://api.cloudbreak-app.com/health` toutes les 3 min et alerte par e-mail. Heartbeats posés le 2026-11-18 (sauvegarde, purge prod, favoris prod ; marge 2 h pour la sauvegarde). Le dev n'est volontairement pas surveillé. Restent : moniteur ops, `/version`, agent serveur, SMS (story 10.1). |
 | **Logs FastAPI** | Erreurs 5xx en JSON structuré | Logger conditionnel en place dans le code (`logger.debug/info/error`), mais pas d'agrégation/alerting externe branché dessus. |
 
@@ -204,8 +203,8 @@ réutiliser les secrets du flux de support.
 - [x] ~~Créer un vrai environnement Dokploy de prod~~ — fait : environnement `prod`, en ligne le 2026-11-13.
 
 ### Observabilité — prochain lot iOS/TestFlight
-- [ ] **Sentry** : poser les variables Dokploy/EAS, générer une build native dev/TestFlight et contrôler un événement filtré sur les deux projets.
-- [ ] **PostHog dev/TestFlight** : poser les variables `POSTHOG_API_KEY`/`POSTHOG_HOST` dans Dokploy dev et `EXPO_PUBLIC_POSTHOG_KEY`/`EXPO_PUBLIC_POSTHOG_HOST` dans EAS, puis valider les événements filtrés dans la même build native que Sentry. Le compte, le projet dev/TestFlight et les SDKs sont déjà prêts.
+- [ ] **Sentry** : contrôler qu'un événement filtré arrive sur les deux projets de production.
+- [ ] **PostHog après publication** : compléter la recette App Store, distinguer test/public, instrumenter identité commune, score vu et résultats auth/abonnement ; compléter les analyses à réception des événements. Dashboard et faits vérifiés : `docs/posthog-analytics/configuration-production-2026-11-27.md`.
 - [ ] **PostHog — dette de taxonomie** : conserver `auth_submitted` exclu jusqu'à ce que son `error_code` soit remplacé par un enum stable ; ne jamais envoyer son texte libre actuel.
 
 ---

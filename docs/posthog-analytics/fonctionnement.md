@@ -1,5 +1,15 @@
 # PostHog Product Analytics — fonctionnement
 
+> **État final du 2026-11-27** : accès PostHog authentifié, projet et réception vérifiés,
+> dashboard de six analyses créé. Voir la [configuration actuelle](configuration-production-2026-11-27.md).
+
+
+> **Historique dev/TestFlight (2026-11-16), statut d'activation dépassé.** Les variables de
+> production ont ensuite été posées (décision du 2026-11-21) et la 1.0.2 est publiée. Nom du projet
+> et réception restent à vérifier : voir l'[audit du 2026-11-27](audit-production-2026-11-27.md).
+> Le code actuel envoie le UUID Supabase côté backend et un ID PostHog indépendant côté mobile ;
+> cette page ne prouve pas leur rapprochement. Les règles de confidentialité restent applicables.
+
 ## L'idée, simplement
 
 PostHog répond aux questions produit : quels parcours sont utilisés, où un parcours s'arrête et

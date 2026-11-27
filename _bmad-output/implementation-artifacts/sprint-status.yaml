@@ -54,6 +54,7 @@ development_status:
   1-7-taxonomie-instrumentation-posthog: done
   1-6-dashboard-ops-admin: backlog  # remplacée par l'Epic 10 (Ops console), décidé le 2026-11-15
   1-8-monitoring-avance-posthog-sentry: done  # Clos le 2026-11-21 : code mergé (backend #48, mobile #70), variables prod posées (Dokploy prod + EAS production). Actif à la prochaine release.
+  # Suivi 2026-11-27 : 1.0.2 publiée ; MCP authentifié, projet Cloudbreak Production 353557 et réception de cinq événements vérifiés ; dashboard de six analyses créé/recalculé. Funnel complet restant bloqué par identités UI/backend et confirmations score vu/auth/achat manquantes. Voir docs/posthog-analytics/configuration-production-2026-11-27.md ; done reste le statut historique de l’intégration.
   epic-1-retrospective: optional
 
   # ─────────────────────────────────────────────────────────────

@@ -7,15 +7,15 @@
 
 - **1.0.0 / build 10** est publique sur l'App Store depuis le 2026-11-13.
 - **1.0.1 / build 11** (groupe « Cloudbreak Premium », abonnements mensuel et annuel) est **approuvée par Apple**. Les abonnements restent à valider sur l'app téléchargée depuis l'App Store (section 2).
-- **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **en attente de vérification** chez Apple (soumise le 2026-11-26 à 15 h 59), en **publication manuelle** ; la déclaration « Confidentialité de l'app » est publiée et à jour. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
+- **1.0.2 / build 12** (`release/1.0.2`, commit `a1ee0f9`) est **publiée sur l’App Store** (2026-11-27, vérifiée sur la fiche publique) ; la déclaration « Confidentialité de l'app » est publiée et à jour. Elle embarque Sentry et PostHog, le correctif du clavier OTP et celui de la suppression de compte. Elle ne contient **aucun correctif du paywall**.
 - Backend en prod en **1.2.0**, ops en **1.2.1** (`main`).
 
-## 0. Finir la 1.0.2 (dans cet ordre)
+## 0. Suivi après publication de la 1.0.2
 
-1. Dans PostHog, vérifier le nom du projet qui porte la clé de production (la même clé sert au backend prod et au build EAS `production`, constaté le 2026-11-26).
-2. Après l'approbation d'Apple : publier la version à la main.
-3. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
-4. Vérifier que les événements arrivent dans Sentry et PostHog (Live events), puis créer les funnels.
+1. Livraison Git (sur accord) : `release/1.0.2` → `main` en merge `--no-ff`, tag `v1.0.2`, GitHub Release, puis `main` → `develop` ; bump de la ref `mobile` et `docs/versions.md`.
+2. Compléter la recette PostHog sur un parcours App Store contrôlé : onboarding terminé, recherche, paywall, favoris et validation terrain. État et liens : `docs/posthog-analytics/configuration-production-2026-11-27.md`. Séparer test/TestFlight/public avant toute conclusion produit ; revoir les filtres mobiles 1.0.2/build 12 à la prochaine version.
+3. Préparer l'instrumentation du funnel complet : identité commune sans profils, score réellement vu/check intentionnel, résultats auth et cycle d'abonnement vérifiés. Détail : audit de code PostHog, sections 2 à 6. Laisser mûrir les cohortes J7/J30 ; N/A ne signifie pas 0%.
+4. Vérifier la réception Sentry (backend et mobile).
 
 ## 1. Documentation de mise en production (à faire en parallèle)
 
@@ -25,7 +25,7 @@
 
 ## 2. Valider la 1.0.1 et les abonnements
 
-1. Une fois la 1.0.1 disponible sur l'App Store, laisser le temps aux offres d'apparaître, puis tester sur un iPhone avec l'app téléchargée depuis l'App Store :
+1. Tester les abonnements sur un iPhone avec l'app téléchargée depuis l'App Store :
    - le paywall affiche les prix mensuel et annuel ;
    - un achat annuel et un achat mensuel ouvrent bien la feuille Apple et aboutissent ;
    - une annulation ou un refus laisse un bouton utilisable, sans chargement infini ;

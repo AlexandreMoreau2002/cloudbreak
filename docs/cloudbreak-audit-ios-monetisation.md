@@ -19,7 +19,7 @@ Le risque principal n’est plus le cœur du produit météo. Il est commercial 
 - StoreKit 2 réel non implémenté.
 - Badge « essai gratuit 7 jours » affiché sans mécanisme garanti.
 - VPS, domaine et production à finaliser.
-- PostHog réel non connecté.
+- Au moment de cet audit initial : PostHog réel non connecté. **Actualisation du 2026-11-27** : SDKs implémentés et mobile 1.0.2 publié ; projet Cloudbreak Production (353557), réception mobile/backend et six analyses vérifiés. Voir [la configuration analytics actuelle](posthog-analytics/configuration-production-2026-11-27.md). Test/TestFlight/public restent non séparés. Les besoins ci-dessous restent pertinents ; le funnel complet et le cycle commercial ne sont pas encore couverts.
 - JWT Supabase encore stocké dans AsyncStorage.
 - Identité légale, date des documents et email support incomplets.
 - Push, deep links et Universal Links dépendants d’Apple Developer et du domaine.

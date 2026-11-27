@@ -40,7 +40,7 @@ Vérifié dans les fichiers de dépendances.
 
 Points à ne pas inventer :
 - **Météo-France** est prévu comme provider secondaire mais **n'est pas implémenté** : seul `backend/app/services/weather_providers/open_meteo.py` existe.
-- **PostHog** : la taxonomie d'events est câblée mais le SDK n'est pas branché (stubs `backend/app/services/analytics.py` et côté mobile).
+- **PostHog** : SDKs filtrés implémentés. Projet Cloudbreak Production (353557, UE) et réception mobile 1.0.2/build 12 + événements backend vérifiés le 2026-11-27 ; dashboard de six analyses créé. Test/TestFlight/public non séparés et identités mobile/backend distinctes. Voir `docs/analytics-posthog.md` et `docs/posthog-analytics/configuration-production-2026-11-27.md`.
 
 ## Project Structure
 
@@ -318,7 +318,7 @@ Un graphe de connaissance du code est configuré (`.mcp.json`, `.codex/config.to
 - **Deep link partage** : l'URL est `<hôte ops de l'env>/sommet/{slug}` (hôte lu dans `EXPO_PUBLIC_LEGAL_BASE_URL` : dev `dev-ops.cloudbreak-app.com`, prod `ops.cloudbreak-app.com` par défaut ; le domaine racine n'héberge rien). Universal Links iOS : code fait et scénario principal validé sur iPhone (story 3.6 — AASA servi par `ops`, Associated Domains calculés dans `mobile/app.config.ts`, `?mode=developer` automatique en dev, route mobile `/sommet/[slug]`). `APPLE_TEAM_ID` et `NEXT_PUBLIC_APP_STORE_URL` (`https://apps.apple.com/app/id6816759640`) sont posées sur ops dev et prod depuis le 2026-11-15 ; les pages `/sommet/*` pointent vers la fiche App Store.
 - **Supabase « Confirm email »** : désactivé en dev, à réactiver.
 - **MountainBackground (login)** : rework visuel nécessaire.
-- **PostHog** : brancher le SDK (backend + mobile) ; avant ça, mapper `error_code` côté auth vers un enum stable (le hook censé le faire, `useAuthForm.ts`, est **introuvable** dans `mobile/src/` — à vérifier).
+- **PostHog (suivi post-publication)** : accès authentifié et dashboard créé. Compléter la recette et le funnel complet : identités compatibles avec l’absence de profils, score vu et résultats auth/achats explicites. Garder `auth_submitted` exclu ; voir l’audit de code et `docs/posthog-analytics/configuration-production-2026-11-27.md`.
 - **Nom utilisateur** (avatar + nom dans le Profil) : pas de champ DB, à planifier.
 - **`EXPO_PUBLIC_SUPPORT_EMAIL`** : adresse réelle pas encore choisie (fallback placeholder).
 

@@ -398,6 +398,13 @@ So that I can sleep without worrying about the backend going down silently.
 
 ### Story 1.8: Monitoring avancé — PostHog réel & Sentry ✅ (clos le 2026-11-21 : code sur develop, variables de production posées, actif à la prochaine release)
 
+> **Suivi du 2026-11-27** : 1.0.2 / build 12 publiée (confirmation Alexandre). Connexion PostHog
+> authentifiée, projet Cloudbreak Production (353557), cinq noms d'événements reçus et dashboard
+> de six analyses vérifiés. L'AC de funnel complet reste non satisfait : identités UI/backend
+> distinctes et confirmations score vu/auth/achat manquantes. Voir
+> `docs/posthog-analytics/configuration-production-2026-11-27.md`. Le replay mentionné dans
+> l'intention initiale reste désactivé selon les décisions de confidentialité ultérieures.
+
 > **Scope post-MVP** — décidé le 2026-08-08. Au lancement, BetterStack (uptime) + PostHog en stub DEBUG-only (story 1.7) + logs FastAPI suffisent. Cette story devient prioritaire juste après la sortie MVP, pour comprendre l'usage réel (funnels, rétention) et capter les crashs en prod.
 
 As an administrator (Alex),
