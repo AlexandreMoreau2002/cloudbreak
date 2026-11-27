@@ -17,6 +17,11 @@
 3. Préparer l'instrumentation du funnel complet : identité commune sans profils, score réellement vu/check intentionnel, résultats auth et cycle d'abonnement vérifiés. Détail : audit de code PostHog, sections 2 à 6. Laisser mûrir les cohortes J7/J30 ; N/A ne signifie pas 0%.
 4. Vérifier la réception Sentry (backend et mobile).
 
+## Avant de lancer la promo
+
+1. **Licence Open-Meteo** : l'API gratuite (`api.open-meteo.com`) exclut les apps avec abonnement ([conditions](https://open-meteo.com/en/terms), lues le 2026-11-27). Prendre un plan commercial (clé + `customer-api`, petit changement backend) ou changer de fournisseur ; ajouter le crédit CC BY 4.0 visible dans l'app (aujourd'hui cité seulement dans les CGU).
+2. Tester un achat depuis l'app téléchargée sur l'App Store (section 2).
+
 ## 1. Documentation de mise en production (à faire en parallèle)
 
 1. Écrire une checklist réutilisable de post-MEP : app installée depuis le store, score, création de compte, paywall/achat, logs, crons, `/health` et critères de retour arrière.
